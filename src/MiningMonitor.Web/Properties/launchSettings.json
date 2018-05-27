@@ -1,0 +1,15 @@
+{
+  "profiles": {
+    "Dev": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "http://localhost:8080/"
+    },
+    "Prod": {
+      "commandName": "Project",
+      "applicationUrl": "http://localhost:8080/"
+    }
+  }
+}

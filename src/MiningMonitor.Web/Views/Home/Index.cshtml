@@ -1,0 +1,17 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <base href="~/" />
+    <title>Mining Monitor</title>
+    <link rel="stylesheet" href="~/css/mining-monitor.css" asp-append-version="true">
+</head>
+<body>
+    <environment names="Development">
+        <div id="miningmonitor">Loading...</div>
+    </environment>
+    <environment names="Production">        
+        <div id="miningmonitor" asp-prerender-module="ClientApp/dist/miningmonitor-server">Loading...</div>
+    </environment>
+    <script src="~/js/miningmonitor.js" asp-append-version="true"></script>
+</body>
+</html>

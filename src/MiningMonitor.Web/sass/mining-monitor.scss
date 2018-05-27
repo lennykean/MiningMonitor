@@ -1,0 +1,78 @@
+@import "../node_modules/bootswatch/dist/darkly/variables.scss";
+@import "../node_modules/bootstrap/scss/bootstrap.scss";
+@import "../node_modules/bootswatch/dist/darkly/bootswatch.scss";
+
+$left-nav-width: 200px;
+$small-screen: 800px;
+
+main {
+    margin-top: 85px;
+    .right-panel {
+        min-width: 600px;
+        @media screen and (min-width: $small-screen) {
+            padding-left: $left-nav-width + 15;
+        }
+    }
+}
+
+.validation-errors small {
+    display: block;
+}
+
+.navbar .navbar-nav .nav-item .nav-link.icon {
+    padding-bottom: 0;
+}
+
+.left-nav {
+    display: block;
+    width: $left-nav-width;
+    position: fixed;
+    top: 70px;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    overflow-x: hidden;
+    overflow-y: auto;
+    @media screen and (max-width: $small-screen) {
+        display: none;
+    }
+    .nav {
+        margin-bottom: 20px;
+    }
+    .nav-item {
+        width: 100%;
+        .nav-link {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        & + .nav-item {
+            margin-left: 0;
+        }
+    }
+    .nav-link {
+        border-radius: 0;
+    }
+}
+
+table.miners {
+    thead tr th:first-child {
+        width: 50px;
+    }
+}
+
+.miner-form {
+    margin-top: 25px;
+}
+
+.gpu-chart {
+    margin: 15px 0;
+    display: inline-block;
+    .recharts-wrapper {
+        margin: 0 15px;
+    }
+}
+
+.admin-tabs {
+    margin-bottom: 25px;
+}

@@ -1,0 +1,58 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <RepositoryUrl>https://github.com/lennykean/MiningMonitor</RepositoryUrl>
+    <Authors>Lenny Kean</Authors>
+    <IsPackable>false</IsPackable>
+    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+    <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="data\**" />
+    <Compile Remove="data\**" />
+    <Content Remove="data\**" />
+    <EmbeddedResource Remove="data\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AspNetCore.ClaimsValueProvider" Version="2.0.0" />
+    <PackageReference Include="AspNetCore.Identity.LiteDB" Version="2.6.0" />
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.5" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MiningMonitor.BackgroundWorker\MiningMonitor.BackgroundWorker.csproj" />
+    <ProjectReference Include="..\MiningMonitor.Data\MiningMonitor.Data.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.DotNet.Watcher.Tools" Version="2.0.0" />
+  </ItemGroup>
+  
+  <Target Name="InstallNodeModules" BeforeTargets="Build" Condition="!Exists('node_modules') ">
+    <Exec Command="node --version" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+    </Exec>
+    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project." />
+    <Message Importance="high" Text="Installing node modules..." />
+    <Exec Command="npm install" />
+  </Target>
+
+  <Target Name="DebugRunWebpack" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('wwwroot/js/miningmonitor.js')">
+    <Message Importance="high" Text="Performing dev Webpack build..." />
+    <Exec Command="node node_modules/webpack/bin/webpack.js --config webpack.config.js" />
+  </Target>
+
+  <Target Name="ReleaseRunWebpack" AfterTargets="Build" Condition=" '$(Configuration)' != 'Debug'">
+    <Message Importance="high" Text="Performing prod Webpack build..." />
+    <Exec Command="node node_modules/webpack/bin/webpack.js --config webpack.config.js --env.prod" />
+  </Target>
+
+</Project>

@@ -1,0 +1,18 @@
+export enum ActionType {
+    Busy,
+    NotBusy,
+    FetchAllCollectorsSuccess,
+    UpdateCollectorSuccess,
+    FetchAllMinersSuccess,
+    CreateMinerSuccess,
+    UpdateMinerSuccess,
+    DeleteMinerSuccess,
+    FetchSnapshotsSuccess,
+    FetchAllUsersSuccess,
+    CreateUserSuccess,
+    DeleteUserSuccess,
+    FetchAllSettingsSuccess,
+    UpdateSettingsSuccess,
+    Validation,
+    LoginSuccess,
+}
