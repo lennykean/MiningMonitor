@@ -10,9 +10,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiningMonitor.Test", "Minin
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiningMonitor.BackgroundWorker", "MiningMonitor.BackgroundWorker\MiningMonitor.BackgroundWorker.csproj", "{31BFF761-62CF-49EB-84E8-DCABF76EBC99}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiningMonitor.Service", "MiningMonitor.Service\MiningMonitor.Service.csproj", "{335ABC0B-6BA7-41D1-A4A1-786A870E935C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiningMonitor.Service", "MiningMonitor.Service\MiningMonitor.Service.csproj", "{335ABC0B-6BA7-41D1-A4A1-786A870E935C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiningMonitor.Model", "MiningMonitor.Model\MiningMonitor.Model.csproj", "{75818985-35AB-455F-9013-EB45AD6CAAA0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiningMonitor.Model", "MiningMonitor.Model\MiningMonitor.Model.csproj", "{75818985-35AB-455F-9013-EB45AD6CAAA0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5F68AB13-6E09-47CF-B673-386FC0D6DAFB}"
+	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
+		Dockerfile = Dockerfile
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

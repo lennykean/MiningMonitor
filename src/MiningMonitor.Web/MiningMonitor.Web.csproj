@@ -16,6 +16,17 @@
     <EmbeddedResource Remove="data\**" />
   </ItemGroup>
 
+
+  <ItemGroup>
+    <None Remove="ClientApp\dist\miningmonitor-server.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="ClientApp\dist\miningmonitor-server.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
   <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>

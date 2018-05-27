@@ -57,7 +57,7 @@ export class MinerForm extends React.Component<Props, State> {
         return (
             <>
                 <Form className="miner-form" onSubmit={this.submit}>
-                    <fieldset disabled={!!this.props.miner.collectorId}>
+                    <fieldset disabled={this.props.miner && !!this.props.miner.collectorId}>
                         <FormGroup row>
                             <Label for="name" sm={2}>
                                 Name
@@ -120,7 +120,7 @@ export class MinerForm extends React.Component<Props, State> {
                                 </FormGroup>
                             </Col>
                         </FormGroup>
-                        {!this.props.miner.collectorId ?
+                        {!this.props.miner || !this.props.miner.collectorId ?
                             <Button outline color="info">Save Changes</Button> :
                             null}
                     </fieldset>
