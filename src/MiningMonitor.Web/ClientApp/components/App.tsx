@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { NavLink } from 'react-router-dom';
 
-import { Container, Row } from 'reactstrap';
+import { Container } from 'reactstrap';
 
-import { Header, LeftNav, Routes } from '.';
+import { LeftNav, Routes } from '.';
 
 export const App: React.SFC = () => (
     <>
