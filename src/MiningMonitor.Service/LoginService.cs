@@ -32,7 +32,7 @@ namespace MiningMonitor.Service
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, username),
-                new Claim(ClaimTypes.Name, username)
+                new Claim(ClaimTypes.Name, username),
             };
             var token = new JwtSecurityToken(claims: claims);
             var tokenHandler = new JwtSecurityTokenHandler();

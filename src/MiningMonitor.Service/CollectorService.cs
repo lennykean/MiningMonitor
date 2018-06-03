@@ -56,7 +56,7 @@ namespace MiningMonitor.Service
             return (result, result.IsValid ? new RegistrationResponse
             {
                 Id = identityUser.UserName,
-                Token = _loginService.CreateToken(collector.Name)
+                Token = _loginService.CreateToken(identityUser.UserName)
             } : null);
         }
 
