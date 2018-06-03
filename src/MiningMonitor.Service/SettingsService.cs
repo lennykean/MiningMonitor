@@ -66,7 +66,7 @@ namespace MiningMonitor.Service
                 var originalSetting = await _repository.GetSettingAsync(normalizedKey);
                 if (originalSetting == null)
                 {
-                    await _repository.AddAsync(new Setting {Key = setting.Key, Value = setting.Value});
+                    await _repository.AddAsync(new Setting { Key = setting.Key, Value = setting.Value });
                 }
                 else
                 {
@@ -76,6 +76,24 @@ namespace MiningMonitor.Service
             }
 
             return (true, await GetAllAsync());
+        }
+
+        public async Task<bool> UpdateSettingAsync(string setting, string value)
+        {
+            if (!DefaultSettings.TryGetKey(setting, out var normalizedKey))
+                return false;
+
+            var originalSetting = await _repository.GetSettingAsync(normalizedKey);
+            if (originalSetting == null)
+            {
+                await _repository.AddAsync(new Setting { Key = setting, Value = value });
+            }
+            else
+            {
+                originalSetting.Value = value;
+                await _repository.UpdateAsync(originalSetting);
+            }
+            return true;
         }
     }
 }

@@ -96,27 +96,28 @@ namespace MiningMonitor.BackgroundWorker.DataCollector
         {
             try
             {
-                var settings = await _settingsService.GetAllAsync();
+                var (_, isDataCollectorSetting) = await _settingsService.GetSettingAsync("IsDataCollector");
 
-                bool.TryParse(settings["IsDataCollector"], out var isDataCollector);
-                if (settings["IsDataCollector"] != "true")
+                if (!bool.TryParse(isDataCollectorSetting, out var isDataCollector) || !isDataCollector)
                     return (isDataCollector, registered: false, approved: false, id: null);
 
                 _logger.LogInformation("Checking for registration");
-                var id = settings["CollectorId"];
-                if (settings["CollectorId"] == null)
+                var (_, id) = await _settingsService.GetSettingAsync("CollectorId");
+                if (id == null)
                 {
-                    _logger.LogInformation("Registering as data collector");
-                    id = await _serverService.RegisterAsCollectorAsync();
+                    string token;
 
-                    settings["CollectorId"] = id;
-                    await _settingsService.UpdateSettingsAsync(settings);
+                    _logger.LogInformation("Registering as data collector");
+                    (id, token) = await _serverService.RegisterAsCollectorAsync();
+
+                    await _settingsService.UpdateSettingAsync("CollectorId", id);
+                    await _settingsService.UpdateSettingAsync("ServerToken", token);
                 }
 
                 _logger.LogInformation("Checking approval");
                 var approved = await _serverService.CheckApprovalAsync(id);
 
-                return (isDataCollector, registered: true, approved, id);
+                return (isDataCollector: true, registered: true, approved, id);
             }
             catch (Exception ex)
             {

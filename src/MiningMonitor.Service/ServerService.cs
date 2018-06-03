@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -19,7 +18,7 @@ namespace MiningMonitor.Service
             _settingsService = settingsService;
         }
 
-        public async Task<string> RegisterAsCollectorAsync()
+        public async Task<(string id, string token)> RegisterAsCollectorAsync()
         {
             var client = await SetupConnection(authorization: false);
             var (_, name) = await _settingsService.GetSettingAsync("Name");
@@ -31,13 +30,8 @@ namespace MiningMonitor.Service
             response.EnsureSuccessStatusCode();
             
             var registration = await response.Content.ReadAsAsync<RegistrationResponse>();
-            await _settingsService.UpdateSettingsAsync(new Dictionary<string, string>
-            {
-                ["CollectorId"] = registration.Id,
-                ["ServerToken"] = registration.Token
-            });
 
-            return registration.Id;
+            return (registration.Id, registration.Token);
         }
 
         public async Task<bool> CheckApprovalAsync(string id)
