@@ -1,4 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -27,31 +28,23 @@ namespace MiningMonitor.Service
             return (success: true, token: CreateToken(username));
         }
 
-        public string CreateToken(string username)
+        public string LoginCollector(string collectorId)
+        {
+            return CreateToken(collectorId, new Claim(ClaimTypes.Role, "Collector"));
+        }
+
+        private static string CreateToken(string username, params Claim[] additionalClaims)
         {
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, username),
                 new Claim(ClaimTypes.Name, username),
-            };
+            }.Concat(additionalClaims);
+
             var token = new JwtSecurityToken(claims: claims);
             var tokenHandler = new JwtSecurityTokenHandler();
 
             return tokenHandler.WriteToken(token);
-        }
-
-        public Task<string> LoginCollectorAsync(string name)
-        {
-            var claims = new[]
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, name),
-                new Claim(ClaimTypes.Name, name),
-                new Claim(ClaimTypes.Role, "Collector")
-            };
-            var token = new JwtSecurityToken(claims: claims);
-            var tokenHandler = new JwtSecurityTokenHandler();
-
-            return Task.FromResult(tokenHandler.WriteToken(token));
         }
     }
 }
