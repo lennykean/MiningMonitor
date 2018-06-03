@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -17,6 +18,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 using MiningMonitor.BackgroundWorker.DataCollector;
 using MiningMonitor.BackgroundWorker.Scheduler;
@@ -110,6 +112,7 @@ namespace MiningMonitor.Web
                 {
                     config.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                     config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 })
                 .AddJwtBearer(options =>
                 {
@@ -118,22 +121,14 @@ namespace MiningMonitor.Web
                     options.TokenValidationParameters.RequireExpirationTime = false;
                     options.TokenValidationParameters.RequireSignedTokens = false;
                 });
-            services.ConfigureApplicationCookie(config => 
-            {
-                config.Events = new CookieAuthenticationEvents 
-                {
-                    OnRedirectToLogin = ctx =>
-                    {
-                        ctx.Response.StatusCode = 401;
-                        return Task.CompletedTask;
-                    }
-                };
-            });
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("Basic", policy => policy.AddRequirements(new AuthenticatedWhenEnabledRequirement()));
-                options.AddPolicy("Collector", policy => policy.AddRequirements(new HasRoleWhenEnabledRequirement("Collector"), new OwnResourceWhenEnabledRequirement("collector")));
+                options.AddPolicy("Basic", policy => policy.AddRequirements(
+                    new AuthenticatedWhenEnabledRequirement()));
+                options.AddPolicy("Collector", policy => policy.AddRequirements(
+                    new HasRoleWhenEnabledRequirement("Collector"), 
+                    new OwnResourceWhenEnabledRequirement("collector")));
             });
             services.AddTransient<IAuthorizationHandler, MiningMonitorAuthorizationHandler>();
 
