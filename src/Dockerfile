@@ -1,6 +1,10 @@
 FROM microsoft/aspnetcore-build:2.0 AS builder
 WORKDIR /app
 
+#update npm
+RUN npm install -g n
+RUN n 8.11.2
+
 # Copy csproj files restore
 COPY *.sln ./
 COPY MiningMonitor.Web/*.csproj MiningMonitor.Web/
