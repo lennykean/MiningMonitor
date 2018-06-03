@@ -1,7 +1,13 @@
-﻿using System.Security.Principal;
+﻿using System.Collections.Generic;
+using System.Security.Principal;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Routing;
 
 using MiningMonitor.Service;
 using MiningMonitor.Web.Security;
@@ -106,8 +112,58 @@ namespace MiningMonitor.Test.Web.Security
             const string role = "test-role";
             var requirements = new[] {new HasRoleWhenEnabledRequirement(role)};
             var principal = new GenericPrincipal(new GenericIdentity("test", "test"), new string[0]);
-            var context = new AuthorizationHandlerContext(requirements, principal, null);
+            var context = new AuthorizationHandlerContext(requirements, principal, new ActionDescriptor());
 
+            _settingsService.Setup(m => m.GetSettingAsync("EnableSecurity"))
+                .ReturnsAsync(() => (true, "true"));
+
+            var handler = new MiningMonitorAuthorizationHandler(_settingsService.Object);
+
+            // Act
+            await handler.HandleAsync(context);
+
+            // Assert
+            Assert.That(context, Has.Property(nameof(context.HasSucceeded)).False);
+        }
+
+        [TestCase(TestName = "MiningMonitorAuthorizationHandler.HandleAsync() own resource requirement")]
+        public async Task MiningMonitorAuthorizationHandlerHandleAsyncOwnResource()
+        {
+            // Arrange
+            var requirements = new[] { new OwnResourceWhenEnabledRequirement("id") };
+            var principal = new GenericPrincipal(new GenericIdentity("test-id"), null);
+            var routeData = new RouteData();
+            var httpContext = new Mock<HttpContext>();
+            var actionContext = new ActionContext(httpContext.Object, routeData, new ActionDescriptor());
+            var filterContext = new AuthorizationFilterContext(actionContext, new List<IFilterMetadata>());
+            var context = new AuthorizationHandlerContext(requirements, principal, filterContext);
+
+            routeData.Values.Add("id", "test-id");
+            _settingsService.Setup(m => m.GetSettingAsync("EnableSecurity"))
+                .ReturnsAsync(() => (true, "true"));
+
+            var handler = new MiningMonitorAuthorizationHandler(_settingsService.Object);
+
+            // Act
+            await handler.HandleAsync(context);
+
+            // Assert
+            Assert.That(context, Has.Property(nameof(context.HasSucceeded)).True);
+        }
+
+        [TestCase(TestName = "MiningMonitorAuthorizationHandler.HandleAsync() authenticated requirement fails")]
+        public async Task MiningMonitorAuthorizationHandlerHandleAsyncOwnResourceFails()
+        {
+            // Arrange
+            var requirements = new[] { new OwnResourceWhenEnabledRequirement("id") };
+            var principal = new GenericPrincipal(new GenericIdentity("test-id"), null);
+            var routeData = new RouteData();
+            var httpContext = new Mock<HttpContext>();
+            var actionContext = new ActionContext(httpContext.Object, routeData, new ActionDescriptor());
+            var filterContext = new AuthorizationFilterContext(actionContext, new List<IFilterMetadata>());
+            var context = new AuthorizationHandlerContext(requirements, principal, filterContext);
+
+            routeData.Values.Add("id", "other-id");
             _settingsService.Setup(m => m.GetSettingAsync("EnableSecurity"))
                 .ReturnsAsync(() => (true, "true"));
 
