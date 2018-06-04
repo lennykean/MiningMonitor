@@ -16,8 +16,12 @@ namespace MiningMonitor.Data.Repository
 
         public Task<IEnumerable<Snapshot>> GetByMinerAsync(Guid minerId, DateTime? from, DateTime? to)
         {
-            return Task.Run(() =>
-                DbCollection.Find(snapshot => minerId == snapshot.MinerId && (from == null || from <= snapshot.SnapshotTime) && (to == null || to >= snapshot.SnapshotTime)));
+            return Task.Run(() => DbCollection.Find(snapshot => minerId == snapshot.MinerId && (from == null || from <= snapshot.SnapshotTime) && (to == null || to >= snapshot.SnapshotTime)));
+        }
+
+        public Task<int> DeleteByMinerAsync(Guid minerId)
+        {
+            return Task.Run(() => DbCollection.Delete(snapshot => snapshot.MinerId == minerId));
         }
     }
 }

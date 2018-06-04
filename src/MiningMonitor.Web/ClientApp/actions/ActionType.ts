@@ -3,6 +3,7 @@ export enum ActionType {
     NotBusy,
     FetchAllCollectorsSuccess,
     UpdateCollectorSuccess,
+    DeleteCollectorSuccess,
     FetchAllMinersSuccess,
     CreateMinerSuccess,
     UpdateMinerSuccess,

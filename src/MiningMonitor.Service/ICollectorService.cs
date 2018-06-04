@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -13,5 +14,8 @@ namespace MiningMonitor.Service
         Task<Collector> Get(string collector);
         Task<(ModelStateDictionary modelState, RegistrationResponse registration)> CreateCollectorAsync(Collector collector);
         Task<bool> UpdateAsync(Collector collector);
+        Task<bool> DeleteAsync(string collectorId);
+        Task<bool> MinerSyncAsync(string collector, Miner miner);
+        Task<bool> SnapshotSyncAsync(string collector, Guid minerId, Snapshot snapshot);
     }
 }

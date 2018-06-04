@@ -15,6 +15,6 @@ namespace MiningMonitor.Service
         Task<bool> UpdateAsync(Miner miner);
         Task<bool> SetSyncedAsync(Miner miner);
         Task<bool> DeleteAsync(Guid id);
-        Task<bool> CollectorSyncAsync(string collector, Miner miner);
+        Task DeleteByCollectorAsync(string collectorId);
     }
 }

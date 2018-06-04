@@ -11,12 +11,10 @@ namespace MiningMonitor.Service
     public class SnapshotService : ISnapshotService
     {
         private readonly ISnapshotRepository _repository;
-        private readonly IMinerService _minerService;
 
-        public SnapshotService(ISnapshotRepository repository, IMinerService minerService)
+        public SnapshotService(ISnapshotRepository repository)
         {
             _repository = repository;
-            _minerService = minerService;
         }
 
         public async Task<IEnumerable<Snapshot>> GetAllAsync()
@@ -54,16 +52,9 @@ namespace MiningMonitor.Service
             await _repository.DeleteAsync(snapshotId);
         }
 
-        public async Task<bool> CollectorSyncAsync(string collector, Guid minerId, Snapshot snapshot)
+        public async Task DeleteByMinerAsync(Guid minerId)
         {
-            var miner = await _minerService.GetByIdAsync(minerId);
-            if (miner?.CollectorId != collector)
-                return false;
-
-            snapshot.MinerId = minerId;
-            await _repository.AddAsync(snapshot);
-
-            return true;
+            await _repository.DeleteByMinerAsync(minerId);
         }
     }
 }

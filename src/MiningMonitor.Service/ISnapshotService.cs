@@ -13,6 +13,6 @@ namespace MiningMonitor.Service
         Task AddAsync(Snapshot snapshot);
         Task AddAsync(IEnumerable<Snapshot> snapshot);
         Task DeleteAsync(Guid snapshotId);
-        Task<bool> CollectorSyncAsync(string collector, Guid minerId, Snapshot snapshot);
+        Task DeleteByMinerAsync(Guid minerId);
     }
 }

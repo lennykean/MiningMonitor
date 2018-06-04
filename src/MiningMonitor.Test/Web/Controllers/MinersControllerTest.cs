@@ -16,11 +16,13 @@ namespace MiningMonitor.Test.Web.Controllers
     public class MinersControllerTest
     {
         private Mock<IMinerService> _minerService;
+        private Mock<ICollectorService> _collectorService;
 
         [SetUp]
         public void Setup()
         {
             _minerService = new Mock<IMinerService>();
+            _collectorService = new Mock<ICollectorService>();
         }
 
         [TestCase(TestName = "MinersController.Get{a}")]
@@ -31,7 +33,7 @@ namespace MiningMonitor.Test.Web.Controllers
 
             _minerService.Setup(m => m.GetAllAsync()).ReturnsAsync(() => miners).Verifiable();
 
-            var controller = new MinersController(_minerService.Object);
+            var controller = new MinersController(_minerService.Object, _collectorService.Object);
 
             // Act
             var result = await controller.Get();
@@ -49,7 +51,7 @@ namespace MiningMonitor.Test.Web.Controllers
 
             _minerService.Setup(m => m.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(() => miner).Verifiable();
 
-            var controller = new MinersController(_minerService.Object);
+            var controller = new MinersController(_minerService.Object, _collectorService.Object);
 
             // Act
             var result = await controller.Get(Guid.NewGuid());
@@ -66,7 +68,7 @@ namespace MiningMonitor.Test.Web.Controllers
             // Arrange
             _minerService.Setup(m => m.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(() => null).Verifiable();
 
-            var controller = new MinersController(_minerService.Object);
+            var controller = new MinersController(_minerService.Object, _collectorService.Object);
 
             // Act
             var result = await controller.Get(Guid.NewGuid());
@@ -81,7 +83,7 @@ namespace MiningMonitor.Test.Web.Controllers
         {
             // Arrange
             var miner = new Miner();
-            var controller = new MinersController(_minerService.Object);
+            var controller = new MinersController(_minerService.Object, _collectorService.Object);
 
             // Act
             var result = await controller.Post(miner);
@@ -97,7 +99,7 @@ namespace MiningMonitor.Test.Web.Controllers
         {
             // Arrange
             var miner = new Miner();
-            var controller = new MinersController(_minerService.Object);
+            var controller = new MinersController(_minerService.Object, _collectorService.Object);
 
             controller.ModelState.AddModelError("test-key", "test-validation-message");
 
@@ -115,7 +117,7 @@ namespace MiningMonitor.Test.Web.Controllers
         {
             // Arrange
             var miner = new Miner();
-            var controller = new MinersController(_minerService.Object);
+            var controller = new MinersController(_minerService.Object, _collectorService.Object);
 
             _minerService.Setup(m => m.UpdateAsync(miner)).ReturnsAsync(() => true).Verifiable();
 
@@ -133,7 +135,7 @@ namespace MiningMonitor.Test.Web.Controllers
         {
             // Arrange
             var miner = new Miner();
-            var controller = new MinersController(_minerService.Object);
+            var controller = new MinersController(_minerService.Object, _collectorService.Object);
 
             _minerService.Setup(m => m.UpdateAsync(miner)).ReturnsAsync(() => false).Verifiable();
 
@@ -150,7 +152,7 @@ namespace MiningMonitor.Test.Web.Controllers
         {
             // Arrange
             var miner = new Miner();
-            var controller = new MinersController(_minerService.Object);
+            var controller = new MinersController(_minerService.Object, _collectorService.Object);
 
             controller.ModelState.AddModelError("test-key", "test-valation-message");
 
@@ -169,7 +171,7 @@ namespace MiningMonitor.Test.Web.Controllers
         {
             // Arrange
             var minerId = Guid.NewGuid();
-            var controller = new MinersController(_minerService.Object);
+            var controller = new MinersController(_minerService.Object, _collectorService.Object);
 
             _minerService.Setup(m => m.DeleteAsync(minerId)).ReturnsAsync(() => deleted).Verifiable();
 

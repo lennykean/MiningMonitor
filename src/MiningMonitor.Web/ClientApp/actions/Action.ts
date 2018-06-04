@@ -12,7 +12,7 @@ export type Action =
         collectors: Collector[],
     } |
     {
-        type: ActionType.UpdateCollectorSuccess,
+        type: ActionType.UpdateCollectorSuccess | ActionType.DeleteCollectorSuccess,
         collector: Collector,
     } |
     {

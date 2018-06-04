@@ -15,13 +15,16 @@ namespace MiningMonitor.Web.Controllers
     public class SnapshotsController : Controller
     {
         private readonly ISnapshotService _snapshotService;
+        private readonly ICollectorService _collectorService;
         private readonly SnapshotDataCollectorSchedule _snapshotDataCollectorSchedule;
 
         public SnapshotsController(
             ISnapshotService snapshotService,
+            ICollectorService collectorService,
             SnapshotDataCollectorSchedule snapshotDataCollectorSchedule)
         {
             _snapshotService = snapshotService;
+            _collectorService = collectorService;
             _snapshotDataCollectorSchedule = snapshotDataCollectorSchedule;
         }
 
@@ -37,7 +40,7 @@ namespace MiningMonitor.Web.Controllers
         [HttpPost("collector/{collector}/{minerId}"), Authorize(Policy = "Collector")]
         public async Task<StatusCodeResult> Post(string collector, Guid minerId, [FromBody]Snapshot snapshot)
         {
-            var success = await _snapshotService.CollectorSyncAsync(collector, minerId, snapshot);
+            var success = await _collectorService.SnapshotSyncAsync(collector, minerId, snapshot);
 
             if (!success)
                 return BadRequest();

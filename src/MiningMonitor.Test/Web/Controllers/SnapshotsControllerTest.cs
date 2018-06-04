@@ -17,11 +17,13 @@ namespace MiningMonitor.Test.Web.Controllers
     public class SnapshotsControllerTest
     {
         private Mock<ISnapshotService> _snapshotService;
+        private Mock<ICollectorService> _collectorService;
 
         [SetUp]
         public void Setup()
         {
             _snapshotService = new Mock<ISnapshotService>();
+            _collectorService = new Mock<ICollectorService>();
         }
 
         [TestCase("56f5fb3a-4b59-417c-aae0-ace175bb7c5b", TestName = "SnapshotsController.Get{a}")]
@@ -34,7 +36,7 @@ namespace MiningMonitor.Test.Web.Controllers
             _snapshotService.Setup(m => m.GetByMinerAsync(minerId, It.IsAny<DateTime?>(), It.IsAny<DateTime?>(), It.IsAny<TimeSpan>()))
                 .ReturnsAsync(() => snapshots)
                 .Verifiable();
-            var controller = new SnapshotsController(_snapshotService.Object, schedule);
+            var controller = new SnapshotsController(_snapshotService.Object, _collectorService.Object, schedule);
 
             // Act
             var result = await controller.Get(minerId);

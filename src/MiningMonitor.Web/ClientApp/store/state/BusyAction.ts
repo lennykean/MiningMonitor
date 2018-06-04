@@ -1,6 +1,7 @@
 export enum BusyAction {
     FetchingCollectors,
     UpdatingCollector,
+    DeletingCollector,
     FetchingMiners,
     CreatingMiner,
     UpdatingMiner,

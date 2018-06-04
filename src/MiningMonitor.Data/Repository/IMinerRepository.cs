@@ -9,5 +9,6 @@ namespace MiningMonitor.Data.Repository
     public interface IMinerRepository : IRepository<Miner, Guid>
     {
         Task<IEnumerable<Miner>> GetEnabledMinersAsync();
+        Task<int> DeleteByCollectorAsync(string collectorId);
     }
 }

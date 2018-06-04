@@ -14,10 +14,12 @@ namespace MiningMonitor.Web.Controllers
     public class MinersController : Controller
     {
         private readonly IMinerService _minerService;
+        private readonly ICollectorService _collectorService;
 
-        public MinersController(IMinerService minerService)
+        public MinersController(IMinerService minerService, ICollectorService collectorService)
         {
             _minerService = minerService;
+            _collectorService = collectorService;
         }
 
         [HttpGet]
@@ -71,7 +73,7 @@ namespace MiningMonitor.Web.Controllers
         [HttpPost("collector/{collector}"), Authorize(Policy = "Collector")]
         public async Task<StatusCodeResult> Post(string collector, [FromBody]Miner miner)
         {
-            var succcess = await _minerService.CollectorSyncAsync(collector, miner);
+            var succcess = await _collectorService.MinerSyncAsync(collector, miner);
 
             if (!succcess)
                 return BadRequest();

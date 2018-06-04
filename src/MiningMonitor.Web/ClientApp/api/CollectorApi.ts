@@ -23,4 +23,12 @@ export class CollectorApi {
         });
         return await handleResponse<Collector>(response);
     }
+
+    public static async Delete(id: string) {
+        const response = await fetch(`${CollectorApi.resourceUrl}/${id}`, {
+            method: 'delete',
+            headers: new Headers(addBearerToken()),
+        });
+        handleResponse<void>(response);
+    }
 }

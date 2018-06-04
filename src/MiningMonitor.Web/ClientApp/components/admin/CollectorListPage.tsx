@@ -9,7 +9,12 @@ import autobind from 'autobind-decorator';
 import * as _ from 'lodash';
 import * as Icon from 'react-feather';
 
-import { collectorActions, FetchAllCollectorsAction, UpdateCollectorAction } from '../../actions';
+import {
+    collectorActions,
+    DeleteCollectorAction,
+    FetchAllCollectorsAction,
+    UpdateCollectorAction,
+} from '../../actions';
 import { Collector } from '../../models';
 import { AppState, Busy } from '../../store';
 import { BusyAction } from '../../store/state/BusyAction';
@@ -19,6 +24,7 @@ interface Props {
     collectors: Collector[];
     fetchAllCollectors: FetchAllCollectorsAction;
     updateCollector: UpdateCollectorAction;
+    deleteCollector: DeleteCollectorAction;
 }
 
 export class CollectorListPage extends React.Component<Props> {
@@ -45,6 +51,10 @@ export class CollectorListPage extends React.Component<Props> {
             approved: false,
         });
     }
+    @autobind
+    public delete(collector: Collector) {
+        this.props.deleteCollector(collector);
+    }
     public render() {
         return (
             <>
@@ -54,6 +64,7 @@ export class CollectorListPage extends React.Component<Props> {
                         <tr>
                             <th>Name</th>
                             <th>Status</th>
+                            <th></th>
                             <th></th>
                         </tr>
                     </thead>
@@ -84,6 +95,14 @@ export class CollectorListPage extends React.Component<Props> {
                                             <Icon.X size={12} /> Reject
                                         </Button> : null}
                                 </td>
+                                <td>
+                                    <Button
+                                        onClick={() => this.delete(collector)}
+                                        className="btn-sm btn-danger"
+                                    >
+                                        Delete
+                                    </Button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
@@ -105,6 +124,7 @@ function mapDispatchToProps(dispatch: Dispatch<AppState>) {
     return {
         fetchAllCollectors: bindActionCreators(collectorActions.fetchAllCollectors, dispatch),
         updateCollector: bindActionCreators(collectorActions.updateCollector, dispatch),
+        deleteCollector: bindActionCreators(collectorActions.deleteCollector, dispatch),
     };
 }
 

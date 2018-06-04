@@ -18,5 +18,10 @@ namespace MiningMonitor.Data.Repository
         {
             return Task.Run(() => DbCollection.Find(miner => miner.CollectData && miner.CollectorId == null));
         }
+
+        public Task<int> DeleteByCollectorAsync(string collectorId)
+        {
+            return Task.Run(() => DbCollection.Delete(miner => miner.CollectorId == collectorId));
+        }
     }
 }

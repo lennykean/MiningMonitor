@@ -21,6 +21,11 @@ export const collectorReducer: Reducer<CollectorState> = (state: CollectorState 
                 ...state,
                 collectors: [..._.reject(state.collectors, { id: action.collector.id }), action.collector],
             };
+        case ActionType.DeleteCollectorSuccess:
+            return {
+                ...state,
+                collectors: [..._.reject(state.collectors, { id: action.collector.id })],
+            };
         default:
             return state;
     }
