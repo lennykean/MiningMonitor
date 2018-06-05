@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
@@ -14,17 +14,6 @@
     <Compile Remove="data\**" />
     <Content Remove="data\**" />
     <EmbeddedResource Remove="data\**" />
-  </ItemGroup>
-
-
-  <ItemGroup>
-    <None Remove="ClientApp\dist\miningmonitor-server.js" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="ClientApp\dist\miningmonitor-server.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -64,6 +53,10 @@
   <Target Name="ReleaseRunWebpack" AfterTargets="Build" Condition=" '$(Configuration)' != 'Debug'">
     <Message Importance="high" Text="Performing prod Webpack build..." />
     <Exec Command="node node_modules/webpack/bin/webpack.js --config webpack.config.js --env.prod" />
+  </Target>
+
+  <Target Name="CopyServerJS" AfterTargets="Build" Condition="Exists('ClientApp\dist\miningmonitor-server.js')">
+    <Copy SourceFiles="ClientApp\dist\miningmonitor-server.js" DestinationFolder="$(OutputPath)"/>
   </Target>
 
 </Project>
