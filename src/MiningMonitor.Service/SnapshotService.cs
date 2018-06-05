@@ -34,19 +34,15 @@ namespace MiningMonitor.Service
         public async Task AddAsync(Snapshot snapshot)
         {
             snapshot.Id = Guid.NewGuid();
+
+            await AddExistingAsync(snapshot);
+        }
+
+        public async Task AddExistingAsync(Snapshot snapshot)
+        {
             await _repository.AddAsync(snapshot);
         }
-
-        public async Task AddAsync(IEnumerable<Snapshot> snapshots)
-        {
-            snapshots = snapshots.ToList();
-
-            foreach (var snapshot in snapshots)
-                snapshot.Id = Guid.NewGuid();
-
-            await _repository.BulkAddAsync(snapshots);
-        }
-
+        
         public async Task DeleteAsync(Guid snapshotId)
         {
             await _repository.DeleteAsync(snapshotId);

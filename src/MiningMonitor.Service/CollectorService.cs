@@ -106,7 +106,7 @@ namespace MiningMonitor.Service
             else
             {
                 miner.CollectorId = collector;
-                await _minerService.AddAsync(miner);
+                await _minerService.AddExistingAsync(miner);
             }
             return true;
         }
@@ -118,7 +118,8 @@ namespace MiningMonitor.Service
                 return false;
 
             snapshot.MinerId = minerId;
-            await _snapshotService.AddAsync(snapshot);
+
+            await _snapshotService.AddExistingAsync(snapshot);
 
             return true;
         }

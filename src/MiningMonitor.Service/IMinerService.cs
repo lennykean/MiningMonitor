@@ -12,6 +12,7 @@ namespace MiningMonitor.Service
         Task<IEnumerable<Miner>> GetAllAsync();
         Task<Miner> GetByIdAsync(Guid id);
         Task AddAsync(Miner miner);
+        Task AddExistingAsync(Miner miner);
         Task<bool> UpdateAsync(Miner miner);
         Task<bool> SetSyncedAsync(Miner miner);
         Task<bool> DeleteAsync(Guid id);
