@@ -59,7 +59,7 @@ namespace MiningMonitor.Web.Controllers
             if (!await _collectorService.DeleteAsync(collectorId))
                 return NotFound();
 
-            return Ok();
+            return NoContent();
         }
     }
 }

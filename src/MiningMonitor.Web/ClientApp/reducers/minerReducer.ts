@@ -31,6 +31,11 @@ export const minerReducer: Reducer<MinerState> = (state: MinerState = initialSta
                 ...state,
                 miners: [..._.reject(state.miners, { id: action.miner.id })],
             };
+        case ActionType.DeleteCollectorSuccess:
+            return {
+                ...state,
+                miners: [..._.reject(state.miners, { collectorId: action.collector.id })],
+            };
         default:
             return state;
     }
