@@ -37,12 +37,6 @@ namespace MiningMonitor.Service
         public async Task AddAsync(Miner miner)
         {
             miner.Id = Guid.NewGuid();
-
-            await AddExistingAsync(miner);
-        }
-
-        public async Task AddExistingAsync(Miner miner)
-        {
             miner.IsSynced = false;
 
             await _minerRepo.AddAsync(miner);
@@ -54,8 +48,18 @@ namespace MiningMonitor.Service
                 return false;
 
             miner.IsSynced = false;
+
             return await _minerRepo.UpdateAsync(miner);
         }
+
+        public async Task UpsertAsync(Miner miner)
+        {
+            if (await _minerRepo.GetByIdAsync(miner.Id) != null)
+                await _minerRepo.UpdateAsync(miner);
+            else
+                await _minerRepo.AddAsync(miner);
+        }
+
         public async Task<bool> SetSyncedAsync(Miner miner)
         {
             miner.IsSynced = true;

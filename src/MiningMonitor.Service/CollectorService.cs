@@ -95,19 +95,12 @@ namespace MiningMonitor.Service
         public async Task<bool> MinerSyncAsync(string collector, Miner miner)
         {
             var existing = await _minerService.GetByIdAsync(miner.Id);
-            if (existing != null)
-            {
-                if (existing.CollectorId != collector)
-                    return false;
+            if (existing == null || existing.CollectorId != collector)
+                return false;
 
-                miner.CollectorId = collector;
-                await _minerService.UpdateAsync(miner);
-            }
-            else
-            {
-                miner.CollectorId = collector;
-                await _minerService.AddExistingAsync(miner);
-            }
+            miner.CollectorId = collector;
+            await _minerService.UpsertAsync(miner);
+            
             return true;
         }
 
@@ -118,8 +111,7 @@ namespace MiningMonitor.Service
                 return false;
 
             snapshot.MinerId = minerId;
-
-            await _snapshotService.AddExistingAsync(snapshot);
+            await _snapshotService.UpsertAsync(snapshot);
 
             return true;
         }

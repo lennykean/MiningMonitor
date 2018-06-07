@@ -35,14 +35,17 @@ namespace MiningMonitor.Service
         {
             snapshot.Id = Guid.NewGuid();
 
-            await AddExistingAsync(snapshot);
-        }
-
-        public async Task AddExistingAsync(Snapshot snapshot)
-        {
             await _repository.AddAsync(snapshot);
         }
-        
+
+        public async Task UpsertAsync(Snapshot snapshot)
+        {
+            if (await _repository.GetByIdAsync(snapshot.Id) != null)
+                await _repository.UpdateAsync(snapshot);
+            else
+                await _repository.AddAsync(snapshot);
+        }
+
         public async Task DeleteAsync(Guid snapshotId)
         {
             await _repository.DeleteAsync(snapshotId);
