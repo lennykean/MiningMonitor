@@ -23,11 +23,11 @@ namespace MiningMonitor.Test.Web.Controllers
             _snapshotRepository = new Mock<ISnapshotRepository>();
         }
 
-        [TestCase("56f5fb3a-4b59-417c-aae0-ace175bb7c5b", TestName = "SnapshotsService.GetByMinerAsync{a}")]
-        public async Task SnapshotServiceGetByMinerAsync(string minerIdString)
+        [Test]
+        public async Task GetByMinerId()
         {
             // Arrange
-            var minerId = new Guid(minerIdString);
+            var minerId = new Guid("56f5fb3a-4b59-417c-aae0-ace175bb7c5b");
             var snapshots = Enumerable.Range(0, 3)
                 .Select(i => new Snapshot {SnapshotTime = DateTime.Now})
                 .ToList();
@@ -45,11 +45,11 @@ namespace MiningMonitor.Test.Web.Controllers
             Assert.That(result, Is.Not.Empty);
         }
 
-        [TestCase("56f5fb3a-4b59-417c-aae0-ace175bb7c5b", TestName = "SnapshotsService.GetByMinerAsync{a} fills gaps")]
-        public async Task SnapshotsControllerGetFillsGaps(string minerIdString)
+        [Test]
+        public async Task GetAndFillsGaps()
         {
             // Arrange
-            var minerId = new Guid(minerIdString);
+            var minerId = new Guid("56f5fb3a-4b59-417c-aae0-ace175bb7c5b");
             var from = new DateTime(2018, 1, 1, 12, 0, 0);
             var to = new DateTime(2018, 1, 1, 12, 10, 0);
             var actualStart = from.AddMinutes(3);

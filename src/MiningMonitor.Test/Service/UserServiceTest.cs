@@ -2,8 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-using AspNetCore.Identity.LiteDB.Models;
-
 using Microsoft.AspNetCore.Identity;
 
 using MiningMonitor.Model;
@@ -39,8 +37,8 @@ namespace MiningMonitor.Test.Service
                     null, null, null);
         }
 
-        [TestCase(TestName = "UserService.GetAllAsync()")]
-        public async Task UserServiceGetAllAsync()
+        [Test]
+        public async Task GetAll()
         {
             // Arrange
             var applicationUsers = Enumerable.Range(0, 3).Select(u => new MiningMonitorUser());
@@ -56,8 +54,8 @@ namespace MiningMonitor.Test.Service
             Assert.That(users.Count(), Is.EqualTo(3));
         }
 
-        [TestCase(TestName = "UserService.CreateUser()")]
-        public async Task CreateuserAsync()
+        [Test]
+        public async Task CreateUser()
         {
             // Arrange
             var user = new User {Username = "test-user", Email = "test@test.test", Password = "hunter2"};

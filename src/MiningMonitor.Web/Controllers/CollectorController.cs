@@ -26,9 +26,14 @@ namespace MiningMonitor.Web.Controllers
         }
 
         [HttpGet("{collector}"), Authorize(Policy = "Collector")]
-        public async Task<Collector> Get(string collector)
+        public async Task<IActionResult> Get(string collector)
         {
-            return await _collectorService.Get(collector);
+            var (success, collectorObj) = await _collectorService.Get(collector);
+
+            if (!success)
+                return NotFound();
+
+            return Ok(collectorObj);
         }
 
         [HttpPut, Authorize(Policy = "Basic")]
@@ -43,14 +48,14 @@ namespace MiningMonitor.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]Collector collector)
+        public async Task<ObjectResult> Post([FromBody]Collector collector)
         {
-            var (result, token) = await _collectorService.CreateCollectorAsync(collector);
+            var (result, response) = await _collectorService.CreateCollectorAsync(collector);
 
             if (!result.IsValid)
                 return BadRequest(result);
 
-            return Ok(token);
+            return Ok(response);
         }
 
         [HttpDelete("{collectorId}"), Authorize(Policy = "Basic")]

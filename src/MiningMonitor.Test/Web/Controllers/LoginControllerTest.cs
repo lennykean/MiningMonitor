@@ -23,8 +23,8 @@ namespace MiningMonitor.Test.Web.Controllers
             _loginService = new Mock<ILoginService>();
         }
 
-        [TestCase(TestName = "LoginController.Post() logs in")]
-        public async Task LoginControllerPostLogsIn()
+        [Test]
+        public async Task PostPerformsLogin()
         {
             // Arrange
             const string token = "test-token";
@@ -43,8 +43,8 @@ namespace MiningMonitor.Test.Web.Controllers
             Assert.That(result, Has.Property(nameof(JsonResult.Value)).EqualTo(token));
         }
 
-        [TestCase(TestName = "LoginController.Post(User) fails")]
-        public async Task LoginControllerPostFails()
+        [Test]
+        public async Task PostFailsAuthentication()
         {
             // Arrange
             _loginService.Setup(m => m.LoginUserAsync(It.IsAny<string>(), It.IsAny<string>()))

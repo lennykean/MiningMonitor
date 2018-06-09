@@ -44,9 +44,14 @@ namespace MiningMonitor.Service
             return Task.Run(() => _userManager.Users.Where(u => u.Roles.Contains("Collector")).AsEnumerable().Select(_collectorMapper.Map));
         }
 
-        public async Task<Collector> Get(string collector)
+        public async Task<(bool success, Collector collector)> Get(string collectorId)
         {
-            return _collectorMapper.Map(await _userManager.FindByNameAsync(collector));
+            var collector = await _userManager.FindByNameAsync(collectorId);
+
+            if (collector == null)
+                return (false, null);
+
+            return (true, _collectorMapper.Map(collector));
         }
 
         public async Task<(ModelStateDictionary modelState, RegistrationResponse registration)> CreateCollectorAsync(Collector collector)

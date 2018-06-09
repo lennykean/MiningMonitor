@@ -21,8 +21,8 @@ namespace MiningMonitor.Test.Web.Controllers
             _service = new Mock<ISettingsService>();
         }
 
-        [TestCase(TestName = "ServerSettingsController.Get()")]
-        public async Task ServerSettingsControllerGetAll()
+        [Test]
+        public async Task GetAll()
         {
             // Arrange
             var settings = new Dictionary<string, string> {["test1"] = "test1", ["test2"] = "test2"};
@@ -39,8 +39,8 @@ namespace MiningMonitor.Test.Web.Controllers
             Assert.That(result, Is.EquivalentTo(settings));
         }
 
-        [TestCase(TestName = "ServerSettingsController.Put(Setting) updates setting")]
-        public async Task ServerSettingsControllerPutUpdates()
+        [Test]
+        public async Task PutSettings()
         {
             // Arrange
             var setting = new Dictionary<string, string>();
@@ -57,8 +57,8 @@ namespace MiningMonitor.Test.Web.Controllers
             Assert.That(result, Has.Property(nameof(result.Value)).EqualTo(setting));
         }
 
-        [TestCase(TestName = "ServerSettingsController.Put(Setting) returns 404")]
-        public async Task ServerSettingsControllerPutNotFound()
+        [Test]
+        public async Task PutSettingNotFound()
         {
             // Arrange
             var setting = new Dictionary<string, string>();

@@ -36,8 +36,8 @@ namespace MiningMonitor.Test.BackgroundWorker.DataCollector
             _clientFactory.Setup(m => m.Create(It.IsAny<Miner>())).Returns(() => _client.Object);
         }
 
-        [TestCase(TestName = "SnapshotDataCollector.Collect()")]
-        public async Task SnapshotDataCollectorCollect()
+        [Test]
+        public async Task Collect()
         {
             // Arrange
             var statisitcs = new MinerStatistics();

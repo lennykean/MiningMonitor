@@ -29,8 +29,8 @@ namespace MiningMonitor.Test.Web.Security
             _settingsService = new Mock<ISettingsService>();
         }
 
-        [TestCase(TestName = "MiningMonitorAuthorizationHandler.HandleAsync() succeeds when security is disabled")]
-        public async Task MiningMonitorAuthorizationHandlerHandleAsyncSecurityDisabled()
+        [Test]
+        public async Task SecurityDisabled()
         {
             // Arrange
             var requirements = new[] {new AuthenticatedWhenEnabledRequirement()};
@@ -44,8 +44,8 @@ namespace MiningMonitor.Test.Web.Security
             Assert.That(context, Has.Property(nameof(context.HasSucceeded)).True);
         }
 
-        [TestCase(TestName = "MiningMonitorAuthorizationHandler.HandleAsync() authenticated requirement")]
-        public async Task MiningMonitorAuthorizationHandlerHandleAsyncAuthenticated()
+        [Test]
+        public async Task AuthenticatedWhenEnabledRequirement()
         {
             // Arrange
             var requirements = new[] {new AuthenticatedWhenEnabledRequirement()};
@@ -64,8 +64,8 @@ namespace MiningMonitor.Test.Web.Security
             Assert.That(context, Has.Property(nameof(context.HasSucceeded)).True);
         }
 
-        [TestCase(TestName = "MiningMonitorAuthorizationHandler.HandleAsync() authenticated requirement fails")]
-        public async Task MiningMonitorAuthorizationHandlerHandleAsyncAuthenticatedFails()
+        [Test]
+        public async Task AuthenticatedWhenEnabledRequirementFailsWhenNotAuthenticated()
         {
             // Arrange
             var requirements = new[] {new AuthenticatedWhenEnabledRequirement()};
@@ -84,8 +84,8 @@ namespace MiningMonitor.Test.Web.Security
             Assert.That(context, Has.Property(nameof(context.HasSucceeded)).False);
         }
 
-        [TestCase(TestName = "MiningMonitorAuthorizationHandler.HandleAsync() role requirement")]
-        public async Task MiningMonitorAuthorizationHandlerHandleAsyncRole()
+        [Test]
+        public async Task HasRoleWhenEnabledRequirement()
         {
             // Arrange
             const string role = "test-role";
@@ -105,8 +105,8 @@ namespace MiningMonitor.Test.Web.Security
             Assert.That(context, Has.Property(nameof(context.HasSucceeded)).True);
         }
 
-        [TestCase(TestName = "MiningMonitorAuthorizationHandler.HandleAsync() role requirement fails")]
-        public async Task MiningMonitorAuthorizationHandlerHandleAsyncRoleFails()
+        [Test]
+        public async Task HasRoleWhenEnabledRequirementFailsWhenNotInRole()
         {
             // Arrange
             const string role = "test-role";
@@ -126,8 +126,8 @@ namespace MiningMonitor.Test.Web.Security
             Assert.That(context, Has.Property(nameof(context.HasSucceeded)).False);
         }
 
-        [TestCase(TestName = "MiningMonitorAuthorizationHandler.HandleAsync() own resource requirement")]
-        public async Task MiningMonitorAuthorizationHandlerHandleAsyncOwnResource()
+        [Test]
+        public async Task OwnResourceWhenEnabledRequirement()
         {
             // Arrange
             var requirements = new[] { new OwnResourceWhenEnabledRequirement("id") };
@@ -151,8 +151,8 @@ namespace MiningMonitor.Test.Web.Security
             Assert.That(context, Has.Property(nameof(context.HasSucceeded)).True);
         }
 
-        [TestCase(TestName = "MiningMonitorAuthorizationHandler.HandleAsync() authenticated requirement fails")]
-        public async Task MiningMonitorAuthorizationHandlerHandleAsyncOwnResourceFails()
+        [Test]
+        public async Task OwnResourceWhenEnabledRequirementFailsWhenResourceIsNotOwned()
         {
             // Arrange
             var requirements = new[] { new OwnResourceWhenEnabledRequirement("id") };

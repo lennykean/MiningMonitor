@@ -25,8 +25,8 @@ namespace MiningMonitor.Test.Web.Controllers
             _collectorService = new Mock<ICollectorService>();
         }
 
-        [TestCase(TestName = "MinersController.Get{a}")]
-        public async Task MinersControllerGetAll()
+        [Test]
+        public async Task GetAll()
         {
             // Arrange
             var miners = Enumerable.Range(0, 3).Select(i => new Miner()).ToList();
@@ -43,8 +43,8 @@ namespace MiningMonitor.Test.Web.Controllers
             Assert.That(result, Is.EquivalentTo(miners));
         }
 
-        [TestCase(TestName = "MinersController.Get(int) returns miner")]
-        public async Task MinersControllerGetOk()
+        [Test]
+        public async Task GetByMinerId()
         {
             // Arrange
             var miner = new Miner();
@@ -62,8 +62,8 @@ namespace MiningMonitor.Test.Web.Controllers
             Assert.That(result, Has.Property(nameof(result.Value)).EqualTo(miner));
         }
 
-        [TestCase(TestName = "MinersController.Get(Guid) returns 404")]
-        public async Task MinersControllerGetNotFound()
+        [Test]
+        public async Task GetByMinerIdNotFound()
         {
             // Arrange
             _minerService.Setup(m => m.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(() => null).Verifiable();
@@ -78,8 +78,8 @@ namespace MiningMonitor.Test.Web.Controllers
             Assert.That(result, Has.Property(nameof(result.StatusCode)).EqualTo(404));
         }
 
-        [TestCase(TestName = "MinersController.Post(Miner) adds miner")]
-        public async Task MinersControllerPostAdds()
+        [Test]
+        public async Task PostNewMiner()
         {
             // Arrange
             var miner = new Miner();
@@ -94,8 +94,8 @@ namespace MiningMonitor.Test.Web.Controllers
             Assert.That(result, Has.Property(nameof(result.Value)).EqualTo(miner));
         }
 
-        [TestCase(TestName = "MinersController.Post(Miner) returns validatation message")]
-        public async Task MinersControllerPostValidates()
+        [Test]
+        public async Task PostInvalidMiner()
         {
             // Arrange
             var miner = new Miner();
@@ -112,8 +112,8 @@ namespace MiningMonitor.Test.Web.Controllers
             Assert.That(result, Has.Property(nameof(result.Value)).ContainKey("test-key"));
         }
 
-        [TestCase(TestName = "MinersController.Put(Miner) updates miner")]
-        public async Task MinersControllerPutUpdates()
+        [Test]
+        public async Task PutUpdatedMiner()
         {
             // Arrange
             var miner = new Miner();
@@ -130,8 +130,8 @@ namespace MiningMonitor.Test.Web.Controllers
             Assert.That(result, Has.Property(nameof(result.Value)).EqualTo(miner));
         }
 
-        [TestCase(TestName = "MinersController.Put(Miner) returns 404")]
-        public async Task MinersControllerPutNotFound()
+        [Test]
+        public async Task PutUpdatedMinerNotFound()
         {
             // Arrange
             var miner = new Miner();
@@ -147,8 +147,8 @@ namespace MiningMonitor.Test.Web.Controllers
             Assert.That(result, Has.Property(nameof(result.StatusCode)).EqualTo(404));
         }
 
-        [TestCase(TestName = "MinersController.Put(Miner) returns validatation message")]
-        public async Task MinersControllerPutValidates()
+        [Test]
+        public async Task PutInvalidMiner()
         {
             // Arrange
             var miner = new Miner();
@@ -165,9 +165,9 @@ namespace MiningMonitor.Test.Web.Controllers
             Assert.That(result, Has.Property(nameof(result.Value)).ContainKey("test-key"));
         }
 
-        [TestCase(true, 204, TestName = "MinersController.Delete(int) deletes miner")]
-        [TestCase(false, 404, TestName = "MinersController.Delete(int) returns 404")]
-        public async Task MinersControllerDelete(bool deleted, int statusCode)
+        //[TestCase(true, 204)]
+        //[TestCase(false, 404)]
+        public async Task DeleteByMinerId(bool deleted, int statusCode)
         {
             // Arrange
             var minerId = Guid.NewGuid();

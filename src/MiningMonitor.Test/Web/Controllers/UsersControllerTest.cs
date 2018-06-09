@@ -25,8 +25,8 @@ namespace MiningMonitor.Test.Web.Controllers
             _userService = new Mock<IUserService>();
         }
 
-        [TestCase(TestName = "UsersController.Get()")]
-        public async Task UsersControllerGet()
+        [Test]
+        public async Task Get()
         {
             // Arrange
             var users = Enumerable.Range(0, 3).Select(i => new User()).ToList();
@@ -43,8 +43,8 @@ namespace MiningMonitor.Test.Web.Controllers
             Assert.That(result, Is.EquivalentTo(users));
         }
 
-        [TestCase(TestName = "UsersController.Post(User) adds user")]
-        public async Task UsersControllerPostAdds()
+        [Test]
+        public async Task PostNewUser()
         {
             // Arrange
             var user = new User();
@@ -63,8 +63,8 @@ namespace MiningMonitor.Test.Web.Controllers
             Assert.That(result, Has.Property(nameof(StatusCodeResult.StatusCode)).EqualTo(204));
         }
 
-        [TestCase(TestName = "UsersController.Post(User) returns errors")]
-        public async Task MinersControllerPostValidates()
+        [Test]
+        public async Task PostInvalidUser()
         {
             // Arrange
             var user = new User();

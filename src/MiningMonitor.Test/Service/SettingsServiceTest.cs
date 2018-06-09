@@ -23,8 +23,8 @@ namespace MiningMonitor.Test.Service
             _repository = new Mock<ISettingRepository>();
         }
 
-        [TestCase(TestName = "SettingsService.GetAllAsync() returns defaults")]
-        public async Task SettingsServiceGetAllAsyncDefaults()
+        [Test]
+        public async Task GetAllDefaults()
         {
             // Arrange
             _repository.Setup(m => m.GetAllAsync()).ReturnsAsync(() => new Setting[0]).Verifiable();
@@ -38,8 +38,8 @@ namespace MiningMonitor.Test.Service
             Assert.That(result, Has.Count.EqualTo(SettingsService.DefaultSettings.Count));
         }
 
-        [TestCase(TestName = "SettingsService.GetAllAsync() merges settings")]
-        public async Task SettingsServiceGetAllAsyncMerges()
+        [Test]
+        public async Task GetAll()
         {
             // Arrange
             var setting = new Setting {Key = "EnableSecurity", Value = "true"};
@@ -52,12 +52,11 @@ namespace MiningMonitor.Test.Service
 
             // Assert
             Assert.That(result, Has.Count.EqualTo(SettingsService.DefaultSettings.Count));
-            Assert.That(result.FirstOrDefault(s => s.Key == "EnableSecurity"),
-                Has.Property(nameof(Setting.Value)).EqualTo("true"));
+            Assert.That(result.FirstOrDefault(s => s.Key == "EnableSecurity"), Has.Property(nameof(Setting.Value)).EqualTo("true"));
         }
 
-        [TestCase(TestName = "SettingsService.GetSettingAsync(string)")]
-        public async Task SettingsServiceGetSettingAsync()
+        [Test]
+        public async Task GetByName()
         {
             // Arrange
             var service = new SettingsService(_repository.Object);
@@ -73,8 +72,8 @@ namespace MiningMonitor.Test.Service
             Assert.That(setting, Is.EqualTo("test"));
         }
 
-        [TestCase(TestName = "SettingsService.GetSettingAsync(string) fails on non-existant")]
-        public async Task SettingsServiceGetSettingAsyncFails()
+        [Test]
+        public async Task GetByNameNotFound()
         {
             // Arrange
             var setting = new Setting();
@@ -89,8 +88,8 @@ namespace MiningMonitor.Test.Service
             Assert.That(success, Is.False);
         }
 
-        [TestCase(TestName = "SettingsService.GetSettingAsync(string) returns default")]
-        public async Task SettingsServiceGetSettingAsyncDefault()
+        [Test]
+        public async Task GetByNameWithDefault()
         {
             // Arrange
             var service = new SettingsService(_repository.Object);
@@ -103,8 +102,8 @@ namespace MiningMonitor.Test.Service
             Assert.That(setting, Is.Not.Null);
         }
 
-        [TestCase(TestName = "SettingsService.UpdateSettingAsync() inserts")]
-        public async Task SettingsServiceUpdateSettingAsyncInsert()
+        [Test]
+        public async Task UpdateExistingSetting()
         {
             // Arrange
             var settings = new Dictionary<string, string> {["EnableSecurity"] = "true"};
@@ -118,8 +117,8 @@ namespace MiningMonitor.Test.Service
             Assert.That(success, Is.True);
         }
 
-        [TestCase(TestName = "SettingsService.UpdateSettingAsync() updates")]
-        public async Task SettingsServiceUpdateSettingAsyncUpdates()
+        [Test]
+        public async Task UpdateDefaultSetting()
         {
             // Arrange
             var originalSetting = new Setting {Key = "EnableSecurity", Value = "true"};
@@ -141,8 +140,8 @@ namespace MiningMonitor.Test.Service
             Assert.That(success, Is.True);
         }
 
-        [TestCase(TestName = "SettingsService.UpdateSettingAsync() fails on non-existant")]
-        public async Task SettingsServiceUpdateSettingAsyncFails()
+        [Test]
+        public async Task UpdateSettingNotFound()
         {
             // Arrange
             var setting = new Dictionary<string, string> {["fake"] = "notreal"};

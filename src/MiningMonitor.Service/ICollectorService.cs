@@ -11,7 +11,7 @@ namespace MiningMonitor.Service
     public interface ICollectorService
     {
         Task<IEnumerable<Collector>> GetAllAsync();
-        Task<Collector> Get(string collector);
+        Task<(bool success, Collector collector)> Get(string collectorId);
         Task<(ModelStateDictionary modelState, RegistrationResponse registration)> CreateCollectorAsync(Collector collector);
         Task<bool> UpdateAsync(Collector collector);
         Task<bool> DeleteAsync(string collectorId);

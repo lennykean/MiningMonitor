@@ -4,8 +4,6 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
-using AspNetCore.Identity.LiteDB.Models;
-
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -54,14 +52,12 @@ namespace MiningMonitor.Test.Service
             _services.Setup(m => m.GetService(typeof(IAuthenticationService)))
                 .Returns(() => _authenticationService.Object);
 
-            _userManager = new UserManager<MiningMonitorUser>(_userStore.Object, null, _passwordHasher.Object, null, null,
-                null, null, null, _userManagerLogger.Object);
-            _signinManager = new SignInManager<MiningMonitorUser>(_userManager, _contextAccessor.Object,
-                _claimsFactory.Object, null, _signinManagerLogger.Object, null);
+            _userManager = new UserManager<MiningMonitorUser>(_userStore.Object, null, _passwordHasher.Object, null, null, null, null, null, _userManagerLogger.Object);
+            _signinManager = new SignInManager<MiningMonitorUser>(_userManager, _contextAccessor.Object, _claimsFactory.Object, null, _signinManagerLogger.Object, null);
         }
 
-        [TestCase(TestName = "LoginService.LoginAsync()")]
-        public async Task AuthenticationServiceLoginAsync()
+        [Test]
+        public async Task Login()
         {
             // Arrange
             const string username = "test-user";
@@ -86,14 +82,12 @@ namespace MiningMonitor.Test.Service
 
             // Assert
             Assert.That(result.success, Is.True);
-            Assert.That(tokenHander.ReadJwtToken(result.token),
-                Has.Property(nameof(JwtSecurityToken.Subject)).EqualTo(username));
-            _authenticationService.Verify(m =>
-                m.SignInAsync(_context.Object, It.IsAny<string>(), principal, It.IsAny<AuthenticationProperties>()));
+            Assert.That(tokenHander.ReadJwtToken(result.token), Has.Property(nameof(JwtSecurityToken.Subject)).EqualTo(username));
+            _authenticationService.Verify(m => m.SignInAsync(_context.Object, It.IsAny<string>(), principal, It.IsAny<AuthenticationProperties>()));
         }
 
-        [TestCase(TestName = "LoginService.LoginAsync() fails")]
-        public async Task AuthenticationServiceLoginAsyncFails()
+        [Test]
+        public async Task LoginFails()
         {
             // Arrange
             const string username = "test-user";
