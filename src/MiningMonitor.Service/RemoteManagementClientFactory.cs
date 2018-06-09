@@ -2,7 +2,7 @@
 
 using MiningMonitor.Model;
 
-namespace MiningMonitor.BackgroundWorker.DataCollector
+namespace MiningMonitor.Service
 {
     public class RemoteManagementClientFactory : IRemoteManagementClientFactory
     {

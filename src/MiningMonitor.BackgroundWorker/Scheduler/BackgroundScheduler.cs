@@ -14,8 +14,7 @@ namespace MiningMonitor.BackgroundWorker.Scheduler
         private readonly TSchedule _schedule;
         private readonly ILogger<BackgroundScheduler<TWorker, TSchedule>> _logger;
 
-        public BackgroundScheduler(TWorker worker, TSchedule schedule,
-            ILogger<BackgroundScheduler<TWorker, TSchedule>> logger)
+        public BackgroundScheduler(TWorker worker, TSchedule schedule, ILogger<BackgroundScheduler<TWorker, TSchedule>> logger)
         {
             _worker = worker;
             _schedule = schedule;
