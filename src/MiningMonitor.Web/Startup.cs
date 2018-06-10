@@ -17,6 +17,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using MiningMonitor.BackgroundWorker.DataCollector;
+using MiningMonitor.BackgroundWorker.Maintenance;
 using MiningMonitor.BackgroundWorker.Scheduler;
 using MiningMonitor.Data;
 using MiningMonitor.Data.Repository;
@@ -87,12 +88,15 @@ namespace MiningMonitor.Web
             services.AddTransient<IRemoteManagementClientFactory, RemoteManagementClientFactory>();
 
             // Background workers
-            services.AddTransient<DataSyncronizer>();
-            services.AddTransient<SnapshotDataCollector>();
-            services.ConfigurePOCO<DataSyncronizerSchedule>(_configuration.GetSection("Scheduler:DataSyncronizer"));
-            services.ConfigurePOCO<SnapshotDataCollectorSchedule>(_configuration.GetSection("Scheduler:SnapshotDataCollector"));
-            services.AddSingleton<IHostedService, BackgroundScheduler<DataSyncronizer, DataSyncronizerSchedule>>();
             services.AddSingleton<IHostedService, BackgroundScheduler<SnapshotDataCollector, SnapshotDataCollectorSchedule>>();
+            services.AddSingleton<IHostedService, BackgroundScheduler<DataSyncronizer, DataSyncronizerSchedule>>();
+            services.AddSingleton<IHostedService, BackgroundScheduler<Purge, PurgeSchedule>>();
+            services.ConfigurePOCO<SnapshotDataCollectorSchedule>(_configuration.GetSection("Scheduler:SnapshotDataCollector"));
+            services.ConfigurePOCO<DataSyncronizerSchedule>(_configuration.GetSection("Scheduler:DataSyncronizer"));
+            services.ConfigurePOCO<PurgeSchedule>(_configuration.GetSection("Scheduler:Purge"));
+            services.AddTransient<SnapshotDataCollector>();
+            services.AddTransient<DataSyncronizer>();
+            services.AddTransient<Purge>();
 
             // Security
             services.AddSingleton(service => new LiteDbContext(service.GetService<IHostingEnvironment>())

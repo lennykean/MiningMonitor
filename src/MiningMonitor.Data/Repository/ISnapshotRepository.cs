@@ -9,7 +9,5 @@ namespace MiningMonitor.Data.Repository
     public interface ISnapshotRepository : IRepository<Snapshot, Guid>
     {
         Task<IEnumerable<Snapshot>> GetByMinerAsync(Guid minerId, DateTime? from, DateTime? to);
-
-        Task<int> DeleteByMinerAsync(Guid minerId);
     }
 }

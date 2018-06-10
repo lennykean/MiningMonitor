@@ -14,5 +14,6 @@ namespace MiningMonitor.Service
         Task UpsertAsync(Snapshot snapshot);
         Task DeleteAsync(Guid snapshotId);
         Task DeleteByMinerAsync(Guid minerId);
+        Task<int> DeleteOldAsync(DateTime cutoff);
     }
 }

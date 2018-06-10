@@ -18,7 +18,9 @@ namespace MiningMonitor.Service
             ["ServerUrl"] = null,
             ["ServerToken"] = null,
             ["Name"] = null,
-            ["CollectorId"] = null
+            ["CollectorId"] = null,
+            ["EnablePurge"] = "true",
+            ["PurgeAgeMinutes"] = "1440",
         }.ToImmutableDictionary(StringComparer.OrdinalIgnoreCase);
 
         private readonly ISettingRepository _repository;

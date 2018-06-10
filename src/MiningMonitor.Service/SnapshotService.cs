@@ -53,7 +53,12 @@ namespace MiningMonitor.Service
 
         public async Task DeleteByMinerAsync(Guid minerId)
         {
-            await _repository.DeleteByMinerAsync(minerId);
+            await _repository.DeleteAsync(s => s.MinerId == minerId);
+        }
+
+        public async Task<int> DeleteOldAsync(DateTime cutoff)
+        {
+            return await _repository.DeleteAsync(s => s.SnapshotTime < cutoff);
         }
     }
 }
