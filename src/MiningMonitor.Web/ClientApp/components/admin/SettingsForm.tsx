@@ -73,6 +73,42 @@ export class SettingsForm extends React.Component<Props, { [key: string]: string
                             </FormGroup>
                         </Col>
                     </FormGroup>
+                    <FormGroup row title="Automatically purge old monitoring data">
+                        <Label for="enablePurge" sm={2}>Automatic Data Purge</Label>
+                        <Col sm={{ size: 10 }}>
+                            <FormGroup check>
+                                <Label check>
+                                    <FormInput
+                                        id="enablePurge"
+                                        name="enablePurge"
+                                        type="checkbox"
+                                        checked={this.state.enablePurge === 'true'}
+                                        onChange={this.change}
+                                    /> Enabled
+                            </Label>
+                            </FormGroup>
+                        </Col>
+                    </FormGroup>
+                    <FormGroup row>
+                        <Label for="purgeAgeMinutes" sm={2}>
+                            Purge Data Older Than
+                            <small className="form-text text-muted">Minutes</small>
+                        </Label>
+                        <Col sm={{ size: 10 }}>
+                            <FormGroup>
+                                <Label>
+                                    <FormInput
+                                        id="purgeAgeMinutes"
+                                        name="purgeAgeMinutes"
+                                        type="number"
+                                        value={this.state.purgeAgeMinutes || ''}
+                                        disabled={this.state.enablePurge !== 'true'}
+                                        onChange={this.change}
+                                    />
+                                </Label>
+                            </FormGroup>
+                        </Col>
+                    </FormGroup>
                     <fieldset disabled={this.props.settings && this.props.settings.isDataCollector === 'true'}>
                         <FormGroup row title="Run server in data collector mode">
                             <Label for="isDataCollector" sm={2}>Data Collector</Label>

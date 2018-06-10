@@ -10,6 +10,7 @@ interface Props {
     checked?: boolean;
     placeholder?: string;
     validation?: { [key: string]: string[] };
+    disabled?: boolean;
     onChange?: React.ChangeEventHandler<HTMLInputElement>;
 }
 
@@ -23,6 +24,7 @@ export const FormInput: React.SFC<Props> = (props) => (
             checked={props.checked}
             onChange={props.onChange}
             placeholder={props.placeholder}
+            disabled={props.disabled}
             valid={props.validation && props.validation[props.name] && props.validation[props.name].length === 0}
         />
         {props.validation && props.validation[props.name] ?
