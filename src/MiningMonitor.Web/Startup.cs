@@ -104,7 +104,7 @@ namespace MiningMonitor.Web
                 LiteDatabase = service.GetService<LiteDatabase>()
             });
             services.AddIdentity<MiningMonitorUser, IdentityRole>()
-                .AddUserStore<MiningMonitorUserStore<MiningMonitorUser>>()
+                .AddUserStore<QueryableLiteDbUserStore<MiningMonitorUser>>()
                 .AddRoleStore<LiteDbRoleStore<IdentityRole>>()
                 .AddDefaultTokenProviders();
             services
