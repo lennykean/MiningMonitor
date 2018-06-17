@@ -29,9 +29,10 @@ namespace MiningMonitor.Test.Web.Controllers
         public void GetByMinerId()
         {
             // Arrange
+            var now = new DateTime(2018, 6, 1);
             var minerId = new Guid("56f5fb3a-4b59-417c-aae0-ace175bb7c5b");
             var schedule = new SnapshotDataCollectorSchedule { Interval = TimeSpan.FromMinutes(1) };
-            var snapshots = Enumerable.Range(0, 3).Select(i => new Snapshot { SnapshotTime = DateTime.Now }).ToList();
+            var snapshots = Enumerable.Range(0, 3).Select(i => new Snapshot { SnapshotTime = now }).ToList();
             _snapshotService.Setup(m => m.GetByMiner(minerId, It.IsAny<DateTime?>(), It.IsAny<DateTime?>(), It.IsAny<TimeSpan>()))
                 .Returns(() => snapshots)
                 .Verifiable();

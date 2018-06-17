@@ -38,9 +38,10 @@ namespace MiningMonitor.Test.Web.Controllers
         public void GetByMinerId()
         {
             // Arrange
+            var now = new DateTime(2018, 6, 1);
             var minerId = new Guid("56f5fb3a-4b59-417c-aae0-ace175bb7c5b");
             _collection.InsertBulk(Enumerable.Range(0, 3)
-                .Select(i => new Snapshot { Id = Guid.NewGuid(), SnapshotTime = DateTime.Now, MinerId = minerId})
+                .Select(i => new Snapshot { Id = Guid.NewGuid(), SnapshotTime = now, MinerId = minerId})
                 .ToList());
             
             // Act

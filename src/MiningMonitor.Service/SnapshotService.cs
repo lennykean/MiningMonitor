@@ -15,6 +15,8 @@ namespace MiningMonitor.Service
         public SnapshotService(LiteCollection<Snapshot> collection)
         {
             _collection = collection;
+            _collection.EnsureIndex(s => s.MinerId);
+            _collection.EnsureIndex(s => s.SnapshotTime);
         }
 
         public IEnumerable<Snapshot> GetAll()
@@ -24,7 +26,7 @@ namespace MiningMonitor.Service
 
         public IEnumerable<Snapshot> GetByMiner(Guid minerId, DateTime? from, DateTime? to, TimeSpan interval)
         {
-            var end = to ?? DateTime.Now;
+            var end = to ?? DateTime.UtcNow;
             var start = from ?? end.AddMinutes(-60);
             var snapshots = _collection.Find(snapshot => snapshot.MinerId == minerId && (from == null || snapshot.SnapshotTime >= from) && (to == null || snapshot.SnapshotTime <= to));
 

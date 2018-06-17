@@ -34,7 +34,7 @@ namespace MiningMonitor.BackgroundWorker.Maintenance
             if (!bool.TryParse(enablePurgeSetting, out var enablePurge) || !int.TryParse(purgeAgeMinutesSetting, out var purgeAgeMinutes) || !enablePurge)
                 return;
 
-            var purgeCutoff = DateTime.Now - TimeSpan.FromMinutes(purgeAgeMinutes);
+            var purgeCutoff = DateTime.UtcNow - TimeSpan.FromMinutes(purgeAgeMinutes);
             _logger.LogInformation($"Purging snapshot data before {purgeCutoff:MM/dd/yy H:mm}");
 
             var purgedCount = _snapshotService.DeleteOld(purgeCutoff);
