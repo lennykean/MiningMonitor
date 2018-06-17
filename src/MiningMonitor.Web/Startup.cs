@@ -60,7 +60,9 @@ namespace MiningMonitor.Web
             services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<Snapshot>());
             services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<Miner>());
             services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<Setting>());
-            
+            services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<AlertDefinition>());
+            services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<Alert>());
+
             // Mappers
             services.AddTransient<IMapper<MiningMonitorUser, User>, UserMapper>();
             services.AddTransient<IMapper<User, MiningMonitorUser>, UserMapper>();
@@ -77,6 +79,7 @@ namespace MiningMonitor.Web
             services.AddTransient<ISettingsService, SettingsService>();
             services.AddTransient<ISnapshotService, SnapshotService>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IAlertService, AlertService>();
 
             // API Client
             services.AddTransient<IRemoteManagementClientFactory, RemoteManagementClientFactory>();
