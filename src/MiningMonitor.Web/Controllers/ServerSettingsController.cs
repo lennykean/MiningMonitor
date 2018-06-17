@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,15 +18,15 @@ namespace MiningMonitor.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IDictionary<string, string>> Get()
+        public IDictionary<string, string> Get()
         {
-            return await _settingsService.GetAllAsync();
+            return _settingsService.GetAll();
         }
 
         [HttpPut]
-        public async Task<ObjectResult> Put([FromBody]IDictionary<string, string> settings)
+        public ObjectResult Put([FromBody]IDictionary<string, string> settings)
         {
-            var result = await _settingsService.UpdateSettingsAsync(settings);
+            var result = _settingsService.UpdateSettings(settings);
 
             if (!result.success)
                 return NotFound(null);

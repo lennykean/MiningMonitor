@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Threading.Tasks;
 
-using MiningMonitor.Data.Repository;
+using LiteDB;
+
 using MiningMonitor.Model;
 
 namespace MiningMonitor.Service
@@ -23,16 +23,16 @@ namespace MiningMonitor.Service
             ["PurgeAgeMinutes"] = "1440",
         }.ToImmutableDictionary(StringComparer.OrdinalIgnoreCase);
 
-        private readonly ISettingRepository _repository;
+        private readonly LiteCollection<Setting> _collection;
 
-        public SettingsService(ISettingRepository repository)
+        public SettingsService(LiteCollection<Setting> collection)
         {
-            _repository = repository;
+            _collection = collection;
         }
 
-        public async Task<IDictionary<string, string>> GetAllAsync()
+        public IDictionary<string, string> GetAll()
         {
-            var settings = await _repository.GetAllAsync();
+            var settings = _collection.FindAll();
 
             var mergedSettings = DefaultSettings.ToDictionary(
                 defaultSetting => defaultSetting.Key,
@@ -44,20 +44,20 @@ namespace MiningMonitor.Service
             return mergedSettings;
         }
 
-        public async Task<(bool success, string setting)> GetSettingAsync(string key)
+        public (bool success, string setting) GetSetting(string key)
         {
             if (!DefaultSettings.ContainsKey(key))
                 return (false, null);
 
             DefaultSettings.TryGetKey(key, out var normalizedKey);
 
-            var setting = await _repository.GetSettingAsync(normalizedKey);
+            var setting = _collection.FindOne(s => s.Key.ToLower() == normalizedKey.ToLower());
             var value = setting?.Value ?? DefaultSettings[normalizedKey];
 
             return (true, value);
         }
 
-        public async Task<(bool success, IDictionary<string, string> settings)> UpdateSettingsAsync(IDictionary<string, string> settings)
+        public (bool success, IDictionary<string, string> settings) UpdateSettings(IDictionary<string, string> settings)
         {
             if (settings.Any(s => !DefaultSettings.ContainsKey(s.Key)))
                 return (false, null);
@@ -65,35 +65,34 @@ namespace MiningMonitor.Service
             foreach (var setting in settings)
             {
                 DefaultSettings.TryGetKey(setting.Key, out var normalizedKey);
-                var originalSetting = await _repository.GetSettingAsync(normalizedKey);
+                var originalSetting = _collection.FindOne(s => s.Key.ToLower() == normalizedKey.ToLower());
                 if (originalSetting == null)
                 {
-                    await _repository.AddAsync(new Setting { Key = setting.Key, Value = setting.Value });
+                    _collection.Insert(new Setting { Key = setting.Key, Value = setting.Value });
                 }
                 else
                 {
                     originalSetting.Value = setting.Value;
-                    await _repository.UpdateAsync(originalSetting);
+                    _collection.Update(originalSetting);
                 }
             }
-
-            return (true, await GetAllAsync());
+            return (true, GetAll());
         }
 
-        public async Task<bool> UpdateSettingAsync(string setting, string value)
+        public bool UpdateSetting(string setting, string value)
         {
             if (!DefaultSettings.TryGetKey(setting, out var normalizedKey))
                 return false;
 
-            var originalSetting = await _repository.GetSettingAsync(normalizedKey);
+            var originalSetting = _collection.FindOne(s => s.Key.ToLower() == normalizedKey.ToLower());
             if (originalSetting == null)
             {
-                await _repository.AddAsync(new Setting { Key = setting, Value = value });
+                _collection.Insert(new Setting { Key = setting, Value = value });
             }
             else
             {
                 originalSetting.Value = value;
-                await _repository.UpdateAsync(originalSetting);
+                _collection.Update(originalSetting);
             }
             return true;
         }

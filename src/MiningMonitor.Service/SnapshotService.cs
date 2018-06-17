@@ -1,64 +1,61 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
-using MiningMonitor.Data.Repository;
+using LiteDB;
+
 using MiningMonitor.Model;
 
 namespace MiningMonitor.Service
 {
     public class SnapshotService : ISnapshotService
     {
-        private readonly ISnapshotRepository _repository;
+        private readonly LiteCollection<Snapshot> _collection;
 
-        public SnapshotService(ISnapshotRepository repository)
+        public SnapshotService(LiteCollection<Snapshot> collection)
         {
-            _repository = repository;
+            _collection = collection;
         }
 
-        public async Task<IEnumerable<Snapshot>> GetAllAsync()
+        public IEnumerable<Snapshot> GetAll()
         {
-            return await _repository.GetAllAsync();
+            return _collection.FindAll();
         }
 
-        public async Task<IEnumerable<Snapshot>> GetByMinerAsync(Guid minerId, DateTime? from, DateTime? to, TimeSpan interval)
+        public IEnumerable<Snapshot> GetByMiner(Guid minerId, DateTime? from, DateTime? to, TimeSpan interval)
         {
             var end = to ?? DateTime.Now;
             var start = from ?? end.AddMinutes(-60);
-            var snapshots = await _repository.GetByMinerAsync(minerId, start, end);
+            var snapshots = _collection.Find(snapshot => snapshot.MinerId == minerId && (from == null || snapshot.SnapshotTime >= from) && (to == null || snapshot.SnapshotTime <= to));
 
             return snapshots.FillGaps(start, end, interval).ToList();
         }
 
-        public async Task AddAsync(Snapshot snapshot)
+        public void Add(Snapshot snapshot)
         {
             snapshot.Id = Guid.NewGuid();
 
-            await _repository.AddAsync(snapshot);
+            _collection.Insert(snapshot);
         }
 
-        public async Task UpsertAsync(Snapshot snapshot)
+        public void Upsert(Snapshot snapshot)
         {
-            if (await _repository.GetByIdAsync(snapshot.Id) != null)
-                await _repository.UpdateAsync(snapshot);
-            else
-                await _repository.AddAsync(snapshot);
+            _collection.Upsert(snapshot);
         }
 
-        public async Task DeleteAsync(Guid snapshotId)
+        public void Delete(Guid snapshotId)
         {
-            await _repository.DeleteAsync(snapshotId);
+            _collection.Delete(snapshotId);
         }
 
-        public async Task DeleteByMinerAsync(Guid minerId)
+        public void DeleteByMiner(Guid minerId)
         {
-            await _repository.DeleteAsync(s => s.MinerId == minerId);
+            _collection.Delete(s => s.MinerId == minerId);
         }
 
-        public async Task<int> DeleteOldAsync(DateTime cutoff)
+        public int DeleteOld(DateTime cutoff)
         {
-            return await _repository.DeleteAsync(s => s.SnapshotTime < cutoff);
+            return _collection.Delete(s => s.SnapshotTime < cutoff);
         }
     }
 }

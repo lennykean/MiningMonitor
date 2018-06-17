@@ -6,6 +6,7 @@ using AspNetCore.Identity.LiteDB;
 using AspNetCore.Identity.LiteDB.Data;
 
 using LiteDB;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -19,8 +20,6 @@ using Microsoft.Extensions.Hosting;
 using MiningMonitor.BackgroundWorker.DataCollector;
 using MiningMonitor.BackgroundWorker.Maintenance;
 using MiningMonitor.BackgroundWorker.Scheduler;
-using MiningMonitor.Data;
-using MiningMonitor.Data.Repository;
 using MiningMonitor.Model;
 using MiningMonitor.Service;
 using MiningMonitor.Service.Mapper;
@@ -61,12 +60,7 @@ namespace MiningMonitor.Web
             services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<Snapshot>());
             services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<Miner>());
             services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<Setting>());
-
-            // Repository
-            services.AddTransient<IMinerRepository, MinerRepository>();
-            services.AddTransient<ISnapshotRepository, SnapshotRepository>();
-            services.AddTransient<ISettingRepository, SettingRepository>();
-
+            
             // Mappers
             services.AddTransient<IMapper<MiningMonitorUser, User>, UserMapper>();
             services.AddTransient<IMapper<User, MiningMonitorUser>, UserMapper>();

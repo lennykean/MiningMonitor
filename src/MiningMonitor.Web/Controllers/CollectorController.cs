@@ -28,7 +28,7 @@ namespace MiningMonitor.Web.Controllers
         [HttpGet("{collector}"), Authorize(Policy = "Collector")]
         public async Task<IActionResult> Get(string collector)
         {
-            var (success, collectorObj) = await _collectorService.Get(collector);
+            var (success, collectorObj) = await _collectorService.GetAsync(collector);
 
             if (!success)
                 return NotFound();

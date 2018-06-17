@@ -13,7 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MiningMonitor.Data\MiningMonitor.Data.csproj" />
     <ProjectReference Include="..\MiningMonitor.Service\MiningMonitor.Service.csproj" />
   </ItemGroup>
 

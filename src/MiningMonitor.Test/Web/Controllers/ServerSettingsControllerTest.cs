@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
 
 using MiningMonitor.Service;
 using MiningMonitor.Web.Controllers;
@@ -22,17 +21,17 @@ namespace MiningMonitor.Test.Web.Controllers
         }
 
         [Test]
-        public async Task GetAll()
+        public void GetAll()
         {
             // Arrange
-            var settings = new Dictionary<string, string> {["test1"] = "test1", ["test2"] = "test2"};
+            var settings = new Dictionary<string, string> { ["test1"] = "test1", ["test2"] = "test2" };
 
-            _service.Setup(m => m.GetAllAsync()).ReturnsAsync(() => settings).Verifiable();
+            _service.Setup(m => m.GetAll()).Returns(() => settings).Verifiable();
 
             var controller = new ServerSettingsController(_service.Object);
 
             // Act
-            var result = await controller.Get();
+            var result = controller.Get();
 
             // Assert
             _service.Verify();
@@ -40,16 +39,16 @@ namespace MiningMonitor.Test.Web.Controllers
         }
 
         [Test]
-        public async Task PutSettings()
+        public void PutSettings()
         {
             // Arrange
             var setting = new Dictionary<string, string>();
             var controller = new ServerSettingsController(_service.Object);
 
-            _service.Setup(m => m.UpdateSettingsAsync(setting)).ReturnsAsync(() => (true, setting)).Verifiable();
+            _service.Setup(m => m.UpdateSettings(setting)).Returns(() => (true, setting)).Verifiable();
 
             // Act
-            var result = await controller.Put(setting);
+            var result = controller.Put(setting);
 
             // Assert
             _service.Verify();
@@ -58,16 +57,16 @@ namespace MiningMonitor.Test.Web.Controllers
         }
 
         [Test]
-        public async Task PutSettingNotFound()
+        public void PutSettingNotFound()
         {
             // Arrange
             var setting = new Dictionary<string, string>();
             var controller = new ServerSettingsController(_service.Object);
 
-            _service.Setup(m => m.UpdateSettingsAsync(setting)).ReturnsAsync(() => (false, null)).Verifiable();
+            _service.Setup(m => m.UpdateSettings(setting)).Returns(() => (false, null)).Verifiable();
 
             // Act
-            var result = await controller.Put(setting);
+            var result = controller.Put(setting);
 
             // Assert
             _service.Verify();

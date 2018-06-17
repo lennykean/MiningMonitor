@@ -4,8 +4,6 @@ VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiningMonitor.Web", "MiningMonitor.Web\MiningMonitor.Web.csproj", "{819A4F4C-6509-4C54-AF90-FEAD0667E223}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiningMonitor.Data", "MiningMonitor.Data\MiningMonitor.Data.csproj", "{A76A28CF-6198-4DC9-A6F9-8E260FA72D37}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiningMonitor.Test", "MiningMonitor.Test\MiningMonitor.Test.csproj", "{8FEDDC35-D5FC-4CF7-9CE3-F632482DC021}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiningMonitor.BackgroundWorker", "MiningMonitor.BackgroundWorker\MiningMonitor.BackgroundWorker.csproj", "{31BFF761-62CF-49EB-84E8-DCABF76EBC99}"
@@ -42,18 +40,6 @@ Global
 		{819A4F4C-6509-4C54-AF90-FEAD0667E223}.Release|x64.Build.0 = Release|Any CPU
 		{819A4F4C-6509-4C54-AF90-FEAD0667E223}.Release|x86.ActiveCfg = Release|Any CPU
 		{819A4F4C-6509-4C54-AF90-FEAD0667E223}.Release|x86.Build.0 = Release|Any CPU
-		{A76A28CF-6198-4DC9-A6F9-8E260FA72D37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A76A28CF-6198-4DC9-A6F9-8E260FA72D37}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A76A28CF-6198-4DC9-A6F9-8E260FA72D37}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{A76A28CF-6198-4DC9-A6F9-8E260FA72D37}.Debug|x64.Build.0 = Debug|Any CPU
-		{A76A28CF-6198-4DC9-A6F9-8E260FA72D37}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{A76A28CF-6198-4DC9-A6F9-8E260FA72D37}.Debug|x86.Build.0 = Debug|Any CPU
-		{A76A28CF-6198-4DC9-A6F9-8E260FA72D37}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A76A28CF-6198-4DC9-A6F9-8E260FA72D37}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A76A28CF-6198-4DC9-A6F9-8E260FA72D37}.Release|x64.ActiveCfg = Release|Any CPU
-		{A76A28CF-6198-4DC9-A6F9-8E260FA72D37}.Release|x64.Build.0 = Release|Any CPU
-		{A76A28CF-6198-4DC9-A6F9-8E260FA72D37}.Release|x86.ActiveCfg = Release|Any CPU
-		{A76A28CF-6198-4DC9-A6F9-8E260FA72D37}.Release|x86.Build.0 = Release|Any CPU
 		{8FEDDC35-D5FC-4CF7-9CE3-F632482DC021}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8FEDDC35-D5FC-4CF7-9CE3-F632482DC021}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8FEDDC35-D5FC-4CF7-9CE3-F632482DC021}.Debug|x64.ActiveCfg = Debug|Any CPU

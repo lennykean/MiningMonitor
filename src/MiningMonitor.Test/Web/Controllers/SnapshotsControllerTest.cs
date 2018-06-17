@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
 
 using MiningMonitor.BackgroundWorker.DataCollector;
 using MiningMonitor.Model;
@@ -27,19 +26,19 @@ namespace MiningMonitor.Test.Web.Controllers
         }
 
         [Test]
-        public async Task GetByMinerId()
+        public void GetByMinerId()
         {
             // Arrange
             var minerId = new Guid("56f5fb3a-4b59-417c-aae0-ace175bb7c5b");
-            var schedule = new SnapshotDataCollectorSchedule {Interval = TimeSpan.FromMinutes(1)};
-            var snapshots = Enumerable.Range(0, 3).Select(i => new Snapshot {SnapshotTime = DateTime.Now}).ToList();
-            _snapshotService.Setup(m => m.GetByMinerAsync(minerId, It.IsAny<DateTime?>(), It.IsAny<DateTime?>(), It.IsAny<TimeSpan>()))
-                .ReturnsAsync(() => snapshots)
+            var schedule = new SnapshotDataCollectorSchedule { Interval = TimeSpan.FromMinutes(1) };
+            var snapshots = Enumerable.Range(0, 3).Select(i => new Snapshot { SnapshotTime = DateTime.Now }).ToList();
+            _snapshotService.Setup(m => m.GetByMiner(minerId, It.IsAny<DateTime?>(), It.IsAny<DateTime?>(), It.IsAny<TimeSpan>()))
+                .Returns(() => snapshots)
                 .Verifiable();
             var controller = new SnapshotsController(_snapshotService.Object, _collectorService.Object, schedule);
 
             // Act
-            var result = await controller.Get(minerId);
+            var result = controller.Get(minerId);
 
             // Assert
             _snapshotService.Verify();
@@ -48,20 +47,20 @@ namespace MiningMonitor.Test.Web.Controllers
 
         [TestCase(true, 200)]
         [TestCase(false, 400)]
-        public async Task PostCollectorSync(bool success, int expectedStatus)
+        public void PostCollectorSync(bool success, int expectedStatus)
         {
             // Arrange
             var collector = "12345";
             var minerId = new Guid("56f5fb3a-4b59-417c-aae0-ace175bb7c5b");
             var schedule = new SnapshotDataCollectorSchedule { Interval = TimeSpan.FromMinutes(1) };
             var snapshot = new Snapshot();
-            _collectorService.Setup(m => m.SnapshotSyncAsync(collector, minerId, snapshot))
-                .ReturnsAsync(() => success)
+            _collectorService.Setup(m => m.SnapshotSync(collector, minerId, snapshot))
+                .Returns(() => success)
                 .Verifiable();
             var controller = new SnapshotsController(_snapshotService.Object, _collectorService.Object, schedule);
 
             // Act
-            var result = await controller.Post(collector, minerId, snapshot);
+            var result = controller.Post(collector, minerId, snapshot);
 
             // Assert
             _snapshotService.Verify();

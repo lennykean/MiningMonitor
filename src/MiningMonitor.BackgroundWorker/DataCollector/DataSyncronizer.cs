@@ -50,7 +50,7 @@ namespace MiningMonitor.BackgroundWorker.DataCollector
             {
                 _logger.LogInformation("Starting snapshot sync");
 
-                var snapshots = await _snapshotService.GetAllAsync();
+                var snapshots = _snapshotService.GetAll();
 
                 foreach (var snapshot in snapshots.ToList())
                 {
@@ -58,7 +58,7 @@ namespace MiningMonitor.BackgroundWorker.DataCollector
                     await _serverService.SyncSnapshotAsync(id, snapshot);
 
                     _logger.LogInformation($"Removing snapshot {snapshot.Id}");
-                    await _snapshotService.DeleteAsync(snapshot.Id);
+                    _snapshotService.Delete(snapshot.Id);
                 }
                 _logger.LogInformation("Finished snapshot sync");
             }
@@ -75,13 +75,13 @@ namespace MiningMonitor.BackgroundWorker.DataCollector
             {
                 _logger.LogInformation("Starting miner sync");
 
-                var miners = await _minerService.GetAllAsync();
+                var miners = _minerService.GetAll();
 
                 foreach (var miner in miners.Where(m => m.IsSynced != true).ToList())
                 {
                     _logger.LogInformation($"Syncing miner {miner.Id}");
                     await _serverService.SyncMinerAsync(id, miner);
-                    await _minerService.SetSyncedAsync(miner);
+                    _minerService.SetSynced(miner);
                 }
                 _logger.LogInformation("Finished miner sync");
             }
@@ -96,13 +96,13 @@ namespace MiningMonitor.BackgroundWorker.DataCollector
         {
             try
             {
-                var (_, isDataCollectorSetting) = await _settingsService.GetSettingAsync("IsDataCollector");
+                var (_, isDataCollectorSetting) = _settingsService.GetSetting("IsDataCollector");
 
                 if (!bool.TryParse(isDataCollectorSetting, out var isDataCollector) || !isDataCollector)
                     return (isDataCollector, registered: false, approved: false, id: null);
 
                 _logger.LogInformation("Checking for registration");
-                var (_, id) = await _settingsService.GetSettingAsync("CollectorId");
+                var (_, id) = _settingsService.GetSetting("CollectorId");
                 if (id == null)
                 {
                     string token;
@@ -110,8 +110,8 @@ namespace MiningMonitor.BackgroundWorker.DataCollector
                     _logger.LogInformation("Registering as data collector");
                     (id, token) = await _serverService.RegisterAsCollectorAsync();
 
-                    await _settingsService.UpdateSettingAsync("CollectorId", id);
-                    await _settingsService.UpdateSettingAsync("ServerToken", token);
+                    _settingsService.UpdateSetting("CollectorId", id);
+                    _settingsService.UpdateSetting("ServerToken", token);
                 }
 
                 _logger.LogInformation("Checking approval");

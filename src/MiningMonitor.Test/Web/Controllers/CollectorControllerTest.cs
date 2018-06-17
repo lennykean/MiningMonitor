@@ -51,7 +51,7 @@ namespace MiningMonitor.Test.Web.Controllers
 
             // Arrange
             var collector = new Collector();
-            _collectorService.Setup(m => m.Get(collectorId))
+            _collectorService.Setup(m => m.GetAsync(collectorId))
                 .ReturnsAsync(() => (true, collector))
                 .Verifiable();
 
@@ -70,7 +70,7 @@ namespace MiningMonitor.Test.Web.Controllers
             const string collectorId = "12345";
 
             // Arrange
-            _collectorService.Setup(m => m.Get(collectorId))
+            _collectorService.Setup(m => m.GetAsync(collectorId))
                 .ReturnsAsync(() => (false, null))
                 .Verifiable();
 
@@ -116,7 +116,7 @@ namespace MiningMonitor.Test.Web.Controllers
             _collectorService.Setup(m => m.CreateCollectorAsync(collector))
                 .ReturnsAsync(() => (state, null))
                 .Verifiable();
-            
+
             // Act
             var result = await _controller.Post(collector);
 

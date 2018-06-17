@@ -23,8 +23,13 @@ namespace MiningMonitor.BackgroundWorker.Maintenance
 
         public async Task DoWorkAsync(CancellationToken cancellationToken)
         {
-            var (_, enablePurgeSetting) = await _settingsService.GetSettingAsync("EnablePurge");
-            var (_, purgeAgeMinutesSetting) = await _settingsService.GetSettingAsync("PurgeAgeMinutes");
+            await Task.Run(() => DoWork(), cancellationToken);
+        }
+
+        public void DoWork()
+        {
+            var (_, enablePurgeSetting) = _settingsService.GetSetting("EnablePurge");
+            var (_, purgeAgeMinutesSetting) = _settingsService.GetSetting("PurgeAgeMinutes");
 
             if (!bool.TryParse(enablePurgeSetting, out var enablePurge) || !int.TryParse(purgeAgeMinutesSetting, out var purgeAgeMinutes) || !enablePurge)
                 return;
@@ -32,7 +37,7 @@ namespace MiningMonitor.BackgroundWorker.Maintenance
             var purgeCutoff = DateTime.Now - TimeSpan.FromMinutes(purgeAgeMinutes);
             _logger.LogInformation($"Purging snapshot data before {purgeCutoff:MM/dd/yy H:mm}");
 
-            var purgedCount = await _snapshotService.DeleteOldAsync(purgeCutoff);
+            var purgedCount = _snapshotService.DeleteOld(purgeCutoff);
 
             _logger.LogInformation($"Purged {purgedCount} snapshots.");
         }

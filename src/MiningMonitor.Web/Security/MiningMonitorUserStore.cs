@@ -8,7 +8,7 @@ using LiteDB;
 
 using Microsoft.AspNetCore.Identity;
 
-namespace MiningMonitor.Data
+namespace MiningMonitor.Web.Security
 {
     public class QueryableLiteDbUserStore<TUser> : LiteDbUserStore<TUser>, IQueryableUserStore<TUser> where TUser : ApplicationUser, new()
     {

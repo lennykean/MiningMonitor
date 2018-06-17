@@ -44,7 +44,7 @@ namespace MiningMonitor.Service
             return Task.Run(() => _userManager.Users.Where(u => u.Roles.Contains("Collector")).AsEnumerable().Select(_collectorMapper.Map));
         }
 
-        public async Task<(bool success, Collector collector)> Get(string collectorId)
+        public async Task<(bool success, Collector collector)> GetAsync(string collectorId)
         {
             var collector = await _userManager.FindByNameAsync(collectorId);
 
@@ -91,32 +91,32 @@ namespace MiningMonitor.Service
             if (collector == null)
                 return false;
 
-            await _minerService.DeleteByCollectorAsync(collectorId);
+            _minerService.DeleteByCollector(collectorId);
             await _userManager.DeleteAsync(collector);
 
             return true;
         }
 
-        public async Task<bool> MinerSyncAsync(string collector, Miner miner)
+        public bool MinerSync(string collector, Miner miner)
         {
-            var existing = await _minerService.GetByIdAsync(miner.Id);
+            var existing = _minerService.GetById(miner.Id);
             if (existing == null || existing.CollectorId != collector)
                 return false;
 
             miner.CollectorId = collector;
-            await _minerService.UpsertAsync(miner);
+            _minerService.Upsert(miner);
             
             return true;
         }
 
-        public async Task<bool> SnapshotSyncAsync(string collector, Guid minerId, Snapshot snapshot)
+        public bool SnapshotSync(string collector, Guid minerId, Snapshot snapshot)
         {
-            var miner = await _minerService.GetByIdAsync(minerId);
+            var miner = _minerService.GetById(minerId);
             if (miner?.CollectorId != collector)
                 return false;
 
             snapshot.MinerId = minerId;
-            await _snapshotService.UpsertAsync(snapshot);
+            _snapshotService.Upsert(snapshot);
 
             return true;
         }

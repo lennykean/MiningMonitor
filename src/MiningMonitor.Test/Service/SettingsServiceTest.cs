@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 
-using MiningMonitor.Data.Repository;
+using LiteDB;
+
 using MiningMonitor.Model;
 using MiningMonitor.Service;
-
-using Moq;
 
 using NUnit.Framework;
 
@@ -15,40 +14,44 @@ namespace MiningMonitor.Test.Service
     [TestFixture]
     public class SettingsServiceTest
     {
-        private Mock<ISettingRepository> _repository;
+        private MemoryStream _ms;
+        private LiteDatabase _memoryDb;
+        private LiteCollection<Setting> _collection;
+        private SettingsService _subject;
 
         [SetUp]
         public void Setup()
         {
-            _repository = new Mock<ISettingRepository>();
+            _ms = new MemoryStream();
+            _memoryDb = new LiteDatabase(_ms);
+            _collection = _memoryDb.GetCollection<Setting>();
+            _subject = new SettingsService(_collection);
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            _ms.Dispose();
         }
 
         [Test]
-        public async Task GetAllDefaults()
+        public void GetAllDefaults()
         {
-            // Arrange
-            _repository.Setup(m => m.GetAllAsync()).ReturnsAsync(() => new Setting[0]).Verifiable();
-
-            var service = new SettingsService(_repository.Object);
-
             // Act
-            var result = (await service.GetAllAsync()).ToList();
+            var result = _subject.GetAll().ToList();
 
             // Assert
             Assert.That(result, Has.Count.EqualTo(SettingsService.DefaultSettings.Count));
         }
 
         [Test]
-        public async Task GetAll()
+        public void GetAll()
         {
             // Arrange
-            var setting = new Setting {Key = "EnableSecurity", Value = "true"};
-            _repository.Setup(m => m.GetAllAsync()).ReturnsAsync(() => new[] {setting}).Verifiable();
-
-            var service = new SettingsService(_repository.Object);
+            _collection.Insert(new Setting {Key = "EnableSecurity", Value = "true"});
 
             // Act
-            var result = (await service.GetAllAsync()).ToList();
+            var result = _subject.GetAll().ToList();
 
             // Assert
             Assert.That(result, Has.Count.EqualTo(SettingsService.DefaultSettings.Count));
@@ -56,16 +59,13 @@ namespace MiningMonitor.Test.Service
         }
 
         [Test]
-        public async Task GetByName()
+        public void GetByName()
         {
             // Arrange
-            var service = new SettingsService(_repository.Object);
-
-            _repository.Setup(m => m.GetSettingAsync("EnableSecurity"))
-                .ReturnsAsync(() => new Setting {Key = "EnableSecurity", Value = "test"}).Verifiable();
+            _collection.Insert(new Setting {Key = "EnableSecurity", Value = "test"});
 
             // Act
-            var (success, setting) = await service.GetSettingAsync("EnableSecurity");
+            var (success, setting) = _subject.GetSetting("EnableSecurity");
 
             // Assert
             Assert.That(success, Is.True);
@@ -73,29 +73,20 @@ namespace MiningMonitor.Test.Service
         }
 
         [Test]
-        public async Task GetByNameNotFound()
+        public void GetByNameNotFound()
         {
-            // Arrange
-            var setting = new Setting();
-            var service = new SettingsService(_repository.Object);
-
-            _repository.Setup(m => m.GetSettingAsync("fake")).ReturnsAsync(() => setting).Verifiable();
-
             // Act
-            var (success, _) = await service.GetSettingAsync("fake");
+            var (success, _) = _subject.GetSetting("fake");
 
             // Assert
             Assert.That(success, Is.False);
         }
 
         [Test]
-        public async Task GetByNameWithDefault()
+        public void GetByNameWithDefault()
         {
-            // Arrange
-            var service = new SettingsService(_repository.Object);
-
             // Act
-            var (success, setting) = await service.GetSettingAsync("EnableSecurity");
+            var (success, setting) = _subject.GetSetting("EnableSecurity");
 
             // Assert
             Assert.That(success, Is.True);
@@ -103,52 +94,40 @@ namespace MiningMonitor.Test.Service
         }
 
         [Test]
-        public async Task UpdateExistingSetting()
+        public void UpdateExistingSetting()
         {
             // Arrange
-            var settings = new Dictionary<string, string> {["EnableSecurity"] = "true"};
-            var service = new SettingsService(_repository.Object);
+            const string firstValue = "true";
+            const string newValue = "false";
+            _collection.Insert(new Setting { Key = "EnableSecurity", Value = firstValue });
 
             // Act
-            var (success, _) = await service.UpdateSettingsAsync(settings);
+            var (success, _) = _subject.UpdateSettings(new Dictionary<string, string> { ["EnableSecurity"] = newValue });
 
             // Assert
-            _repository.Verify(m => m.AddAsync(It.IsAny<Setting>()));
+            Assert.That(_collection.FindById("EnableSecurity"), Has.Property(nameof(Setting.Value)).EqualTo(newValue));
             Assert.That(success, Is.True);
         }
 
         [Test]
-        public async Task UpdateDefaultSetting()
+        public void UpdateDefaultSetting()
         {
             // Arrange
-            var originalSetting = new Setting {Key = "EnableSecurity", Value = "true"};
-            var settings = new Dictionary<string, string> {["EnableSecurity"] = "true"};
-            var service = new SettingsService(_repository.Object);
-
-            _repository.Setup(m => m.GetSettingAsync("EnableSecurity"))
-                .ReturnsAsync(() => originalSetting)
-                .Verifiable();
-            _repository.Setup(m => m.UpdateAsync(It.Is<Setting>(s => s.Key == "EnableSecurity" && s.Value == "true")))
-                .ReturnsAsync(() => true)
-                .Verifiable();
+            const string value = "true";
 
             // Act
-            var (success, _) = await service.UpdateSettingsAsync(settings);
+            var (success, _) = _subject.UpdateSettings(new Dictionary<string, string> { ["EnableSecurity"] = value });
 
             // Assert
-            _repository.Verify();
+            Assert.That(_collection.FindById("EnableSecurity"), Has.Property(nameof(Setting.Value)).EqualTo(value));
             Assert.That(success, Is.True);
         }
 
         [Test]
-        public async Task UpdateSettingNotFound()
+        public void UpdateSettingNotFound()
         {
-            // Arrange
-            var setting = new Dictionary<string, string> {["fake"] = "notreal"};
-            var service = new SettingsService(_repository.Object);
-
             // Act
-            var (success, _) = await service.UpdateSettingsAsync(setting);
+            var (success, _) = _subject.UpdateSettings(new Dictionary<string, string> { ["fake"] = "notreal" });
 
             // Assert
             Assert.That(success, Is.False);

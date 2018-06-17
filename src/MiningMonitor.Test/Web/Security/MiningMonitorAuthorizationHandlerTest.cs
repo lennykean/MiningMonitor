@@ -33,7 +33,7 @@ namespace MiningMonitor.Test.Web.Security
         public async Task SecurityDisabled()
         {
             // Arrange
-            var requirements = new[] {new AuthenticatedWhenEnabledRequirement()};
+            var requirements = new[] { new AuthenticatedWhenEnabledRequirement() };
             var context = new AuthorizationHandlerContext(requirements, null, null);
             var handler = new MiningMonitorAuthorizationHandler(_settingsService.Object);
 
@@ -48,12 +48,12 @@ namespace MiningMonitor.Test.Web.Security
         public async Task AuthenticatedWhenEnabledRequirement()
         {
             // Arrange
-            var requirements = new[] {new AuthenticatedWhenEnabledRequirement()};
+            var requirements = new[] { new AuthenticatedWhenEnabledRequirement() };
             var principal = new GenericPrincipal(new GenericIdentity("test", "test"), new string[0]);
             var context = new AuthorizationHandlerContext(requirements, principal, null);
 
-            _settingsService.Setup(m => m.GetSettingAsync("EnableSecurity"))
-                .ReturnsAsync(() => (true, "true"));
+            _settingsService.Setup(m => m.GetSetting("EnableSecurity"))
+                .Returns(() => (true, "true"));
 
             var handler = new MiningMonitorAuthorizationHandler(_settingsService.Object);
 
@@ -68,12 +68,12 @@ namespace MiningMonitor.Test.Web.Security
         public async Task AuthenticatedWhenEnabledRequirementFailsWhenNotAuthenticated()
         {
             // Arrange
-            var requirements = new[] {new AuthenticatedWhenEnabledRequirement()};
+            var requirements = new[] { new AuthenticatedWhenEnabledRequirement() };
             var principal = new GenericPrincipal(new GenericIdentity(""), null);
             var context = new AuthorizationHandlerContext(requirements, principal, null);
 
-            _settingsService.Setup(m => m.GetSettingAsync("EnableSecurity"))
-                .ReturnsAsync(() => (true, "true"));
+            _settingsService.Setup(m => m.GetSetting("EnableSecurity"))
+                .Returns(() => (true, "true"));
 
             var handler = new MiningMonitorAuthorizationHandler(_settingsService.Object);
 
@@ -89,12 +89,12 @@ namespace MiningMonitor.Test.Web.Security
         {
             // Arrange
             const string role = "test-role";
-            var requirements = new[] {new HasRoleWhenEnabledRequirement(role)};
-            var principal = new GenericPrincipal(new GenericIdentity("test", "test"), new[] {role});
+            var requirements = new[] { new HasRoleWhenEnabledRequirement(role) };
+            var principal = new GenericPrincipal(new GenericIdentity("test", "test"), new[] { role });
             var context = new AuthorizationHandlerContext(requirements, principal, null);
 
-            _settingsService.Setup(m => m.GetSettingAsync("EnableSecurity"))
-                .ReturnsAsync(() => (true, "true"));
+            _settingsService.Setup(m => m.GetSetting("EnableSecurity"))
+                .Returns(() => (true, "true"));
 
             var handler = new MiningMonitorAuthorizationHandler(_settingsService.Object);
 
@@ -110,12 +110,12 @@ namespace MiningMonitor.Test.Web.Security
         {
             // Arrange
             const string role = "test-role";
-            var requirements = new[] {new HasRoleWhenEnabledRequirement(role)};
+            var requirements = new[] { new HasRoleWhenEnabledRequirement(role) };
             var principal = new GenericPrincipal(new GenericIdentity("test", "test"), new string[0]);
             var context = new AuthorizationHandlerContext(requirements, principal, new ActionDescriptor());
 
-            _settingsService.Setup(m => m.GetSettingAsync("EnableSecurity"))
-                .ReturnsAsync(() => (true, "true"));
+            _settingsService.Setup(m => m.GetSetting("EnableSecurity"))
+                .Returns(() => (true, "true"));
 
             var handler = new MiningMonitorAuthorizationHandler(_settingsService.Object);
 
@@ -139,8 +139,8 @@ namespace MiningMonitor.Test.Web.Security
             var context = new AuthorizationHandlerContext(requirements, principal, filterContext);
 
             routeData.Values.Add("id", "test-id");
-            _settingsService.Setup(m => m.GetSettingAsync("EnableSecurity"))
-                .ReturnsAsync(() => (true, "true"));
+            _settingsService.Setup(m => m.GetSetting("EnableSecurity"))
+                .Returns(() => (true, "true"));
 
             var handler = new MiningMonitorAuthorizationHandler(_settingsService.Object);
 
@@ -164,8 +164,8 @@ namespace MiningMonitor.Test.Web.Security
             var context = new AuthorizationHandlerContext(requirements, principal, filterContext);
 
             routeData.Values.Add("id", "other-id");
-            _settingsService.Setup(m => m.GetSettingAsync("EnableSecurity"))
-                .ReturnsAsync(() => (true, "true"));
+            _settingsService.Setup(m => m.GetSetting("EnableSecurity"))
+                .Returns(() => (true, "true"));
 
             var handler = new MiningMonitorAuthorizationHandler(_settingsService.Object);
 

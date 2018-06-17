@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,18 +28,18 @@ namespace MiningMonitor.Web.Controllers
         }
 
         [HttpGet("{minerId}"), Authorize(Policy = "Basic")]
-        public async Task<IEnumerable<Snapshot>> Get(
+        public IEnumerable<Snapshot> Get(
             [FromRoute]Guid minerId,
             [FromQuery]DateTime? from = null,
             [FromQuery]DateTime? to = null)
         {
-            return await _snapshotService.GetByMinerAsync(minerId, from, to, _snapshotDataCollectorSchedule.Interval);
+            return _snapshotService.GetByMiner(minerId, from, to, _snapshotDataCollectorSchedule.Interval);
         }
 
         [HttpPost("collector/{collector}/{minerId}"), Authorize(Policy = "Collector")]
-        public async Task<StatusCodeResult> Post(string collector, Guid minerId, [FromBody]Snapshot snapshot)
+        public StatusCodeResult Post(string collector, Guid minerId, [FromBody]Snapshot snapshot)
         {
-            var success = await _collectorService.SnapshotSyncAsync(collector, minerId, snapshot);
+            var success = _collectorService.SnapshotSync(collector, minerId, snapshot);
 
             if (!success)
                 return BadRequest();

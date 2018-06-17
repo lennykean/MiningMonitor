@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,15 +22,15 @@ namespace MiningMonitor.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Miner>> Get()
+        public IEnumerable<Miner> Get()
         {
-            return await _minerService.GetAllAsync();
+            return _minerService.GetAll();
         }
 
         [HttpGet("{id}")]
-        public async Task<ObjectResult> Get(Guid id)
+        public ObjectResult Get(Guid id)
         {
-            var miner = await _minerService.GetByIdAsync(id);
+            var miner = _minerService.GetById(id);
 
             if (miner == null)
                 return NotFound(null);
@@ -40,40 +39,40 @@ namespace MiningMonitor.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<ObjectResult> Post([FromBody]Miner miner)
+        public ObjectResult Post([FromBody]Miner miner)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            await _minerService.AddAsync(miner);
+            _minerService.Add(miner);
 
             return Ok(miner);
         }
 
         [HttpPut]
-        public async Task<ObjectResult> Put([FromBody]Miner miner)
+        public ObjectResult Put([FromBody]Miner miner)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            if (!await _minerService.UpdateAsync(miner))
+            if (!_minerService.Update(miner))
                 return NotFound(null);
 
             return Ok(miner);
         }
 
         [HttpDelete("{id}")]
-        public async Task<StatusCodeResult> Delete(Guid id)
+        public StatusCodeResult Delete(Guid id)
         {
-            if (!await _minerService.DeleteAsync(id))
+            if (!_minerService.Delete(id))
                 return NotFound();
 
             return NoContent();
         }
 
         [HttpPost("collector/{collector}"), Authorize(Policy = "Collector")]
-        public async Task<StatusCodeResult> Post(string collector, [FromBody]Miner miner)
+        public StatusCodeResult Post(string collector, [FromBody]Miner miner)
         {
-            var succcess = await _collectorService.MinerSyncAsync(collector, miner);
+            var succcess = _collectorService.MinerSync(collector, miner);
 
             if (!succcess)
                 return BadRequest();

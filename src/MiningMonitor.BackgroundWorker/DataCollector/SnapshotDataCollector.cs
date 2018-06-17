@@ -37,7 +37,7 @@ namespace MiningMonitor.BackgroundWorker.DataCollector
             _logger.LogInformation("Starting snapshot collection");
             try
             {
-                var miners = await _minerService.GetEnabledMinersAsync();
+                var miners = _minerService.GetEnabledMiners();
 
                 foreach (var miner in miners.AsParallel())
                 {
@@ -63,7 +63,7 @@ namespace MiningMonitor.BackgroundWorker.DataCollector
                 var minerStatistics = await client.GetStatisticsAsync();
                 sw.Stop();
 
-                await _snapshotService.AddAsync(new Snapshot
+                _snapshotService.Add(new Snapshot
                 {
                     MinerId = miner.Id,
                     RetrievalElapsedTime = sw.Elapsed,

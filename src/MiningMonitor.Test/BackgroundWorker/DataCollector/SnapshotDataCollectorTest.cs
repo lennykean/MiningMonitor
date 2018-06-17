@@ -41,9 +41,9 @@ namespace MiningMonitor.Test.BackgroundWorker.DataCollector
         {
             // Arrange
             var statisitcs = new MinerStatistics();
-            var miners = new[] {new Miner()};
+            var miners = new[] { new Miner() };
 
-            _minerService.Setup(m => m.GetEnabledMinersAsync()).ReturnsAsync(() => miners);
+            _minerService.Setup(m => m.GetEnabledMiners()).Returns(() => miners);
             _client.Setup(m => m.GetStatisticsAsync()).ReturnsAsync(() => statisitcs);
 
             var dataCollector = new SnapshotDataCollector(
@@ -56,7 +56,7 @@ namespace MiningMonitor.Test.BackgroundWorker.DataCollector
             await dataCollector.Collect();
 
             // Assert
-            _snapshotService.Verify(m => m.AddAsync(It.Is<Snapshot>(s => s.MinerStatistics == statisitcs)));
+            _snapshotService.Verify(m => m.Add(It.Is<Snapshot>(s => s.MinerStatistics == statisitcs)));
         }
     }
 }

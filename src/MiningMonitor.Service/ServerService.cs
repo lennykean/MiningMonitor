@@ -20,8 +20,8 @@ namespace MiningMonitor.Service
 
         public async Task<(string id, string token)> RegisterAsCollectorAsync()
         {
-            var client = await SetupConnection(authorization: false);
-            var (_, name) = await _settingsService.GetSettingAsync("Name");
+            var client = SetupConnection(authorization: false);
+            var (_, name) = _settingsService.GetSetting("Name");
 
             var response = await client.PostAsJsonAsync("api/collector", new Collector
             {
@@ -36,7 +36,7 @@ namespace MiningMonitor.Service
 
         public async Task<bool> CheckApprovalAsync(string id)
         {
-            var client = await SetupConnection();
+            var client = SetupConnection();
 
             var response = await client.GetAsync($"api/collector/{id}");
             response.EnsureSuccessStatusCode();
@@ -48,7 +48,7 @@ namespace MiningMonitor.Service
 
         public async Task SyncMinerAsync(string id, Miner miner)
         {
-            var client = await SetupConnection();
+            var client = SetupConnection();
 
             var response = await client.PostAsJsonAsync($"api/miners/collector/{id}", miner);
             response.EnsureSuccessStatusCode();
@@ -56,22 +56,22 @@ namespace MiningMonitor.Service
 
         public async Task SyncSnapshotAsync(string id, Snapshot snapshot)
         {
-            var client = await SetupConnection();
+            var client = SetupConnection();
 
             var response = await client.PostAsJsonAsync($"api/snapshots/collector/{id}/{snapshot.MinerId}", snapshot);
             response.EnsureSuccessStatusCode();
         }
 
-        private async Task<HttpClient> SetupConnection(bool authorization = true)
+        private HttpClient SetupConnection(bool authorization = true)
         {
-            var (_, serverUrl) = await _settingsService.GetSettingAsync("ServerUrl");
+            var (_, serverUrl) = _settingsService.GetSetting("ServerUrl");
             var client = _clientFactory();
 
             client.BaseAddress = new Uri(serverUrl);
 
             if (authorization)
             {
-                var (_, serverToken) = await _settingsService.GetSettingAsync("ServerToken");
+                var (_, serverToken) = _settingsService.GetSetting("ServerToken");
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", serverToken);
             }
             return client;

@@ -1,87 +1,84 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
-using MiningMonitor.Data.Repository;
+using LiteDB;
+
 using MiningMonitor.Model;
 
 namespace MiningMonitor.Service
 {
     public class MinerService : IMinerService
     {
-        private readonly IMinerRepository _minerRepo;
+        private readonly LiteCollection<Miner> _minerCollection;
         private readonly ISnapshotService _snapshotService;
 
-        public MinerService(IMinerRepository minerRepo, ISnapshotService snapshotService)
+        public MinerService(LiteCollection<Miner> minerCollection, ISnapshotService snapshotService)
         {
-            _minerRepo = minerRepo;
+            _minerCollection = minerCollection;
             _snapshotService = snapshotService;
         }
 
-        public async Task<IEnumerable<Miner>> GetEnabledMinersAsync()
+        public IEnumerable<Miner> GetEnabledMiners()
         {
-            return await _minerRepo.GetEnabledMinersAsync();
+            return _minerCollection.Find(miner => miner.CollectData && miner.CollectorId == null);
         }
 
-        public async Task<IEnumerable<Miner>> GetAllAsync()
+        public IEnumerable<Miner> GetAll()
         {
-            return await _minerRepo.GetAllAsync();
+            return _minerCollection.FindAll();
         }
 
-        public async Task<Miner> GetByIdAsync(Guid id)
+        public Miner GetById(Guid id)
         {
-            return await _minerRepo.GetByIdAsync(id);
+            return _minerCollection.FindById(id);
         }
 
-        public async Task AddAsync(Miner miner)
+        public void Add(Miner miner)
         {
             miner.Id = Guid.NewGuid();
             miner.IsSynced = false;
 
-            await _minerRepo.AddAsync(miner);
+            _minerCollection.Insert(miner);
         }
 
-        public async Task<bool> UpdateAsync(Miner miner)
+        public bool Update(Miner miner)
         {
             if (miner.CollectorId != null)
                 return false;
 
             miner.IsSynced = false;
 
-            return await _minerRepo.UpdateAsync(miner);
+            return _minerCollection.Update(miner);
         }
 
-        public async Task UpsertAsync(Miner miner)
+        public void Upsert(Miner miner)
         {
-            if (await _minerRepo.GetByIdAsync(miner.Id) != null)
-                await _minerRepo.UpdateAsync(miner);
-            else
-                await _minerRepo.AddAsync(miner);
+            _minerCollection.Upsert(miner);
         }
 
-        public async Task<bool> SetSyncedAsync(Miner miner)
+        public bool SetSynced(Miner miner)
         {
             miner.IsSynced = true;
-            return await _minerRepo.UpdateAsync(miner);
+            return _minerCollection.Update(miner);
         }
 
-        public async Task<bool> DeleteAsync(Guid id)
+        public bool Delete(Guid id)
         {
-            await _snapshotService.DeleteByMinerAsync(id);
+            _snapshotService.DeleteByMiner(id);
 
-            return await _minerRepo.DeleteAsync(id);
+            return _minerCollection.Delete(id);
         }
 
-        public async Task DeleteByCollectorAsync(string collectorId)
+        public void DeleteByCollector(string collectorId)
         {
             foreach (var minerId in (
-                from miner in await _minerRepo.GetAllAsync()
+                from miner in _minerCollection.FindAll()
                 where miner.CollectorId == collectorId
                 select miner.Id).ToList())
             {
-                await _snapshotService.DeleteByMinerAsync(minerId);
-                await _minerRepo.DeleteAsync(minerId);
+                _snapshotService.DeleteByMiner(minerId);
+                _minerCollection.Delete(minerId);
             }
         }
     }

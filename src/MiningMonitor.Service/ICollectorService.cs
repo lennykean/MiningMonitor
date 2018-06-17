@@ -11,11 +11,11 @@ namespace MiningMonitor.Service
     public interface ICollectorService
     {
         Task<IEnumerable<Collector>> GetAllAsync();
-        Task<(bool success, Collector collector)> Get(string collectorId);
+        Task<(bool success, Collector collector)> GetAsync(string collectorId);
         Task<(ModelStateDictionary modelState, RegistrationResponse registration)> CreateCollectorAsync(Collector collector);
         Task<bool> UpdateAsync(Collector collector);
         Task<bool> DeleteAsync(string collectorId);
-        Task<bool> MinerSyncAsync(string collector, Miner miner);
-        Task<bool> SnapshotSyncAsync(string collector, Guid minerId, Snapshot snapshot);
+        bool MinerSync(string collector, Miner miner);
+        bool SnapshotSync(string collector, Guid minerId, Snapshot snapshot);
     }
 }
