@@ -9,7 +9,6 @@ using LiteDB;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Configuration;
@@ -99,7 +98,7 @@ namespace MiningMonitor.Web
             services.AddTransient<Purge>();
 
             // Security
-            services.AddSingleton(service => new LiteDbContext(service.GetService<IHostingEnvironment>())
+            services.AddSingleton(service => new LiteDbContext(service.GetService<Microsoft.AspNetCore.Hosting.IHostingEnvironment>())
             {
                 LiteDatabase = service.GetService<LiteDatabase>()
             });

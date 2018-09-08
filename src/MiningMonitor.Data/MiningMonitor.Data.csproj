@@ -8,8 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AspNetCore.Identity.LiteDB" Version="2.6.0" />
-    <PackageReference Include="LiteDB" Version="4.1.1" />
+    <PackageReference Include="LiteDB" Version="4.1.4" />
     <PackageReference Include="ClaymoreMiner.RemoteManagement" Version="1.1.0" />
   </ItemGroup>
 

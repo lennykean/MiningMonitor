@@ -6,9 +6,9 @@
 
   <ItemGroup>
     <PackageReference Include="AspNetCore.Identity.LiteDB" Version="2.6.0" />
-    <PackageReference Include="ClaymoreMiner.RemoteManagement" Version="1.0.5" />
-    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="2.0.1" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="4.4.1" />
+    <PackageReference Include="ClaymoreMiner.RemoteManagement" Version="1.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="2.0.4" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
   </ItemGroup>
 
 </Project>
