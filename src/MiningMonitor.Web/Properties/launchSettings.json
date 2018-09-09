@@ -10,6 +10,11 @@
     "Prod": {
       "commandName": "Project",
       "applicationUrl": "http://localhost:8080/"
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchBrowser": true,
+      "launchUrl": "{Scheme}://localhost:{ServicePort}"
     }
   }
 }
