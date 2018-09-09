@@ -1,0 +1,10 @@
+.git
+.dockerignore
+.gitignore
+.vs
+.vscode
+**/node_modules
+*/bin
+*/obj
+!obj/Docker/publish/*
+!obj/Docker/empty/
