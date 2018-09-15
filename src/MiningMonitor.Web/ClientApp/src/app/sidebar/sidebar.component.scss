@@ -1,0 +1,16 @@
+nav {
+    display: block;
+    position: fixed;
+    top: 70px;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    h3 {
+        .nav-link {
+            padding-left: 0;
+        }
+    }   
+}

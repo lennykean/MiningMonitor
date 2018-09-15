@@ -1,0 +1,12 @@
+<nav class="navbar navbar-dark bg-light" [ngStyle]="{'width': width}">
+    <h3>
+        <a class="nav-link" routerLink="/miners">Miners</a>
+    </h3>
+    <ul class="navbar-nav">
+        <li class="nav-item" *ngFor="let miner of miners">
+            <a class="nav-link" routerLink="/miners/{{ miner.id }}">
+                {{ miner.name }}
+            </a>
+        </li>
+    </ul>
+</nav>

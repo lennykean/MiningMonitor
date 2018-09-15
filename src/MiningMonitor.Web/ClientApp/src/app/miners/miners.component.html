@@ -1,0 +1,22 @@
+<a class="btn btn-outline-info float-right" routerLink="/miner/new">Add Miner</a>
+<h1>Miners</h1>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Data Collection</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let miner of miners">
+            <td title="Monitor {{ miner.name}}">
+                <a routerLink="/monitor/{{ miner.id }}"></a>
+            </td>
+            <td title="Edit {{ miner.name }}">
+                <a routerLink="/miner/{{ miner.id }}">{{ miner.name }}</a>
+            </td>
+            <td>{{ miner.collectData ? 'Enabled' : 'Disabled' }}</td>
+        </tr>
+    </tbody>
+</table>

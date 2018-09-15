@@ -24,6 +24,17 @@ namespace MiningMonitor.Web.Controllers
             return await _settingsService.GetAllAsync();
         }
 
+        [HttpGet("{setting}")]
+        public async Task<ObjectResult> Get(string setting)
+        {
+            var result = await _settingsService.GetSettingAsync(setting);
+
+            if (!result.success)
+                return NotFound(null);
+
+            return Ok(result.setting);
+        }
+
         [HttpPut]
         public async Task<ObjectResult> Put([FromBody]IDictionary<string, string> settings)
         {
