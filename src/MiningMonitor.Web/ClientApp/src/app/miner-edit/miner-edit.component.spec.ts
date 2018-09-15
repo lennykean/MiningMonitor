@@ -1,20 +1,24 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
+import { RouterTestingModule } from '@angular/router/testing';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
-import { MinersComponent } from './miners.component';
-import { RouterTestingModule } from '@angular/router/testing';
+import { MinerEditComponent } from './miner-edit.component';
+import { MinerFormComponent } from '../miner-form/miner-form.component';
 
-describe('MinersComponent', () => {
-    let component: MinersComponent;
-    let fixture: ComponentFixture<MinersComponent>;
+describe('MinerEditComponent', () => {
+    let component: MinerEditComponent;
+    let fixture: ComponentFixture<MinerEditComponent>;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [
-                MinersComponent
+                MinerEditComponent,
+                MinerFormComponent
             ],
             imports: [
+                FormsModule,
                 HttpClientTestingModule,
                 RouterTestingModule,
                 FontAwesomeModule
@@ -23,7 +27,7 @@ describe('MinersComponent', () => {
     }));
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(MinersComponent);
+        fixture = TestBed.createComponent(MinerEditComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

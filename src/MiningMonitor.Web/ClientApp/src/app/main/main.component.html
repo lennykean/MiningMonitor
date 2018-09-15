@@ -1,0 +1,8 @@
+<miningmonitor-header></miningmonitor-header>
+<miningmonitor-sidebar [width]="sidebarWidth"></miningmonitor-sidebar>
+
+<div [ngStyle]="{'padding-left': sidebarWidth}">
+    <div class="container-fluid main-content">
+        <router-outlet></router-outlet>
+    </div>
+</div>

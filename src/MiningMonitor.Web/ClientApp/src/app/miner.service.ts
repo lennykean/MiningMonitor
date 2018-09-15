@@ -20,11 +20,11 @@ export class MinerService {
     }
 
     public async Create(miner: Miner) {
-        return await this.http.post<Miner[]>(MinerService.baseUrl, miner).toPromise();
+        return await this.http.post<Miner>(MinerService.baseUrl, miner).toPromise();
     }
 
     public async Update(miner: Miner) {
-        return await this.http.put<Miner[]>(MinerService.baseUrl, miner).toPromise();
+        return await this.http.put<Miner>(MinerService.baseUrl, miner).toPromise();
     }
 
     public async Delete(id: string) {

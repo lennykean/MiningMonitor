@@ -11,7 +11,9 @@
     <tbody>
         <tr *ngFor="let miner of miners">
             <td title="Monitor {{ miner.name}}">
-                <a routerLink="/monitor/{{ miner.id }}"></a>
+                <a routerLink="/monitor/{{ miner.id }}">
+                    <fa-icon [icon]="'heartbeat'"></fa-icon>
+                </a>
             </td>
             <td title="Edit {{ miner.name }}">
                 <a routerLink="/miner/{{ miner.id }}">{{ miner.name }}</a>

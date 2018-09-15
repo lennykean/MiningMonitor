@@ -1,0 +1,22 @@
+<nav class="navbar navbar-dark bg-primary">
+    <span class="navbar-brand">Mining Monitor</span>
+</nav>
+
+<div class="container">
+    <form (submit)="Login(username.value, password.value); $event.preventDefault();">
+        <h1>Login</h1>
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input #username type="text" name="username" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input #password type="password" name="password" class="form-control" />
+        </div>
+        <p class="text-danger" *ngIf="message">{{ message }}</p>
+        <button class="btn btn-outline-info" type="submit" [disabled]="busy">
+            <fa-icon [icon]="'sign-in-alt'"></fa-icon>
+            Login
+        </button>
+    </form>
+</div>

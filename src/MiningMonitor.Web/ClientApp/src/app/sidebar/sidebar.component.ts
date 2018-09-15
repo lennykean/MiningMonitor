@@ -17,7 +17,7 @@ export class SidebarComponent implements OnInit {
         private minerService: MinerService) {
     }
 
-    async ngOnInit() {
+    public async ngOnInit() {
         this.miners = await this.minerService.GetAll();
     }
 }

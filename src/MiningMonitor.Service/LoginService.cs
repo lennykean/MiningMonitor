@@ -21,10 +21,10 @@ namespace MiningMonitor.Service
         public async Task<(bool success, string token)> LoginUserAsync(string username, string password)
         {
             var result = await _userManager.PasswordSignInAsync(username, password, false, false);
-
+            
             if (!result.Succeeded)
                 return (success: false, token: null);
-
+            
             return (success: true, token: CreateToken(username));
         }
 

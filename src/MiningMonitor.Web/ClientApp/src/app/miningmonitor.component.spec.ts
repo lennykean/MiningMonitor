@@ -1,5 +1,7 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed, async } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 import { HeaderComponent } from './header/header.component';
 import { MiningMonitorComponent } from './miningmonitor.component';
@@ -14,7 +16,9 @@ describe('MiningMonitorComponent', () => {
                 SidebarComponent
             ],
             imports: [
-                RouterTestingModule
+                HttpClientTestingModule,
+                RouterTestingModule,
+                FontAwesomeModule
             ]
         }).compileComponents();
     }));

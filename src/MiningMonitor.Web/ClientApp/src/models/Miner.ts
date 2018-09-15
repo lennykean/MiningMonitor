@@ -1,10 +1,10 @@
 export interface Miner {
     id?: string;
-    name: string;
+    name?: string;
     displayName: string;
     address: string;
     port: number;
-    password: string;
+    password?: string;
     collectData: boolean;
-    collectorId: string;
+    collectorId?: string;
 }
