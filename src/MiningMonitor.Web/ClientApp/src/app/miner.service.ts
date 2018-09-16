@@ -28,7 +28,6 @@ export class MinerService {
 
     public async Create(miner: Miner) {
         miner = await this.http.post<Miner>(MinerService.baseUrl, miner).toPromise();
-
         this.RefreshMiners();
 
         return miner;
@@ -36,7 +35,6 @@ export class MinerService {
 
     public async Update(miner: Miner) {
         miner = await this.http.put<Miner>(MinerService.baseUrl, miner).toPromise();
-
         this.RefreshMiners();
 
         return miner;
