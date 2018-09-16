@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { LoginService } from '../login.service';
 
 @Component({
-    selector: 'miningmonitor-login',
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss']
 })

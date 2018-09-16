@@ -5,7 +5,6 @@ import { Miner } from '../../models/Miner';
 import { MinerService } from '../miner.service';
 
 @Component({
-    selector: 'miningmonitor-miners',
     templateUrl: './miners.component.html',
     styleUrls: ['./miners.component.scss']
 })

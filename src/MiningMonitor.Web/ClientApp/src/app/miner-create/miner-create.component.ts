@@ -6,7 +6,6 @@ import { Miner } from '../../models/Miner';
 import { MinerService } from '../miner.service';
 
 @Component({
-    selector: 'miningmonitor-miner-create',
     templateUrl: './miner-create.component.html'
 })
 export class MinerCreateComponent {

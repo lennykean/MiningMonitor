@@ -1,6 +1,7 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 import { HeaderComponent } from '../header/header.component';
 import { MainComponent } from './main.component';
@@ -19,7 +20,8 @@ describe('MainComponent', () => {
             ],
             imports: [
                 HttpClientTestingModule,
-                RouterTestingModule
+                RouterTestingModule,
+                FontAwesomeModule
             ]
         }).compileComponents();
     }));

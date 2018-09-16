@@ -4,10 +4,14 @@ import { Injectable } from '@angular/core';
 export class TokenService {
     private static readonly BEARER_TOKEN = 'BEARER_TOKEN';
 
-    get token(): string {
+    public get token(): string {
         return localStorage.getItem(TokenService.BEARER_TOKEN);
     }
-    set token(value: string) {
+    public set token(value: string) {
         localStorage.setItem(TokenService.BEARER_TOKEN, value);
+    }
+
+    public DeleteToken() {
+        localStorage.removeItem(TokenService.BEARER_TOKEN);
     }
 }

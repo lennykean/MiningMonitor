@@ -13,6 +13,10 @@ export class LoginService {
         private tokenService: TokenService) {
     }
 
+    public get isLoggedIn() {
+        return this.tokenService.token != null;
+    }
+
     public async Login(username: string, password: string) {
         try {
             this.tokenService.token = await this.http.post<string>(LoginService.baseUrl, { username, password }).toPromise();
@@ -27,7 +31,7 @@ export class LoginService {
     }
 
     public Logout() {
-        this.tokenService.token = null;
+        this.tokenService.DeleteToken();
         this.loginRequired = null;
     }
 

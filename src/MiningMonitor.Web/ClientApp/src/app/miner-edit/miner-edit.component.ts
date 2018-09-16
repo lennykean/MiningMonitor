@@ -6,7 +6,6 @@ import { Miner } from '../../models/Miner';
 import { MinerService } from '../miner.service';
 
 @Component({
-    selector: 'miningmonitor-miner',
     templateUrl: './miner-edit.component.html'
 })
 export class MinerEditComponent implements OnInit {
