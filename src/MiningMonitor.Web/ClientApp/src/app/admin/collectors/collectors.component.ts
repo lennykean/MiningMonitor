@@ -1,13 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 
+import { Collector } from '../../../models/Collector';
+import { CollectorService } from '../../collector.service';
+
 @Component({
-    templateUrl: './collectors.component.html',
-    styleUrls: ['./collectors.component.scss']
+    templateUrl: './collectors.component.html'
 })
 export class CollectorsComponent implements OnInit {
-    constructor() {
+    public collectors: Collector[];
+
+    constructor(
+        private collectorService: CollectorService) {
     }
 
-    ngOnInit() {
+    public async ngOnInit() {
+        this.collectors = await this.collectorService.GetAll();
     }
 }

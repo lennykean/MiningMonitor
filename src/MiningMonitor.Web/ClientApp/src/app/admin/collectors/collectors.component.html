@@ -1,3 +1,38 @@
-<p>
-  collectors works!
-</p>
+<div *ngIf="collectors; else loading">
+    <h3>Data Collectors</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Status</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let collector of collectors">
+                <td>{{ collector.name }}</td>
+                <td>{{ collector.approved === true ? 'Approved' : collector.approved === false ? 'Rejected' :
+                    'Pending'}}
+                </td>
+                <td>
+                    <button class="btn-sm btn-outline-success" *ngIf="collector.approved !== true">
+                        <fa-icon [icon]="'check'"></fa-icon> Approve
+                    </button>
+                    &nbsp;
+                    <button class="btn-sm btn-outline-danger" *ngIf="collector.approved !== false">
+                        <fa-icon [icon]="'times'"></fa-icon> Reject
+                    </button>
+                </td>
+                <td>
+                    <button class="btn-sm btn-danger" *ngIf="!collector.approved">
+                        Delete
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<ng-template #loading>
+    Loading Collectors...
+</ng-template>
