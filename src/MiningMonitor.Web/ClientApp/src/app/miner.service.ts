@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable, ReplaySubject } from 'rxjs';
 
 import { Miner } from '../models/Miner';
 
@@ -7,12 +8,18 @@ import { Miner } from '../models/Miner';
 export class MinerService {
     private static readonly baseUrl = '/api/miners';
 
+    private _miners: ReplaySubject<Miner[]>;
+
     constructor(
         private http: HttpClient) {
     }
 
-    public async GetAll() {
-        return await this.http.get<Miner[]>(MinerService.baseUrl).toPromise();
+    public get miners(): Observable<Miner[]> {
+        if (!this._miners) {
+            this._miners = new ReplaySubject<Miner[]>();
+            this.RefreshMiners();
+        }
+        return this._miners;
     }
 
     public async Get(id: string) {
@@ -20,14 +27,27 @@ export class MinerService {
     }
 
     public async Create(miner: Miner) {
-        return await this.http.post<Miner>(MinerService.baseUrl, miner).toPromise();
+        miner = await this.http.post<Miner>(MinerService.baseUrl, miner).toPromise();
+
+        this.RefreshMiners();
+
+        return miner;
     }
 
     public async Update(miner: Miner) {
-        return await this.http.put<Miner>(MinerService.baseUrl, miner).toPromise();
+        miner = await this.http.put<Miner>(MinerService.baseUrl, miner).toPromise();
+
+        this.RefreshMiners();
+
+        return miner;
     }
 
     public async Delete(id: string) {
-        return await this.http.delete(`${MinerService.baseUrl}/${id}`).toPromise();
+        await this.http.delete(`${MinerService.baseUrl}/${id}`).toPromise();
+        this.RefreshMiners();
+    }
+
+    private RefreshMiners() {
+        this.http.get<Miner[]>(MinerService.baseUrl).subscribe(miners => this._miners.next(miners));
     }
 }

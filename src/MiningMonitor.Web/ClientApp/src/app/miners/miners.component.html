@@ -9,7 +9,7 @@
         </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let miner of miners">
+        <tr *ngFor="let miner of miners | async">
             <td title="Monitor {{ miner.name}}">
                 <a routerLink="/monitor/{{ miner.id }}">
                     <fa-icon [icon]="'heartbeat'"></fa-icon>
