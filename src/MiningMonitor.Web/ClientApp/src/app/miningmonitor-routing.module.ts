@@ -19,7 +19,7 @@ import { LogoutComponent } from './logout/logout.component';
     imports: [
         RouterModule.forRoot([
             {
-                path: '', component: MainComponent, canActivate: [AuthGuard], children: [
+                path: '', component: MainComponent, canActivate: [AuthGuard], runGuardsAndResolvers: 'always', children: [
                     { path: '', component: HomeComponent },
                     {
                         path: 'admin', component: AdminComponent, children: [

@@ -18,8 +18,8 @@
                 Address
             </label>
             <div class="col col-sm-10">
-                <input type="text" name="address" class="form-control" value="miner.address" placeholder="127.0.0.1"
-                    [ngClass]="{'is-invalid': validationErrors.address}" [(ngModel)]="miner.address" valid="false" />
+                <input type="text" name="address" class="form-control" placeholder="127.0.0.1" [ngClass]="{'is-invalid': validationErrors.address}"
+                    [(ngModel)]="miner.address" valid="false" />
                 <small class="invalid-feedback" *ngFor="let message of validationErrors.address">
                     {{ message }}
                 </small>
@@ -30,7 +30,7 @@
                 Port
             </label>
             <div class="col col-sm-10">
-                <input type="number" name="port" class="form-control" placeholder="3333" value="miner.port" [(ngModel)]="miner.port">
+                <input type="number" name="port" class="form-control" placeholder="3333" [(ngModel)]="miner.port">
                 <small class="invalid-feedback" *ngFor="let message of validationErrors.port">
                     {{ message }}
                 </small>

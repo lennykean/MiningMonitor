@@ -41,4 +41,8 @@ export class LoginService {
         }
         return this.loginRequired;
     }
+
+    public ClearCachedSettings() {
+        this.loginRequired = null;
+    }
 }

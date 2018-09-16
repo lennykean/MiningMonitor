@@ -1,4 +1,4 @@
-<div *ngIf="miner">
+<div *ngIf="miner; else loading">
     <button class="btn btn-outline-danger float-right" *ngIf="!miner.collectorId" (click)="Delete()">Delete Miner</button>
     <h1>{{ miner.name }}</h1>
     <a class="btn btn-outline-success" routerLink="/monitor/{{ miner.id }}">
@@ -7,3 +7,6 @@
     </a>
     <miningmonitor-miner-form [miner]="miner" [validationErrors]="validationErrors" (save)="Save($event)"></miningmonitor-miner-form>
 </div>
+<ng-template #loading>
+    Loading Miner...
+</ng-template>

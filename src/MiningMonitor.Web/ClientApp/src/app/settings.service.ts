@@ -12,4 +12,8 @@ export class SettingsService {
     public async GetAll() {
         return await this.http.get<{ [key: string]: string }>(SettingsService.baseUrl).toPromise();
     }
+
+    public async Update(settings: { [key: string]: string }) {
+        return await this.http.put<{ [key: string]: string }>(SettingsService.baseUrl, settings).toPromise();
+    }
 }
