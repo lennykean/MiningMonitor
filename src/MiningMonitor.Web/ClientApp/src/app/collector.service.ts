@@ -21,6 +21,10 @@ export class CollectorService {
         return await this.http.post<Collector>(CollectorService.baseUrl, collector).toPromise();
     }
 
+    public async Update(collector: Collector) {
+        return await this.http.put<Collector>(CollectorService.baseUrl, collector).toPromise();
+    }
+
     public async Delete(id: string) {
         await this.http.delete(`${CollectorService.baseUrl}/${id}`).toPromise();
     }

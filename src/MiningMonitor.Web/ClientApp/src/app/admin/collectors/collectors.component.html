@@ -12,20 +12,18 @@
         <tbody>
             <tr *ngFor="let collector of collectors">
                 <td>{{ collector.name }}</td>
-                <td>{{ collector.approved === true ? 'Approved' : collector.approved === false ? 'Rejected' :
-                    'Pending'}}
-                </td>
+                <td>{{ Status(collector) }}</td>
                 <td>
-                    <button class="btn-sm btn-outline-success" *ngIf="collector.approved !== true">
+                    <button class="btn-sm btn-outline-success" *ngIf="collector.approved !== true" (click)="Approve(collector)">
                         <fa-icon [icon]="'check'"></fa-icon> Approve
                     </button>
                     &nbsp;
-                    <button class="btn-sm btn-outline-danger" *ngIf="collector.approved !== false">
+                    <button class="btn-sm btn-outline-danger" *ngIf="collector.approved !== false" (click)="Reject(collector)">
                         <fa-icon [icon]="'times'"></fa-icon> Reject
                     </button>
                 </td>
                 <td>
-                    <button class="btn-sm btn-danger" *ngIf="!collector.approved">
+                    <button class="btn-sm btn-danger" (click)="Delete(collector)">
                         Delete
                     </button>
                 </td>
