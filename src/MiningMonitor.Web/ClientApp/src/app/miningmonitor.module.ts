@@ -24,12 +24,14 @@ import { SidebarComponent } from './sidebar/sidebar.component';
 import { SettingsComponent } from './admin/settings/settings.component';
 import { UsersComponent } from './admin/users/users.component';
 import { CollectorsComponent } from './admin/collectors/collectors.component';
+import { UserCreateComponent } from './admin/user-create/user-create.component';
 
 library.add(fas);
 
 @NgModule({
     declarations: [
         AdminComponent,
+        CollectorsComponent,
         HeaderComponent,
         HomeComponent,
         MainComponent,
@@ -44,7 +46,7 @@ library.add(fas);
         SidebarComponent,
         SettingsComponent,
         UsersComponent,
-        CollectorsComponent
+        UserCreateComponent,
     ],
     imports: [
         BrowserModule,

@@ -7,7 +7,7 @@
             </label>
             <div class="col col-sm-10">
                 <input name="displayName" class="form-control" [placeholder]="miner.name ? miner.name : '127.0.0.1:3333'"
-                    [(ngModel)]="miner.displayName">
+                    [ngClass]="{'is-invalid': validationErrors.displayName}" [(ngModel)]="miner.displayName">
                 <small class="invalid-feedback" *ngFor="let message of validationErrors.displayName">
                     {{ message }}
                 </small>
@@ -30,7 +30,8 @@
                 Port
             </label>
             <div class="col col-sm-10">
-                <input type="number" name="port" class="form-control" placeholder="3333" [(ngModel)]="miner.port">
+                <input type="number" name="port" class="form-control" placeholder="3333" [ngClass]="{'is-invalid': validationErrors.port}"
+                    [(ngModel)]="miner.port">
                 <small class="invalid-feedback" *ngFor="let message of validationErrors.port">
                     {{ message }}
                 </small>
