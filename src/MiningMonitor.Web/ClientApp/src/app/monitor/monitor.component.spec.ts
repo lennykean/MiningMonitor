@@ -1,5 +1,9 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { ChartsModule } from 'ng2-charts';
 
+import { GpuChartComponent } from '../gpu-chart/gpu-chart.component';
 import { MonitorComponent } from './monitor.component';
 
 describe('MonitorComponent', () => {
@@ -8,7 +12,15 @@ describe('MonitorComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [MonitorComponent]
+            declarations: [
+                GpuChartComponent,
+                MonitorComponent
+            ],
+            imports: [
+                HttpClientTestingModule,
+                RouterTestingModule,
+                ChartsModule
+            ]
         }).compileComponents();
     }));
 

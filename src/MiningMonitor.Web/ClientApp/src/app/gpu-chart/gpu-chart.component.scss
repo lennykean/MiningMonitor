@@ -1,0 +1,23 @@
+.gpu {
+    margin: 0 10px 10px 0;
+
+    .chart  {
+        margin: 15px 0 0 0;
+    }
+    .hashrate {
+        color: #fff;
+    }
+    .temp {
+        color: #3498DB;
+    }
+    .fanSpeed {
+        color: #F39C12;
+    }
+    h4, h6 {
+        display: inline-block;
+        margin-right: 0.5em;
+    }
+    h6 {
+        margin-left: 0.5em;
+    }
+}

@@ -14,6 +14,7 @@ export class SnapshotService {
     }
 
     public async GetByMiner(id: string) {
-        return await this.http.get<Snapshot[]>(`${SnapshotService.baseUrl}/${id}`);
+        return await this.http.get<Snapshot[]>(`${SnapshotService.baseUrl}/${id}`).toPromise();
     }
+
 }

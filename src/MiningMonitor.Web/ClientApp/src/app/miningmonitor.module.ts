@@ -2,6 +2,7 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
+import { ChartsModule } from 'ng2-charts';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
@@ -25,6 +26,7 @@ import { SettingsComponent } from './admin/settings/settings.component';
 import { UsersComponent } from './admin/users/users.component';
 import { CollectorsComponent } from './admin/collectors/collectors.component';
 import { UserCreateComponent } from './admin/user-create/user-create.component';
+import { GpuChartComponent } from './gpu-chart/gpu-chart.component';
 
 library.add(fas);
 
@@ -47,12 +49,14 @@ library.add(fas);
         SettingsComponent,
         UsersComponent,
         UserCreateComponent,
+        GpuChartComponent,
     ],
     imports: [
         BrowserModule,
         HttpClientModule,
-        FontAwesomeModule,
         FormsModule,
+        ChartsModule,
+        FontAwesomeModule,
         MiningMonitorRoutingModule
     ],
     providers: [{
