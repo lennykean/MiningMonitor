@@ -168,7 +168,7 @@ namespace MiningMonitor.Web
             {
                 spa.Options.SourcePath = "ClientApp";
 
-                if (env.IsDevelopment())
+                if (Environment.GetEnvironmentVariable("ANGULAR_DEV_SERVER") == "true")
                 {
                     spa.UseAngularCliServer(npmScript: "start");
                 }
