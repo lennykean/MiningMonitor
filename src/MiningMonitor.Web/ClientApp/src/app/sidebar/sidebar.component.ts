@@ -10,8 +10,6 @@ import { MinerService } from '../miner.service';
     styleUrls: ['./sidebar.component.scss']
 })
 export class SidebarComponent implements OnInit {
-    @Input()
-    public width: string;
     public miners: Observable<Miner[]>;
 
     constructor(
