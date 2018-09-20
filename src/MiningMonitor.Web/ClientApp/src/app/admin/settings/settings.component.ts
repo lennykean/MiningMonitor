@@ -8,7 +8,7 @@ import { SettingsService } from '../../settings.service';
     styleUrls: ['./settings.component.scss']
 })
 export class SettingsComponent implements OnInit {
-    private settings: { [key: string]: string };
+    public settings: { [key: string]: string };
 
     constructor(
         private settingsService: SettingsService,

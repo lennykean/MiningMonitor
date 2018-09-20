@@ -45,6 +45,7 @@ namespace MiningMonitor.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddResponseCompression();
             services.AddOptions();
 
             services
@@ -148,10 +149,12 @@ namespace MiningMonitor.Web
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider service)
         {
+            app.UseResponseCompression();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
             app.UseAuthentication();

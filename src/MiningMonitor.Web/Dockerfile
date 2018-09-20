@@ -3,13 +3,6 @@ FROM microsoft/dotnet:2.1-aspnetcore-runtime as runtime
 WORKDIR /app
 EXPOSE 80
 
-# Install Node.js in runtime container
-ENV NODE_VERSION 8.11.2
-RUN curl -SL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.gz" --output nodejs.tar.gz \
-    && tar -xzf "nodejs.tar.gz" -C /usr/local --strip-components=1 \
-    && rm nodejs.tar.gz \
-    && ln -s /usr/local/bin/node /usr/local/bin/nodejs
-
 # Create build image
 FROM microsoft/dotnet:2.1-sdk AS build
 WORKDIR /src
