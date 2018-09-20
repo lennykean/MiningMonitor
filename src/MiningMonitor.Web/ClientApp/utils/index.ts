@@ -1,1 +1,0 @@
-export { pivotSnapshots } from './pivotSnapshots';
