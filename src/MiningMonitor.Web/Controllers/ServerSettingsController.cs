@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,6 +20,17 @@ namespace MiningMonitor.Web.Controllers
         public IDictionary<string, string> Get()
         {
             return _settingsService.GetAll();
+        }
+
+        [HttpGet("{setting}")]
+        public ObjectResult Get(string setting)
+        {
+            var result = _settingsService.GetSetting(setting);
+
+            if (!result.success)
+                return NotFound(null);
+
+            return Ok(result.setting);
         }
 
         [HttpPut]

@@ -10,9 +10,9 @@ using LiteDB;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -44,6 +44,7 @@ namespace MiningMonitor.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddResponseCompression();
             services.AddOptions();
 
             services
@@ -96,7 +97,7 @@ namespace MiningMonitor.Web
             services.AddTransient<Purge>();
 
             // Security
-            services.AddSingleton(service => new LiteDbContext(service.GetService<IHostingEnvironment>())
+            services.AddSingleton(service => new LiteDbContext(service.GetService<Microsoft.AspNetCore.Hosting.IHostingEnvironment>())
             {
                 LiteDatabase = service.GetService<LiteDatabase>()
             });
@@ -140,21 +141,34 @@ namespace MiningMonitor.Web
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                     options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
                 });
+
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "ClientApp/dist";
+            });
+
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider service)
         {
+            app.UseResponseCompression();
             app.UseStaticFiles();
+            app.UseSpaStaticFiles();
             app.UseAuthentication();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+            });
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "ClientApp";
 
-                routes.MapSpaFallbackRoute(
-                    name: "spa-fallback",
-                    defaults: new {controller = "Home", action = "Index"});
+                if (Environment.GetEnvironmentVariable("ANGULAR_DEV_SERVER") == "true")
+                {
+                    spa.UseAngularCliServer(npmScript: "start");
+                }
             });
         }
     }

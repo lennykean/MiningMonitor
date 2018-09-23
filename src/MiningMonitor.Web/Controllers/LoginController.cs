@@ -11,10 +11,23 @@ namespace MiningMonitor.Web.Controllers
     public class LoginController : Controller
     {
         private readonly ILoginService _loginService;
+        private readonly ISettingsService _settingsService;
 
-        public LoginController(ILoginService loginService)
+        public LoginController(ILoginService loginService, ISettingsService settingsService)
         {
             _loginService = loginService;
+            _settingsService = settingsService;
+        }
+
+        [HttpGet("required")]
+        public bool GetRequired()
+        {
+            var result = _settingsService.GetSetting("EnableSecurity");
+
+            if (!result.success || !bool.TryParse(result.setting, out var enableSecurity) || !enableSecurity)
+                return false;
+
+            return !User.Identity.IsAuthenticated;
         }
 
         [HttpPost]

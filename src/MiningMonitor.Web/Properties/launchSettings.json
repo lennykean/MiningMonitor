@@ -3,13 +3,19 @@
     "Dev": {
       "commandName": "Project",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ANGULAR_DEV_SERVER": "true"
       },
       "applicationUrl": "http://localhost:8080/"
     },
     "Prod": {
       "commandName": "Project",
       "applicationUrl": "http://localhost:8080/"
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchBrowser": true,
+      "launchUrl": "{Scheme}://localhost:{ServicePort}"
     }
   }
 }

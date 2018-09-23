@@ -1,13 +1,10 @@
-.dockerignore
-.env
 .git
+.dockerignore
 .gitignore
 .vs
 .vscode
-docker-compose.yml
-docker-compose.*.yml
+**/node_modules
 */bin
 */obj
 !obj/Docker/publish/*
 !obj/Docker/empty/
-**/node_modules

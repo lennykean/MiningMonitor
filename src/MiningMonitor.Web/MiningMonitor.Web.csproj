@@ -1,12 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
     <RepositoryUrl>https://github.com/lennykean/MiningMonitor</RepositoryUrl>
     <Authors>Lenny Kean</Authors>
     <IsPackable>false</IsPackable>
+    <DockerTargetOS>Linux</DockerTargetOS>    
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
+    <SpaRoot>ClientApp\</SpaRoot>
+    <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,37 +24,47 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.0" />
     <PackageReference Include="AspNetCore.ClaimsValueProvider" Version="2.0.0" />
     <PackageReference Include="AspNetCore.Identity.LiteDB" Version="2.6.0" />
-    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.5" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="2.1.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.0.1916590" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MiningMonitor.BackgroundWorker\MiningMonitor.BackgroundWorker.csproj" />
   </ItemGroup>
-    
-  <Target Name="InstallNodeModules" BeforeTargets="Build" Condition="!Exists('node_modules') ">
+  
+  <ItemGroup>
+    <Content Remove="$(SpaRoot)**" />
+    <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
+  </ItemGroup>
+
+  <Target Name="EnsureNodeEnv" BeforeTargets="Build" Condition=" !Exists('$(SpaRoot)node_modules') ">
     <Exec Command="node --version" ContinueOnError="true">
       <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
     </Exec>
-    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project." />
-    <Message Importance="high" Text="Installing node modules..." />
-    <Exec Command="npm install" />
+    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
+    <Message Importance="high" Text="Restoring dependencies using 'npm'. This may take several minutes..." />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
   </Target>
 
-  <Target Name="DebugRunWebpack" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('wwwroot/js/miningmonitor.js')">
-    <Message Importance="high" Text="Performing dev Webpack build..." />
-    <Exec Command="node node_modules/webpack/bin/webpack.js --config webpack.config.js" />
+  <Target Name="DebugRunWebpack" AfterTargets="Build" Condition="'$(Configuration)' == 'Debug'">
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build" />
   </Target>
-
-  <Target Name="ReleaseRunWebpack" AfterTargets="Build" Condition=" '$(Configuration)' != 'Debug'">
-    <Message Importance="high" Text="Performing prod Webpack build..." />
-    <Exec Command="node node_modules/webpack/bin/webpack.js --config webpack.config.js --env.prod" />
+  
+  <Target Name="ReleaseRunWebpack" AfterTargets="Build" Condition="'$(Configuration)' != 'Debug'">
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build-prod" />
   </Target>
-
-  <Target Name="CopyServerJS" AfterTargets="Build" Condition="Exists('ClientApp\dist\miningmonitor-server.js')">
-    <Copy SourceFiles="ClientApp\dist\miningmonitor-server.js" DestinationFolder="$(OutputPath)" />
+  
+  <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
+    <ItemGroup>
+      <DistFiles Include="$(SpaRoot)dist\**" />
+      <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
+        <RelativePath>%(DistFiles.Identity)</RelativePath>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </ResolvedFileToPublish>
+    </ItemGroup>
   </Target>
-
+    
 </Project>

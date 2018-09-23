@@ -16,11 +16,13 @@ namespace MiningMonitor.Test.Web.Controllers
     public class LoginControllerTest
     {
         private Mock<ILoginService> _loginService;
+        private Mock<ISettingsService> _settingsService;
 
         [SetUp]
         public void Setup()
         {
             _loginService = new Mock<ILoginService>();
+            _settingsService = new Mock<ISettingsService>();
         }
 
         [Test]
@@ -33,7 +35,7 @@ namespace MiningMonitor.Test.Web.Controllers
                 .ReturnsAsync(() => (success: true, token: token))
                 .Verifiable();
 
-            var controller = new LoginController(_loginService.Object);
+            var controller = new LoginController(_loginService.Object, _settingsService.Object);
 
             // Act
             var result = await controller.Post(new LoginCredentials {Username = "test-user", Password = "hunter2"});
@@ -51,7 +53,7 @@ namespace MiningMonitor.Test.Web.Controllers
                 .ReturnsAsync(() => (success: false, token: null))
                 .Verifiable();
 
-            var controller = new LoginController(_loginService.Object);
+            var controller = new LoginController(_loginService.Object, _settingsService.Object);
 
             // Act
             var result = await controller.Post(new LoginCredentials {Username = "test-user", Password = "hunter2"});

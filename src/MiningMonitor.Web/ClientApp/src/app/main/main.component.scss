@@ -1,0 +1,10 @@
+@import "../variables.scss";
+        
+.main-content {
+    padding: 25px 25px;
+    margin-top: 32px;
+    min-width: 600px;
+    @media screen and (min-width: $small-screen) {
+        padding-left: $sidebar-width + 25px;
+    }
+}

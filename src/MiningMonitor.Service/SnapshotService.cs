@@ -28,7 +28,7 @@ namespace MiningMonitor.Service
         {
             var end = to ?? DateTime.UtcNow;
             var start = from ?? end.AddMinutes(-60);
-            var snapshots = _collection.Find(snapshot => snapshot.MinerId == minerId && (from == null || snapshot.SnapshotTime >= from) && (to == null || snapshot.SnapshotTime <= to));
+            var snapshots = _collection.Find(snapshot => snapshot.MinerId == minerId && snapshot.SnapshotTime >= start && snapshot.SnapshotTime <= end);
 
             return snapshots.FillGaps(start, end, interval).ToList();
         }
