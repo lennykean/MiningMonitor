@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using MiningMonitor.Model;
+using MiningMonitor.Model.Alerts;
 
 namespace MiningMonitor.Service
 {
@@ -13,7 +13,7 @@ namespace MiningMonitor.Service
         AlertDefinition GetDefinition(Guid id);
         void Add(AlertDefinition alertDefinition);
         bool Update(AlertDefinition alertDefinition);
-        bool DeleteDefiniton(Guid id);
+        bool DeleteDefinition(Guid id);
         bool AcknowledgeAlert(Guid alertId);
     }
 }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-using MiningMonitor.Model;
+using MiningMonitor.Model.Alerts;
 using MiningMonitor.Service;
 
 namespace MiningMonitor.Test.Service
@@ -61,7 +61,7 @@ namespace MiningMonitor.Test.Service
         [HttpDelete("{id}")]
         public StatusCodeResult Delete(Guid id)
         {
-            if (!_alertService.DeleteDefiniton(id))
+            if (!_alertService.DeleteDefinition(id))
                 return NotFound();
 
             return NoContent();

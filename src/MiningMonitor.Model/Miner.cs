@@ -9,7 +9,7 @@ namespace MiningMonitor.Model
 {
     public class Miner
     {
-        [BsonId(false)]
+        [BsonId(autoId: false)]
         public Guid Id { get; set; }
         public string DisplayName { get; set; }
         [Required]

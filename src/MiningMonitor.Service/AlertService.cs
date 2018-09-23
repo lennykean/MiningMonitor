@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using LiteDB;
 
-using MiningMonitor.Model;
+using MiningMonitor.Model.Alerts;
 
 namespace MiningMonitor.Service
 {
@@ -66,7 +66,7 @@ namespace MiningMonitor.Service
             return _alertDefinitionCollection.Update(alertDefinition);
         }
 
-        public bool DeleteDefiniton(Guid id)
+        public bool DeleteDefinition(Guid id)
         {
             return _alertDefinitionCollection.Delete(id);
         }

@@ -15,4 +15,8 @@
     <ProjectReference Include="..\MiningMonitor.Model\MiningMonitor.Model.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Alerts\" />
+  </ItemGroup>
+
 </Project>

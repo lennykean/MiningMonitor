@@ -21,6 +21,7 @@ using MiningMonitor.BackgroundWorker.DataCollector;
 using MiningMonitor.BackgroundWorker.Maintenance;
 using MiningMonitor.BackgroundWorker.Scheduler;
 using MiningMonitor.Model;
+using MiningMonitor.Model.Alerts;
 using MiningMonitor.Service;
 using MiningMonitor.Service.Mapper;
 using MiningMonitor.Web.Configuration;
@@ -44,9 +45,27 @@ namespace MiningMonitor.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
+            BsonMapper.Global.RegisterType<AlertParameters>(
+                parameters => BsonMapper.Global.ToDocument(parameters.GetType(), parameters),
+                bson =>
+                {
+                    var document = bson.AsDocument;
+                    var alertType = Enum.Parse<AlertType>(document[nameof(AlertParameters.AlertType)].AsString);
+
+                    switch (alertType)
+                    {
+                        case AlertType.Threshold:
+                            return BsonMapper.Global.ToObject<ThresholdAlertParameters>(document);
+                        case AlertType.Connectivity:
+                            return BsonMapper.Global.ToObject<ConnectivityAlertParameters>(document);
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                });
+
             services.AddResponseCompression();
             services.AddOptions();
-
+            
             services
                 .AddMvc()
                 .AddJsonOptions(options =>

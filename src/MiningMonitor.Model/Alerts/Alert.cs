@@ -2,11 +2,11 @@
 
 using LiteDB;
 
-namespace MiningMonitor.Model
+namespace MiningMonitor.Model.Alerts
 {
     public class Alert
     {
-        [BsonId(false)]
+        [BsonId(autoId: false)]
         public Guid Id { get; set; }
         public Guid MinerId { get; set; }
         public Guid AlertDefinitionId { get; set; }

@@ -8,7 +8,7 @@ namespace MiningMonitor.Model
 {
     public class Snapshot
     {
-        [BsonId(false)]
+        [BsonId(autoId: false)]
         public Guid Id { get; set; }
         public Guid MinerId { get; set; }
         public DateTime SnapshotTime { get; set; }
