@@ -9,15 +9,15 @@ using MiningMonitor.Service;
 
 namespace MiningMonitor.BackgroundWorker.DataCollector
 {
-    public class DataSyncronizer : IBackgroundWorker
+    public class DataSynchronizer : IBackgroundWorker
     {
         private readonly ISettingsService _settingsService;
         private readonly IMinerService _minerService;
         private readonly ISnapshotService _snapshotService;
         private readonly IServerService _serverService;
-        private readonly ILogger<DataSyncronizer> _logger;
+        private readonly ILogger<DataSynchronizer> _logger;
 
-        public DataSyncronizer(ISettingsService settingsService, IMinerService minerService, ISnapshotService snapshotService, IServerService serverService, ILogger<DataSyncronizer> logger)
+        public DataSynchronizer(ISettingsService settingsService, IMinerService minerService, ISnapshotService snapshotService, IServerService serverService, ILogger<DataSynchronizer> logger)
         {
             _settingsService = settingsService;
             _minerService = minerService;

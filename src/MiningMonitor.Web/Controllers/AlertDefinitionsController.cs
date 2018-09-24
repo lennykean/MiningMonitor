@@ -5,30 +5,30 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using MiningMonitor.Model.Alerts;
-using MiningMonitor.Service;
+using MiningMonitor.Service.Alerts;
 
 namespace MiningMonitor.Test.Service
 {
     [Route("api/[controller]"), Authorize(Policy = "Basic")]
     public class AlertDefinitionsController : Controller
     {
-        private readonly IAlertService _alertService;
+        private readonly IAlertDefinitionService _alertDefinitionService;
 
-        public AlertDefinitionsController(IAlertService alertService)
+        public AlertDefinitionsController(IAlertDefinitionService alertDefinitionService)
         {
-            _alertService = alertService;
+            _alertDefinitionService = alertDefinitionService;
         }
 
         [HttpGet("miner/{minerId}")]
         public IEnumerable<AlertDefinition> GetByMiner(Guid minerId)
         {
-            return _alertService.GetDefinitionsByMiner(minerId);
+            return _alertDefinitionService.GetByMiner(minerId);
         }
 
         [HttpGet("{id}")]
         public ObjectResult Get(Guid id)
         {
-            var alertDefinition = _alertService.GetDefinition(id);
+            var alertDefinition = _alertDefinitionService.GetById(id);
 
             if (alertDefinition == null)
                 return NotFound(null);
@@ -42,7 +42,7 @@ namespace MiningMonitor.Test.Service
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            _alertService.Add(alertDefinition);
+            _alertDefinitionService.Add(alertDefinition);
 
             return Ok(alertDefinition);
         }
@@ -52,7 +52,7 @@ namespace MiningMonitor.Test.Service
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            if (!_alertService.Update(alertDefinition))
+            if (!_alertDefinitionService.Update(alertDefinition))
                 return NotFound(null);
 
             return Ok(alertDefinition);
@@ -61,7 +61,7 @@ namespace MiningMonitor.Test.Service
         [HttpDelete("{id}")]
         public StatusCodeResult Delete(Guid id)
         {
-            if (!_alertService.DeleteDefinition(id))
+            if (!_alertDefinitionService.Delete(id))
                 return NotFound();
 
             return NoContent();

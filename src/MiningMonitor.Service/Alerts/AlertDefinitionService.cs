@@ -5,38 +5,33 @@ using LiteDB;
 
 using MiningMonitor.Model.Alerts;
 
-namespace MiningMonitor.Service
+namespace MiningMonitor.Service.Alerts
 {
-    public class AlertService : IAlertService
+    public class AlertDefinitionService : IAlertDefinitionService
     {
         private readonly LiteCollection<AlertDefinition> _alertDefinitionCollection;
-        private readonly LiteCollection<Alert> _alertCollection;
 
-        public AlertService(LiteCollection<AlertDefinition> alertDefinitionCollection, LiteCollection<Alert> alertCollection)
+        public AlertDefinitionService(LiteCollection<AlertDefinition> alertDefinitionCollection)
         {
             _alertDefinitionCollection = alertDefinitionCollection;
-            _alertCollection = alertCollection;
-
-            _alertCollection.EnsureIndex(a => a.MinerId);
-            _alertCollection.EnsureIndex(a => a.AlertDefinitionId);
         }
 
-        public IEnumerable<AlertDefinition> GetDefinitions()
+        public IEnumerable<AlertDefinition> GetAll()
         {
             return _alertDefinitionCollection.FindAll();
         }
 
-        public IEnumerable<AlertDefinition> GetDefinitionsByMiner(Guid minerId)
+        public IEnumerable<AlertDefinition> GetEnabled()
+        {
+            return _alertDefinitionCollection.Find(a => a.Enabled);
+        }
+
+        public IEnumerable<AlertDefinition> GetByMiner(Guid minerId)
         {
             return _alertDefinitionCollection.Find(a => a.MinerId == minerId);
         }
 
-        public IEnumerable<Alert> GetActiveAlertsByMiner(Guid minerId)
-        {
-            return _alertCollection.Find(a => !a.Acknowledged && a.MinerId == minerId);
-        }
-
-        public AlertDefinition GetDefinition(Guid id)
+        public AlertDefinition GetById(Guid id)
         {
             return _alertDefinitionCollection.FindById(id);
         }
@@ -58,29 +53,28 @@ namespace MiningMonitor.Service
             if (current == null)
                 return false;
 
+            alertDefinition.MinerId = current.MinerId;
+            alertDefinition.Created = current.Created;
+            alertDefinition.LastScan = current.LastScan;
             alertDefinition.Updated = DateTime.UtcNow;
 
             if (!current.Enabled && alertDefinition.Enabled)
                 alertDefinition.LastEnabled = DateTime.UtcNow;
+            else
+                alertDefinition.LastEnabled = current.LastEnabled;
             
             return _alertDefinitionCollection.Update(alertDefinition);
         }
 
-        public bool DeleteDefinition(Guid id)
+        public void MarkScanned(AlertDefinition alertDefinition, DateTime scanTime)
         {
-            return _alertDefinitionCollection.Delete(id);
+            alertDefinition.LastScan = scanTime;
+            _alertDefinitionCollection.Update(alertDefinition);
         }
 
-        public bool AcknowledgeAlert(Guid alertId)
+        public bool Delete(Guid id)
         {
-            var alert = _alertCollection.FindById(alertId);
-            if (alert == null)
-                return false;
-
-            alert.Acknowledged = true;
-            alert.AcknowledgedAt = DateTime.UtcNow;
-
-            return _alertCollection.Update(alert);
+            return _alertDefinitionCollection.Delete(id);
         }
     }
 }

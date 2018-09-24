@@ -14,6 +14,7 @@ namespace MiningMonitor.Model.Alerts
         public Guid Id { get; set; }
         public Guid MinerId { get; set; }
         public string Name { get; set; }
+        public string CustomMessage { get; set; }
         public bool Enabled { get; set; }
         [JsonConverter(typeof(AlertParametersConverter))]
         public AlertParameters Parameters { get; set; }
@@ -21,5 +22,17 @@ namespace MiningMonitor.Model.Alerts
         public DateTime? Updated { get; set; }
         public DateTime? LastEnabled { get; set; }
         public DateTime? LastScan { get; set; }
+
+        [JsonIgnore, BsonIgnore]
+        public DateTime NextScanStartTime
+        {
+            get
+            {
+                if (LastEnabled > LastScan)
+                    return (DateTime)LastEnabled;
+
+                return LastScan ?? Created;
+            }
+        }
     }
 }

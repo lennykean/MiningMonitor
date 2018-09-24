@@ -2,9 +2,9 @@
 
 using MiningMonitor.BackgroundWorker.Scheduler;
 
-namespace MiningMonitor.BackgroundWorker.DataCollector
+namespace MiningMonitor.BackgroundWorker.Alerts
 {
-    public class DataSynchronizerSchedule : ISchedule
+    public class AlertScanSchedule : ISchedule
     {
         public bool DoWorkOnStartup { get; set; }
         public TimeSpan Interval { get; set; }

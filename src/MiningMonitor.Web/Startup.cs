@@ -17,12 +17,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
+using MiningMonitor.BackgroundWorker.Alerts;
 using MiningMonitor.BackgroundWorker.DataCollector;
 using MiningMonitor.BackgroundWorker.Maintenance;
 using MiningMonitor.BackgroundWorker.Scheduler;
 using MiningMonitor.Model;
 using MiningMonitor.Model.Alerts;
+using MiningMonitor.Model.Serialization;
 using MiningMonitor.Service;
+using MiningMonitor.Service.Alerts;
 using MiningMonitor.Service.Mapper;
 using MiningMonitor.Web.Configuration;
 using MiningMonitor.Web.Security;
@@ -45,24 +48,6 @@ namespace MiningMonitor.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
-            BsonMapper.Global.RegisterType<AlertParameters>(
-                parameters => BsonMapper.Global.ToDocument(parameters.GetType(), parameters),
-                bson =>
-                {
-                    var document = bson.AsDocument;
-                    var alertType = Enum.Parse<AlertType>(document[nameof(AlertParameters.AlertType)].AsString);
-
-                    switch (alertType)
-                    {
-                        case AlertType.Threshold:
-                            return BsonMapper.Global.ToObject<ThresholdAlertParameters>(document);
-                        case AlertType.Connectivity:
-                            return BsonMapper.Global.ToObject<ConnectivityAlertParameters>(document);
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-                });
-
             services.AddResponseCompression();
             services.AddOptions();
             
@@ -76,7 +61,7 @@ namespace MiningMonitor.Web
                 });
 
             // Database
-            services.AddSingleton(service => new LiteDatabase(_configuration.GetConnectionString("miningmonitor")));
+            services.AddSingleton(service => new LiteDatabase(_configuration.GetConnectionString("miningmonitor"), new MiningMonitorBsonMapper()));
             services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<Snapshot>());
             services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<Miner>());
             services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<Setting>());
@@ -99,6 +84,7 @@ namespace MiningMonitor.Web
             services.AddTransient<ISettingsService, SettingsService>();
             services.AddTransient<ISnapshotService, SnapshotService>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IAlertDefinitionService, AlertDefinitionService>();
             services.AddTransient<IAlertService, AlertService>();
 
             // API Client
@@ -106,14 +92,20 @@ namespace MiningMonitor.Web
 
             // Background workers
             services.AddSingleton<IHostedService, BackgroundScheduler<SnapshotDataCollector, SnapshotDataCollectorSchedule>>();
-            services.AddSingleton<IHostedService, BackgroundScheduler<DataSyncronizer, DataSyncronizerSchedule>>();
+            services.AddSingleton<IHostedService, BackgroundScheduler<DataSynchronizer, DataSynchronizerSchedule>>();
             services.AddSingleton<IHostedService, BackgroundScheduler<Purge, PurgeSchedule>>();
+            services.AddSingleton<IHostedService, BackgroundScheduler<AlertScan, AlertScanSchedule>>();
             services.ConfigurePOCO<SnapshotDataCollectorSchedule>(_configuration.GetSection("Scheduler:SnapshotDataCollector"));
-            services.ConfigurePOCO<DataSyncronizerSchedule>(_configuration.GetSection("Scheduler:DataSyncronizer"));
+            services.ConfigurePOCO<DataSynchronizerSchedule>(_configuration.GetSection("Scheduler:DataSynchronizer"));
             services.ConfigurePOCO<PurgeSchedule>(_configuration.GetSection("Scheduler:Purge"));
+            services.ConfigurePOCO<AlertScanSchedule>(_configuration.GetSection("Scheduler:AlertScan"));
             services.AddTransient<SnapshotDataCollector>();
-            services.AddTransient<DataSyncronizer>();
+            services.AddTransient<DataSynchronizer>();
             services.AddTransient<Purge>();
+            services.AddTransient<AlertScan>();
+
+            // Alert Scanners
+            services.AddTransient<IAlertScanner, HashrateScanner>();
 
             // Security
             services.AddSingleton(service => new LiteDbContext(service.GetService<Microsoft.AspNetCore.Hosting.IHostingEnvironment>())

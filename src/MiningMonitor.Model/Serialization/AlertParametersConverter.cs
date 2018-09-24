@@ -26,8 +26,8 @@ namespace MiningMonitor.Model.Serialization
             
             switch ((AlertType)value.Value<int>())
             {
-                case AlertType.Threshold:
-                    parameters = new ThresholdAlertParameters();
+                case AlertType.Hashrate:
+                    parameters = new HashrateAlertParameters();
                     break;
                 case AlertType.Connectivity:
                     parameters = new ConnectivityAlertParameters();
