@@ -22,12 +22,14 @@ namespace MiningMonitor.Service.Alerts
 
         public IEnumerable<Alert> Get(bool includeAcknowledged)
         {
-            return _alertCollection.Find(a => includeAcknowledged || a.AcknowledgedAt == null);
+            return _alertCollection.Find(a => includeAcknowledged || a.AcknowledgedAt == null)
+                .OrderBy(a => a.Start);
         }
         
         public IEnumerable<Alert> GetByMiner(Guid minerId, bool includeAcknowledged)
         {
-            return _alertCollection.Find(a => a.MinerId == minerId && (includeAcknowledged || a.AcknowledgedAt == null));
+            return _alertCollection.Find(a => a.MinerId == minerId && (includeAcknowledged || a.AcknowledgedAt == null))
+                .OrderBy(a => a.Start);
         }
 
         public Alert GetById(Guid id)
