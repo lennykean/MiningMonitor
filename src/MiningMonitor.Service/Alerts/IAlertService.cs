@@ -12,8 +12,8 @@ namespace MiningMonitor.Service.Alerts
         Alert GetById(Guid id);
         Alert GetLatestActiveByDefinition(Guid definitionId, DateTime? since = null);
         void Add(Alert alert);
-        bool Acknowledge(Guid alertId);
-        bool End(Guid alertId);
+        bool Update(Alert alert);
         bool Delete(Guid id);
+        bool Acknowledge(Guid alertId);
     }
 }

@@ -21,6 +21,8 @@ namespace MiningMonitor.Model.Serialization
                     {
                         case AlertType.Hashrate:
                             return ToObject<HashrateAlertParameters>(document);
+                        case AlertType.GpuThreshold:
+                            return ToObject<GpuThresholdParameters>(document);
                         case AlertType.Connectivity:
                             return ToObject<ConnectivityAlertParameters>(document);
                         default:

@@ -50,19 +50,14 @@ namespace MiningMonitor.Service.Alerts
         public void Add(Alert alert)
         {
             alert.Id = Guid.NewGuid();
-            alert.Start = DateTime.UtcNow;
+            alert.Start =
+            alert.LastActive = DateTime.UtcNow;
 
             _alertCollection.Insert(alert);
         }
 
-        public bool Acknowledge(Guid alertId)
+        public bool Update(Alert alert)
         {
-            var alert = _alertCollection.FindById(alertId);
-            if (alert == null)
-                return false;
-
-            alert.AcknowledgedAt = DateTime.UtcNow;
-
             return _alertCollection.Update(alert);
         }
 
@@ -80,6 +75,17 @@ namespace MiningMonitor.Service.Alerts
         public bool Delete(Guid id)
         {
             return _alertCollection.Delete(id);
+        }
+
+        public bool Acknowledge(Guid alertId)
+        {
+            var alert = _alertCollection.FindById(alertId);
+            if (alert == null)
+                return false;
+
+            alert.AcknowledgedAt = DateTime.UtcNow;
+
+            return _alertCollection.Update(alert);
         }
     }
 }

@@ -66,15 +66,20 @@ namespace MiningMonitor.Service.Alerts
             return _alertDefinitionCollection.Update(alertDefinition);
         }
 
-        public void MarkScanned(AlertDefinition alertDefinition, DateTime scanTime)
-        {
-            alertDefinition.LastScan = scanTime;
-            _alertDefinitionCollection.Update(alertDefinition);
-        }
-
         public bool Delete(Guid id)
         {
             return _alertDefinitionCollection.Delete(id);
+        }
+
+        public bool MarkScanned(Guid id, DateTime scanTime)
+        {
+            var alertDefinition = _alertDefinitionCollection.FindById(id);
+            if (alertDefinition == null)
+                return false;
+
+            alertDefinition.LastScan = scanTime;
+            _alertDefinitionCollection.Update(alertDefinition);
+            return true;
         }
     }
 }

@@ -29,6 +29,9 @@ namespace MiningMonitor.Model.Serialization
                 case AlertType.Hashrate:
                     parameters = new HashrateAlertParameters();
                     break;
+                case AlertType.GpuThreshold:
+                    parameters = new GpuThresholdParameters();
+                    break;
                 case AlertType.Connectivity:
                     parameters = new ConnectivityAlertParameters();
                     break;

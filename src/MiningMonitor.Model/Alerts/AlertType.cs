@@ -2,8 +2,8 @@
 {
     public enum AlertType
     {
-        Hashrate = 1,
-        GpuThreshold = 2,
-        Connectivity = 3
+        Hashrate = 0,
+        GpuThreshold = 1,
+        Connectivity = 2
     }
 }

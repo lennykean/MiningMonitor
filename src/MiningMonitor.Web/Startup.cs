@@ -26,6 +26,7 @@ using MiningMonitor.Model.Alerts;
 using MiningMonitor.Model.Serialization;
 using MiningMonitor.Service;
 using MiningMonitor.Service.Alerts;
+using MiningMonitor.Service.Alerts.Scanners;
 using MiningMonitor.Service.Mapper;
 using MiningMonitor.Web.Configuration;
 using MiningMonitor.Web.Security;
@@ -86,6 +87,7 @@ namespace MiningMonitor.Web
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IAlertDefinitionService, AlertDefinitionService>();
             services.AddTransient<IAlertService, AlertService>();
+            services.AddTransient<IScanFactory, ScanFactory>();
 
             // API Client
             services.AddTransient<IRemoteManagementClientFactory, RemoteManagementClientFactory>();
@@ -106,6 +108,9 @@ namespace MiningMonitor.Web
 
             // Alert Scanners
             services.AddTransient<IAlertScanner, HashrateScanner>();
+            services.AddTransient<IAlertScanner, GpuHashrateThresholdScanner>();
+            services.AddTransient<IAlertScanner, GpuTemperatureThresholdScanner>();
+            services.AddTransient<IAlertScanner, GpuFanSpeedThresholdScanner>();
 
             // Security
             services.AddSingleton(service => new LiteDbContext(service.GetService<Microsoft.AspNetCore.Hosting.IHostingEnvironment>())

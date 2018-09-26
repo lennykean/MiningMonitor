@@ -13,7 +13,7 @@ namespace MiningMonitor.Service.Alerts
         AlertDefinition GetById(Guid id);
         void Add(AlertDefinition alertDefinition);
         bool Update(AlertDefinition alertDefinition);
-        void MarkScanned(AlertDefinition alertDefinition, DateTime scanTime);
         bool Delete(Guid id);
+        bool MarkScanned(Guid id, DateTime scanTime);
     }
 }
