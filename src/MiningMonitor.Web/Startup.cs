@@ -160,9 +160,11 @@ namespace MiningMonitor.Web
 
             services.AddSpaStaticFiles(configuration =>
             {
-                configuration.RootPath = "ClientApp/dist";
+                if (Environment.GetEnvironmentVariable("ANGULAR_DEV_SERVER") == "true")
+                    configuration.RootPath = "ClientApp";
+                else 
+                    configuration.RootPath = "ClientApp/dist";
             });
-
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider service)
