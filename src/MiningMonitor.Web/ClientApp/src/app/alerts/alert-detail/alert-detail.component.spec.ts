@@ -1,5 +1,8 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 
+import { MinerNamePipe } from '../../miner-name.pipe';
 import { AlertDetailComponent } from './alert-detail.component';
 
 describe('AlertDetailComponent', () => {
@@ -8,7 +11,14 @@ describe('AlertDetailComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [AlertDetailComponent]
+            declarations: [
+                AlertDetailComponent,
+                MinerNamePipe
+            ],
+            imports: [
+                HttpClientTestingModule,
+                RouterTestingModule
+            ]
         }).compileComponents();
     }));
 

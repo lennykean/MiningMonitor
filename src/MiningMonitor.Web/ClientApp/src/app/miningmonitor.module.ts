@@ -30,6 +30,7 @@ import { GpuChartComponent } from './gpu-chart/gpu-chart.component';
 import { AlertsComponent } from './alerts/alerts/alerts.component';
 import { AlertBadgeComponent } from './alerts/alert-badge/alert-badge.component';
 import { AlertDetailComponent } from './alerts/alert-detail/alert-detail.component';
+import { MinerNamePipe } from './miner-name.pipe';
 
 library.add(fas);
 
@@ -56,6 +57,7 @@ library.add(fas);
         AlertsComponent,
         AlertBadgeComponent,
         AlertDetailComponent,
+        MinerNamePipe,
     ],
     imports: [
         BrowserModule,

@@ -1,3 +1,4 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AlertBadgeComponent } from './alert-badge.component';
@@ -8,7 +9,10 @@ describe('AlertBadgeComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [AlertBadgeComponent]
+            declarations: [AlertBadgeComponent],
+            imports: [
+                HttpClientTestingModule
+            ]
         }).compileComponents();
     }));
 

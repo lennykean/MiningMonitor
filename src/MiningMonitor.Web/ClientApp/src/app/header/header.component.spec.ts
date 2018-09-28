@@ -2,6 +2,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
+import { AlertBadgeComponent } from '../alerts/alert-badge/alert-badge.component';
 import { HeaderComponent } from './header.component';
 
 describe('HeaderComponent', () => {
@@ -10,7 +11,10 @@ describe('HeaderComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [HeaderComponent],
+            declarations: [
+                AlertBadgeComponent,
+                HeaderComponent
+            ],
             imports: [
                 HttpClientTestingModule,
                 FontAwesomeModule

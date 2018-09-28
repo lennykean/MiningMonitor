@@ -3,6 +3,7 @@ import { TestBed, async } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
+import { AlertBadgeComponent } from './alerts/alert-badge/alert-badge.component';
 import { HeaderComponent } from './header/header.component';
 import { MiningMonitorComponent } from './miningmonitor.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
@@ -11,8 +12,9 @@ describe('MiningMonitorComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [
-                MiningMonitorComponent,
+                AlertBadgeComponent,
                 HeaderComponent,
+                MiningMonitorComponent,
                 SidebarComponent
             ],
             imports: [
