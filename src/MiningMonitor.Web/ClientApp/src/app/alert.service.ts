@@ -10,7 +10,6 @@ import { Alert } from '../models/alert';
 export class AlertService {
     private static readonly baseUrl = '/api/alerts';
 
-    private _alerts: Alert[];
     private _alertsSubject: ReplaySubject<Alert[]>;
 
     constructor(
@@ -25,20 +24,18 @@ export class AlertService {
         return this._alertsSubject;
     }
 
+    public async Get(id: string) {
+        return await this.http.get<Alert>(`${AlertService.baseUrl}/${id}`).toPromise();
+    }
+
     public async Acknowledge(id: string) {
-        const result = this.http.post(`${AlertService.baseUrl}/${id}/acknowledge`, null).toPromise();
-
-        this._alerts = [...this._alerts];
-        this._alerts.splice(this._alerts.findIndex(a => a.id === id), 1);
-        this._alertsSubject.next(this._alerts);
-
-        await result;
+        await this.http.post(`${AlertService.baseUrl}/${id}/acknowledge`, null).toPromise();
+        this.RefreshAlerts();
     }
 
     private RefreshAlerts() {
         this.http.get<Alert[]>(AlertService.baseUrl).subscribe(alerts => {
-            this._alerts = alerts;
-            this._alertsSubject.next(this._alerts);
+            this._alertsSubject.next(alerts);
         });
     }
 }

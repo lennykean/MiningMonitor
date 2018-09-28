@@ -1,11 +1,30 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+
+import { Alert } from '../../../models/Alert';
+import { AlertService } from '../../alert.service';
 
 @Component({
     templateUrl: './alert-detail.component.html',
     styleUrls: ['./alert-detail.component.scss']
 })
 export class AlertDetailComponent implements OnInit {
-    constructor() { }
-    ngOnInit() {
+    public alert: Alert;
+
+    constructor(
+        private alertService: AlertService,
+        private route: ActivatedRoute,
+        private router: Router) {
+    }
+
+    public ngOnInit() {
+        this.route.paramMap.subscribe(async paramMap => {
+            this.alert = await this.alertService.Get(paramMap.get('id'));
+        });
+    }
+
+    public async Acknowledge(id: string) {
+        await this.alertService.Acknowledge(id);
+        this.router.navigateByUrl('/alerts');
     }
 }

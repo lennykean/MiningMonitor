@@ -1,3 +1,37 @@
-<p>
-    alert-detail works!
-</p>
+<div *ngIf="alert; else loading;">
+    <ul class="list-group">
+        <li class="list-group-item">
+            <div class="d-flex justify-content-between">
+                <h5>Alert</h5>
+                <button class="btn btn-sm btn-primary" *ngIf="!alert.acknowledged" (click)="Acknowledge(alert.id)">Acknowledge</button>
+                <strong class="text-info" *ngIf="alert.acknowledged">Acknowledged</strong>
+            </div>
+            <p>{{ alert.message }}</p>
+        </li>
+        <li class="list-group-item d-flex justify-content-between">
+            <strong>Status</strong>
+            <span>{{ alert.active ? 'Active' : 'Inactive' }}</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between">
+            <strong>Started</strong>
+            <span>{{ alert.start | date:'short' }}</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between" *ngIf="alert.active">
+            <strong>Last Active</strong>
+            <span>{{ alert.lastActive | date:'short' }}</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between" *ngIf="!alert.active">
+            <strong>Ended</strong>
+            <span>{{ alert.end | date:'short' }}</span>
+        </li>
+        <li class="list-group-item">
+            <a routerLink="/miner/{{ alert.minerId }}">Miner</a>
+        </li>
+        <li class="list-group-item">
+            <a routerLink="/alertdefinition/{{ alert.minerId }}">Alert Definition</a>
+        </li>
+    </ul>
+</div>
+<ng-template #loading>
+    Loading Alert...
+</ng-template>
