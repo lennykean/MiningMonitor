@@ -1,0 +1,28 @@
+<h3>Alerts</h3>
+
+<table class="table table-hover">
+    <thead>
+        <th class="icon"></th>
+        <th class="message">Alert</th>
+        <th class="status">Status</th>
+        <th class="start">Started</th>
+        <th class="end">Ended</th>
+        <th class="acknowledge"></th>
+    </thead>
+    <tbody>
+        <tr *ngFor="let alert of alerts | async" [ngClass]="{'table-danger': alert.active, 'table-warning': !alert.active}">
+            <td class="icon" title="View Alert Details">
+                <a routerLink="/alert/{{ alert.id }}">
+                    <fa-icon icon="exclamation-triangle"></fa-icon>
+                </a>
+            </td>
+            <td class="message" [title]="alert.message">{{ alert.message }}</td>
+            <td class="status">{{ alert.active ? 'Active' : 'Inactive' }}</td>
+            <td class="start">{{ alert.start | date:'short' }}</td>
+            <td class="end">{{ alert.end | date:'short' }}</td>
+            <td class="acknowledge">
+                <button class="btn btn-secondary btn-sm" *ngIf="!alert.acknowledged" (click)="Acknowledge(alert.id)">Acknowledge</button>
+            </td>
+        </tr>
+    </tbody>
+</table>

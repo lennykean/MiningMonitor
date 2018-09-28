@@ -15,11 +15,11 @@
                 <td>{{ Status(collector) }}</td>
                 <td>
                     <button class="btn-sm btn-outline-success" *ngIf="collector.approved !== true" (click)="Approve(collector)">
-                        <fa-icon [icon]="'check'"></fa-icon> Approve
+                        <fa-icon icon="check"></fa-icon> Approve
                     </button>
                     &nbsp;
                     <button class="btn-sm btn-outline-danger" *ngIf="collector.approved !== false" (click)="Reject(collector)">
-                        <fa-icon [icon]="'times'"></fa-icon> Reject
+                        <fa-icon icon="times"></fa-icon> Reject
                     </button>
                 </td>
                 <td>

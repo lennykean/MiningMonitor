@@ -23,7 +23,8 @@ namespace MiningMonitor.Service.Alerts
         public IEnumerable<Alert> Get(bool includeAcknowledged)
         {
             return _alertCollection.Find(a => includeAcknowledged || a.AcknowledgedAt == null)
-                .OrderBy(a => a.Start);
+                .OrderByDescending(a => a.Active)
+                .ThenBy(a => a.Start);
         }
         
         public IEnumerable<Alert> GetByMiner(Guid minerId, bool includeAcknowledged)

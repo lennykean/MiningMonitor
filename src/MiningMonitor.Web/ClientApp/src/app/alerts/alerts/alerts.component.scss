@@ -1,0 +1,31 @@
+.btn-sm {
+    padding: 0 0.5rem;
+}
+table tr {
+    white-space: nowrap;
+}
+.icon {
+    width: 50px;
+    a, a:hover {
+        color: #fff;
+    }
+}
+.message {
+    max-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.status {
+    width: 100px;
+}
+.start, .end {
+    width: 150px;
+}
+.acknowledge {
+    width: 125px;
+}
+@media (max-width: 700px) {
+    .status, .end, .acknowledge {
+        display: none;
+    }
+}

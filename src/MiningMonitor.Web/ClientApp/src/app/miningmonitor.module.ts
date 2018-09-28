@@ -27,6 +27,9 @@ import { UsersComponent } from './admin/users/users.component';
 import { CollectorsComponent } from './admin/collectors/collectors.component';
 import { UserCreateComponent } from './admin/user-create/user-create.component';
 import { GpuChartComponent } from './gpu-chart/gpu-chart.component';
+import { AlertsComponent } from './alerts/alerts/alerts.component';
+import { AlertBadgeComponent } from './alerts/alert-badge/alert-badge.component';
+import { AlertDetailComponent } from './alerts/alert-detail/alert-detail.component';
 
 library.add(fas);
 
@@ -50,6 +53,9 @@ library.add(fas);
         UsersComponent,
         UserCreateComponent,
         GpuChartComponent,
+        AlertsComponent,
+        AlertBadgeComponent,
+        AlertDetailComponent,
     ],
     imports: [
         BrowserModule,

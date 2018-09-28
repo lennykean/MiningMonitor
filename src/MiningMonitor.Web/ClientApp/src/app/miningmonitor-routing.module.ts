@@ -4,6 +4,8 @@ import { RouterModule } from '@angular/router';
 import { AdminComponent } from './admin/admin.component';
 import { AuthGuard } from './auth.guard';
 import { CollectorsComponent } from './admin/collectors/collectors.component';
+import { AlertDetailComponent } from './alerts/alert-detail/alert-detail.component';
+import { AlertsComponent } from './alerts/alerts/alerts.component';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { LogoutComponent } from './logout/logout.component';
@@ -30,6 +32,8 @@ import { UsersComponent } from './admin/users/users.component';
                             { path: 'users/new', component: UserCreateComponent }
                         ]
                     },
+                    { path: 'alert/:id', component: AlertDetailComponent },
+                    { path: 'alerts', component: AlertsComponent },
                     { path: 'miner/new', component: MinerCreateComponent },
                     { path: 'miner/:id', component: MinerEditComponent },
                     { path: 'miners', component: MinersComponent },
