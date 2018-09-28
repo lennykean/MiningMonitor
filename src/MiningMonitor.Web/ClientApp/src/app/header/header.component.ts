@@ -4,7 +4,8 @@ import { LoginService } from '../login.service';
 
 @Component({
     selector: 'miningmonitor-header',
-    templateUrl: './header.component.html'
+    templateUrl: './header.component.html',
+    styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent {
     constructor(

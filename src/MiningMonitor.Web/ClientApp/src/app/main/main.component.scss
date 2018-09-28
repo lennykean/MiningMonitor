@@ -1,6 +1,7 @@
 @import "../variables.scss";
         
 .main-content {
+    min-width: $min-width;
     padding: 25px 25px;
     margin-top: 32px;
     @media screen and (min-width: $small-screen) {
