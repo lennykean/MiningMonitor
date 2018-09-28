@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ReplaySubject, Observable } from 'rxjs';
+import { Observable, timer, BehaviorSubject } from 'rxjs';
 
 import { Alert } from '../models/alert';
 
@@ -10,7 +10,7 @@ import { Alert } from '../models/alert';
 export class AlertService {
     private static readonly baseUrl = '/api/alerts';
 
-    private _alertsSubject: ReplaySubject<Alert[]>;
+    private _alertsSubject: BehaviorSubject<Alert[]>;
 
     constructor(
         private http: HttpClient) {
@@ -18,8 +18,8 @@ export class AlertService {
 
     public get alerts(): Observable<Alert[]> {
         if (!this._alertsSubject) {
-            this._alertsSubject = new ReplaySubject<Alert[]>();
-            this.RefreshAlerts();
+            this._alertsSubject = new BehaviorSubject<Alert[]>([]);
+            timer(0, 15000).subscribe(() => this.RefreshAlerts());
         }
         return this._alertsSubject;
     }

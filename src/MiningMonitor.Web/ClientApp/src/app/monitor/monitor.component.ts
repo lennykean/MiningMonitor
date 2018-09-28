@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { timer, Observable, Subscription } from 'rxjs';
 
@@ -12,7 +12,7 @@ import { SnapshotService } from '../snapshot.service';
     templateUrl: './monitor.component.html',
     styleUrls: ['./monitor.component.scss']
 })
-export class MonitorComponent implements OnInit {
+export class MonitorComponent implements OnInit, OnDestroy {
     public timer: Observable<number>;
     public subscription: Subscription;
     public snapshot: Snapshot;
@@ -41,6 +41,10 @@ export class MonitorComponent implements OnInit {
                 this.dataSet = this.TransformSnapshots(snapshots);
             });
         });
+    }
+
+    public ngOnDestroy() {
+        this.subscription.unsubscribe();
     }
 
     private TransformSnapshots(stats: Snapshot[]) {

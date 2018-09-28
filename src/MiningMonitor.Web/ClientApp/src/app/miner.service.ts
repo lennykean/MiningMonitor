@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, ReplaySubject } from 'rxjs';
+import { Observable, ReplaySubject, BehaviorSubject } from 'rxjs';
 
 import { Miner } from '../models/Miner';
 
@@ -8,7 +8,7 @@ import { Miner } from '../models/Miner';
 export class MinerService {
     private static readonly baseUrl = '/api/miners';
 
-    private _miners: ReplaySubject<Miner[]>;
+    private _miners: BehaviorSubject<Miner[]>;
 
     constructor(
         private http: HttpClient) {
@@ -16,7 +16,7 @@ export class MinerService {
 
     public get miners(): Observable<Miner[]> {
         if (!this._miners) {
-            this._miners = new ReplaySubject<Miner[]>();
+            this._miners = new BehaviorSubject<Miner[]>([]);
             this.RefreshMiners();
         }
         return this._miners;
