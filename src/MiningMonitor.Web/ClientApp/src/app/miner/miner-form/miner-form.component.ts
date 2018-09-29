@@ -3,7 +3,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Miner } from '../../../models/Miner';
 
 @Component({
-    selector: 'miningmonitor-miner-form',
+    selector: 'mm-miner-form',
     templateUrl: './miner-form.component.html',
     styleUrls: ['./miner-form.component.scss']
 })

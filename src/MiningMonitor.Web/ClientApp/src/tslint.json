@@ -4,13 +4,13 @@
         "directive-selector": [
             true,
             "attribute",
-            "miningmonitor",
+            "mm",
             "camelCase"
         ],
         "component-selector": [
             true,
             "element",
-            "miningmonitor",
+            "mm",
             "kebab-case"
         ]
     }

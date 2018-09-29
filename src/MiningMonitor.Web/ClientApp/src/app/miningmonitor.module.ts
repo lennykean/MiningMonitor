@@ -9,18 +9,9 @@ import { fas } from '@fortawesome/free-solid-svg-icons';
 
 import { AdminComponent } from './admin/admin.component';
 import { AlertBadgeComponent } from './alerts/alert-badge/alert-badge.component';
-import {
-    AlertDefinitionConnectivityParametersComponent
-} from './alerts/alert-definition-connectivity-parameters/alert-definition-connectivity-parameters.component';
 import { AlertDefinitionCreateComponent } from './alerts/alert-definition-create/alert-definition-create.component';
 import { AlertDefinitionEditComponent } from './alerts/alert-definition-edit/alert-definition-edit.component';
 import { AlertDefinitionFormComponent } from './alerts/alert-definition-form/alert-definition-form.component';
-import {
-    AlertDefinitionGpuThresholdParametersComponent
-} from './alerts/alert-definition-gpu-threshold-parameters/alert-definition-gpu-threshold-parameters.component';
-import {
-    AlertDefinitionHashrateParametersComponent
-} from './alerts/alert-definition-hashrate-parameters/alert-definition-hashrate-parameters.component';
 import { AlertDefinitionParametersComponent } from './alerts/alert-definition-parameters/alert-definition-parameters.component';
 import { AlertDefinitionsComponent } from './alerts/alert-definitions/alert-definitions.component';
 import { AlertDetailComponent } from './alerts/alert-detail/alert-detail.component';
@@ -46,6 +37,9 @@ import { CollectorsComponent } from './admin/collectors/collectors.component';
 import { UserCreateComponent } from './admin/user-create/user-create.component';
 import { GpuChartComponent } from './miner/gpu-chart/gpu-chart.component';
 import { MinerNamePipe } from './miner-name.pipe';
+import { ConnectivityParametersComponent } from './alerts/connectivity-parameters/connectivity-parameters.component';
+import { GpuThresholdParametersComponent } from './alerts/gpu-threshold-parameters/gpu-threshold-parameters.component';
+import { HashrateParametersComponent } from './alerts/hashrate-parameters/hashrate-parameters.component';
 
 library.add(fas);
 
@@ -53,19 +47,19 @@ library.add(fas);
     declarations: [
         AdminComponent,
         AlertBadgeComponent,
-        AlertDefinitionConnectivityParametersComponent,
         AlertDefinitionCreateComponent,
         AlertDefinitionEditComponent,
         AlertDefinitionFormComponent,
-        AlertDefinitionGpuThresholdParametersComponent,
-        AlertDefinitionHashrateParametersComponent,
         AlertDefinitionParametersComponent,
         AlertDefinitionsComponent,
         AlertDetailComponent,
         AlertsComponent,
         CollectorsComponent,
+        ConnectivityParametersComponent,
         EnumPipe,
         GpuChartComponent,
+        GpuThresholdParametersComponent,
+        HashrateParametersComponent,
         HeaderComponent,
         HomeComponent,
         MainComponent,

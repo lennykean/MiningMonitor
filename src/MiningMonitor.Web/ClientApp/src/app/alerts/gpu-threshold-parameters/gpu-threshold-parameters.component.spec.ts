@@ -2,16 +2,16 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 
 import { EnumPipe } from '../../enum.pipe';
-import { AlertDefinitionGpuThresholdParametersComponent } from './alert-definition-gpu-threshold-parameters.component';
+import { GpuThresholdParametersComponent } from './gpu-threshold-parameters.component';
 
-describe('AlertDefinitionGpuThresholdParametersComponent', () => {
-    let component: AlertDefinitionGpuThresholdParametersComponent;
-    let fixture: ComponentFixture<AlertDefinitionGpuThresholdParametersComponent>;
+describe('GpuThresholdParametersComponent', () => {
+    let component: GpuThresholdParametersComponent;
+    let fixture: ComponentFixture<GpuThresholdParametersComponent>;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [
-                AlertDefinitionGpuThresholdParametersComponent,
+                GpuThresholdParametersComponent,
                 EnumPipe
             ],
             imports: [
@@ -21,7 +21,7 @@ describe('AlertDefinitionGpuThresholdParametersComponent', () => {
     }));
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(AlertDefinitionGpuThresholdParametersComponent);
+        fixture = TestBed.createComponent(GpuThresholdParametersComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

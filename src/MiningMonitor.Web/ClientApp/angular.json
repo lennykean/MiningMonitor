@@ -7,7 +7,7 @@
             "root": "",
             "sourceRoot": "src",
             "projectType": "application",
-            "prefix": "miningmonitor",
+            "prefix": "mm",
             "schematics": {},
             "targets": {
                 "build": {

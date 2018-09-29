@@ -5,7 +5,8 @@
         <fa-icon icon="heartbeat"></fa-icon>
         Monitor {{ miner.name }}
     </a>
-    <miningmonitor-miner-form [miner]="miner" [validationErrors]="validationErrors" (save)="Save($event)"></miningmonitor-miner-form>
+    <mm-miner-form [miner]="miner" [validationErrors]="validationErrors" (save)="Save($event)">
+    </mm-miner-form>
 </div>
 <ng-template #loading>
     Loading Miner...

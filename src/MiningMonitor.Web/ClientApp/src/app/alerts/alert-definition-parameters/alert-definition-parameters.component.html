@@ -22,11 +22,9 @@
         </div>
     </div>
     <div [ngSwitch]="alertParameters.alertType">
-        <miningmonitor-alert-definition-hashrate-parameters *ngSwitchCase="alertType.Hashrate">
-        </miningmonitor-alert-definition-hashrate-parameters>
-        <miningmonitor-alert-definition-gpu-threshold-parameters *ngSwitchCase="alertType.GpuThreshold">
-        </miningmonitor-alert-definition-gpu-threshold-parameters>
-        <miningmonitor-alert-definition-connectivity-parameters *ngSwitchCase="alertType.Connectivity">
-        </miningmonitor-alert-definition-connectivity-parameters>
+        <mm-hashrate-parameters *ngSwitchCase="alertType.Hashrate">
+            </mm-hashrate-parameters>
+            <mm-gpu-threshold-parameters *ngSwitchCase="alertType.GpuThreshold"></mm-gpu-threshold-parameters>
+            <mm-connectivity-parameters *ngSwitchCase="alertType.Connectivity"></mm-connectivity-parameters>
     </div>
 </fieldset>

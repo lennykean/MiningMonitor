@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { LoginService } from '../login.service';
 
 @Component({
-    selector: 'miningmonitor-header',
+    selector: 'mm-header',
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.scss']
 })

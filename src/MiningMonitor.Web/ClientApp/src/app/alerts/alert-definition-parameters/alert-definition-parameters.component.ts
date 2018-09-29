@@ -4,7 +4,7 @@ import { AlertParameters } from '../../../models/AlertParameters';
 import { AlertType } from '../../../models/AlertType';
 
 @Component({
-    selector: 'miningmonitor-alert-definition-parameters',
+    selector: 'mm-alert-definition-parameters',
     templateUrl: './alert-definition-parameters.component.html'
 })
 export class AlertDefinitionParametersComponent {

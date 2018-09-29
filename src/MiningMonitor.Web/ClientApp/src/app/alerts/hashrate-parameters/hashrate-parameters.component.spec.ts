@@ -1,15 +1,15 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 
-import { AlertDefinitionHashrateParametersComponent } from './alert-definition-hashrate-parameters.component';
+import { HashrateParametersComponent } from './hashrate-parameters.component';
 
-describe('AlertDefinitionHashrateParametersComponent', () => {
-    let component: AlertDefinitionHashrateParametersComponent;
-    let fixture: ComponentFixture<AlertDefinitionHashrateParametersComponent>;
+describe('HashrateParametersComponent', () => {
+    let component: HashrateParametersComponent;
+    let fixture: ComponentFixture<HashrateParametersComponent>;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [AlertDefinitionHashrateParametersComponent],
+            declarations: [HashrateParametersComponent],
             imports: [
                 FormsModule
             ]
@@ -17,7 +17,7 @@ describe('AlertDefinitionHashrateParametersComponent', () => {
     }));
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(AlertDefinitionHashrateParametersComponent);
+        fixture = TestBed.createComponent(HashrateParametersComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

@@ -5,7 +5,7 @@ import { Miner } from '../../models/Miner';
 import { MinerService } from '../miner/miner.service';
 
 @Component({
-    selector: 'miningmonitor-sidebar',
+    selector: 'mm-sidebar',
     templateUrl: './sidebar.component.html',
     styleUrls: ['./sidebar.component.scss']
 })

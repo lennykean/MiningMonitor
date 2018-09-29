@@ -3,10 +3,10 @@ import { Component, Input } from '@angular/core';
 import { HashrateAlertParameters } from '../../../models/HashrateAlertParameters';
 
 @Component({
-    selector: 'miningmonitor-alert-definition-hashrate-parameters',
-    templateUrl: './alert-definition-hashrate-parameters.component.html'
+    selector: 'mm-hashrate-parameters',
+    templateUrl: './hashrate-parameters.component.html'
 })
-export class AlertDefinitionHashrateParametersComponent {
+export class HashrateParametersComponent {
     @Input()
     public alertParameters: HashrateAlertParameters = {
         alertMessage: null,

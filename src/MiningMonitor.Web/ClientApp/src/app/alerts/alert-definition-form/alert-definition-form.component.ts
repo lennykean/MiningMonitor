@@ -6,7 +6,7 @@ import { Miner } from '../../../models/Miner';
 import { MinerService } from '../../miner/miner.service';
 
 @Component({
-    selector: 'miningmonitor-alert-definition-form',
+    selector: 'mm-alert-definition-form',
     templateUrl: './alert-definition-form.component.html',
     styleUrls: ['./alert-definition-form.component.scss']
 })

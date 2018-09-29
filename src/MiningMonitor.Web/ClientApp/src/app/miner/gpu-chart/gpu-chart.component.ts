@@ -3,7 +3,7 @@ import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { GpuDataIndex } from '../../../models/GpuDataIndex';
 
 @Component({
-    selector: 'miningmonitor-gpu-chart',
+    selector: 'mm-gpu-chart',
     templateUrl: './gpu-chart.component.html',
     styleUrls: ['./gpu-chart.component.scss']
 })

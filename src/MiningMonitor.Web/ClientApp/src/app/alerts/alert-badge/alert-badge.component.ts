@@ -5,7 +5,7 @@ import { Alert } from '../../../models/Alert';
 import { AlertService } from '../alert.service';
 
 @Component({
-    selector: 'miningmonitor-alert-badge',
+    selector: 'mm-alert-badge',
     templateUrl: './alert-badge.component.html'
 })
 export class AlertBadgeComponent implements OnInit {

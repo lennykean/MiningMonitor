@@ -3,7 +3,8 @@
     <h4>{{ snapshot.minerStatistics && snapshot.minerStatistics.ethereum.hashrate / 1000 || '--' }} MH/s</h4>
     <div class="row">
         <div class="col-md-6" *ngFor="let data of dataSet; index as i">
-            <miningmonitor-gpu-chart name="GPU {{ i + 1 }}" [data]="data"></miningmonitor-gpu-chart>
+            <mm-gpu-chart name="GPU {{ i + 1 }}" [data]="data">
+            </mm-gpu-chart>
         </div>
     </div>
 </div>
