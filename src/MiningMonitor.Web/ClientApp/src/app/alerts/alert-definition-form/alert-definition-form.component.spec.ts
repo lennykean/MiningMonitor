@@ -1,13 +1,13 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { EnumPipe } from '../../enum.pipe';
 import { AlertDefinitionParametersComponent } from '../alert-definition-parameters/alert-definition-parameters.component';
-import { AlertDefinitionFormComponent } from './alert-definition-form.component';
 import { ConnectivityParametersComponent } from '../connectivity-parameters/connectivity-parameters.component';
 import { GpuThresholdParametersComponent } from '../gpu-threshold-parameters/gpu-threshold-parameters.component';
 import { HashrateParametersComponent } from '../hashrate-parameters/hashrate-parameters.component';
+import { AlertDefinitionFormComponent } from './alert-definition-form.component';
 
 describe('AlertDefinitionFormComponent', () => {
     let component: AlertDefinitionFormComponent;

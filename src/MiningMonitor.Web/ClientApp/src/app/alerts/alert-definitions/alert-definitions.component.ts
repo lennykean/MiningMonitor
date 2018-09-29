@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
-import { AlertDefinitionsService } from '../alert-definitions.service';
 import { AlertDefinition } from '../../../models/AlertDefinition';
+import { AlertDefinitionsService } from '../alert-definitions.service';
 
 @Component({
     templateUrl: './alert-definitions.component.html'

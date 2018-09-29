@@ -2,8 +2,8 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 
-import { AlertDefinitionsComponent } from './alert-definitions.component';
 import { MinerNamePipe } from '../../miner-name.pipe';
+import { AlertDefinitionsComponent } from './alert-definitions.component';
 
 describe('AlertDefinitionsComponent', () => {
     let component: AlertDefinitionsComponent;

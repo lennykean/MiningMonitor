@@ -4,8 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
-import { MinerEditComponent } from './miner-edit.component';
 import { MinerFormComponent } from '../miner-form/miner-form.component';
+import { MinerEditComponent } from './miner-edit.component';
 
 describe('MinerEditComponent', () => {
     let component: MinerEditComponent;

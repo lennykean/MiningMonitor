@@ -1,7 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-import { MinerService } from './miner/miner.service';
 import { map } from 'rxjs/operators';
+import { MinerService } from './miner/miner.service';
 
 @Pipe({
     name: 'minerName'

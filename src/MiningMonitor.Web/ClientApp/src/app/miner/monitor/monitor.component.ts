@@ -1,6 +1,6 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { timer, Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, timer } from 'rxjs';
 
 import { GpuDataIndex } from '../../../models/GpuDataIndex';
 import { Miner } from '../../../models/Miner';
