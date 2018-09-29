@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { AlertDefinition } from '../../models/AlertDefinition';
+import { AlertDefinition } from '../models/AlertDefinition';
 
 @Injectable({
     providedIn: 'root'

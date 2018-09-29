@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { Miner } from '../../../models/Miner';
+import { Miner } from '../../models/Miner';
 import { MinerService } from '../miner.service';
 
 @Component({

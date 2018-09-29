@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 
-import { GpuThresholdParameters } from '../../../models/GpuThresholdParameters';
-import { Metric } from '../../../models/Metric';
+import { GpuThresholdParameters } from '../../models/GpuThresholdParameters';
+import { Metric } from '../../models/Metric';
 
 @Component({
     selector: 'mm-gpu-threshold-parameters',

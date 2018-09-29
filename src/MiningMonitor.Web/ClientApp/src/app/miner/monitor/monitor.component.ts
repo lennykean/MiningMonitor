@@ -2,9 +2,9 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, Subscription, timer } from 'rxjs';
 
-import { GpuDataIndex } from '../../../models/GpuDataIndex';
-import { Miner } from '../../../models/Miner';
-import { Snapshot } from '../../../models/Snapshot';
+import { GpuDataIndex } from '../../models/GpuDataIndex';
+import { Miner } from '../../models/Miner';
+import { Snapshot } from '../../models/Snapshot';
 import { MinerService } from '../miner.service';
 import { SnapshotService } from '../snapshot.service';
 

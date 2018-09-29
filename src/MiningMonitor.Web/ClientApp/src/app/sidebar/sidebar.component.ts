@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { Miner } from '../../models/Miner';
 import { MinerService } from '../miner/miner.service';
+import { Miner } from '../models/Miner';
 
 @Component({
     selector: 'mm-sidebar',

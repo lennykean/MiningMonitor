@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
-import { Miner } from '../../../models/Miner';
+import { Miner } from '../../models/Miner';
 
 @Component({
     selector: 'mm-miner-form',

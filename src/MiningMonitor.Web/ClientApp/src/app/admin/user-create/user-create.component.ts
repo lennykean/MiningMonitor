@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { User } from '../../../models/User';
+import { User } from '../../models/User';
 import { UserService } from '../user.service';
 
 @Component({

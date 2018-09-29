@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { Alert } from '../../../models/Alert';
+import { Alert } from '../../models/Alert';
 import { AlertService } from '../alert.service';
 
 @Component({

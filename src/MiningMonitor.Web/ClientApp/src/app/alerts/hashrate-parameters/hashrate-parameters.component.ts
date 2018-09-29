@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { HashrateAlertParameters } from '../../../models/HashrateAlertParameters';
+import { HashrateAlertParameters } from '../../models/HashrateAlertParameters';
 
 @Component({
     selector: 'mm-hashrate-parameters',

@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 
-import { AlertParameters } from '../../../models/AlertParameters';
-import { AlertType } from '../../../models/AlertType';
+import { AlertParameters } from '../../models/AlertParameters';
+import { AlertType } from '../../models/AlertType';
 
 @Component({
     selector: 'mm-alert-definition-parameters',

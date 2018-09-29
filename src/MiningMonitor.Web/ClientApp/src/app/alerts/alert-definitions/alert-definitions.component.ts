@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { AlertDefinition } from '../../../models/AlertDefinition';
+import { AlertDefinition } from '../../models/AlertDefinition';
 import { AlertDefinitionsService } from '../alert-definitions.service';
 
 @Component({

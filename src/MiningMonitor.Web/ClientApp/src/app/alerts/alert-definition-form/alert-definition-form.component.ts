@@ -1,9 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { AlertDefinition } from '../../../models/AlertDefinition';
-import { Miner } from '../../../models/Miner';
 import { MinerService } from '../../miner/miner.service';
+import { AlertDefinition } from '../../models/AlertDefinition';
+import { Miner } from '../../models/Miner';
 
 @Component({
     selector: 'mm-alert-definition-form',

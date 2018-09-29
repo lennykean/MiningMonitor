@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { Snapshot } from '../../models/Snapshot';
+import { Snapshot } from '../models/Snapshot';
 
 @Injectable({
     providedIn: 'root'

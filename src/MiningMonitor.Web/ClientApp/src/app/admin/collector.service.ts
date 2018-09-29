@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { Collector } from '../../models/Collector';
+import { Collector } from '../models/Collector';
 
 @Injectable({
     providedIn: 'root'

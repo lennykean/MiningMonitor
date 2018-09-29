@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 
-import { GpuDataIndex } from '../../../models/GpuDataIndex';
+import { GpuDataIndex } from '../../models/GpuDataIndex';
 
 @Component({
     selector: 'mm-gpu-chart',
