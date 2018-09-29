@@ -4,8 +4,7 @@ import { AlertDefinitionsService } from '../alert-definitions.service';
 import { AlertDefinition } from '../../../models/AlertDefinition';
 
 @Component({
-    templateUrl: './alert-definitions.component.html',
-    styleUrls: ['./alert-definitions.component.scss']
+    templateUrl: './alert-definitions.component.html'
 })
 export class AlertDefinitionsComponent implements OnInit {
     public alertDefinitions: AlertDefinition[];

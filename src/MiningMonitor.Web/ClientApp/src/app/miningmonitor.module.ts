@@ -9,10 +9,24 @@ import { fas } from '@fortawesome/free-solid-svg-icons';
 
 import { AdminComponent } from './admin/admin.component';
 import { AlertBadgeComponent } from './alerts/alert-badge/alert-badge.component';
-import { AlertDetailComponent } from './alerts/alert-detail/alert-detail.component';
+import {
+    AlertDefinitionConnectivityParametersComponent
+} from './alerts/alert-definition-connectivity-parameters/alert-definition-connectivity-parameters.component';
+import { AlertDefinitionCreateComponent } from './alerts/alert-definition-create/alert-definition-create.component';
+import { AlertDefinitionEditComponent } from './alerts/alert-definition-edit/alert-definition-edit.component';
+import { AlertDefinitionFormComponent } from './alerts/alert-definition-form/alert-definition-form.component';
+import {
+    AlertDefinitionGpuThresholdParametersComponent
+} from './alerts/alert-definition-gpu-threshold-parameters/alert-definition-gpu-threshold-parameters.component';
+import {
+    AlertDefinitionHashrateParametersComponent
+} from './alerts/alert-definition-hashrate-parameters/alert-definition-hashrate-parameters.component';
+import { AlertDefinitionParametersComponent } from './alerts/alert-definition-parameters/alert-definition-parameters.component';
 import { AlertDefinitionsComponent } from './alerts/alert-definitions/alert-definitions.component';
+import { AlertDetailComponent } from './alerts/alert-detail/alert-detail.component';
 import { AlertsComponent } from './alerts/alerts/alerts.component';
 import { AuthInterceptor } from './auth.interceptor';
+import { EnumPipe } from './enum.pipe';
 import { HeaderComponent } from './header/header.component';
 import { HomeComponent } from './home/home.component';
 import { MainComponent } from './main/main.component';
@@ -39,10 +53,19 @@ library.add(fas);
     declarations: [
         AdminComponent,
         AlertBadgeComponent,
+        AlertDefinitionConnectivityParametersComponent,
+        AlertDefinitionCreateComponent,
+        AlertDefinitionEditComponent,
+        AlertDefinitionFormComponent,
+        AlertDefinitionGpuThresholdParametersComponent,
+        AlertDefinitionHashrateParametersComponent,
+        AlertDefinitionParametersComponent,
         AlertDefinitionsComponent,
         AlertDetailComponent,
         AlertsComponent,
         CollectorsComponent,
+        EnumPipe,
+        GpuChartComponent,
         HeaderComponent,
         HomeComponent,
         MainComponent,
@@ -59,7 +82,6 @@ library.add(fas);
         SettingsComponent,
         UsersComponent,
         UserCreateComponent,
-        GpuChartComponent,
     ],
     imports: [
         BrowserModule,

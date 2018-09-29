@@ -1,6 +1,6 @@
 <div *ngIf="miner; else loading">
     <button class="btn btn-outline-danger float-right" *ngIf="!miner.collectorId" (click)="Delete()">Delete Miner</button>
-    <h2>{{ miner.name }}</h2>
+    <h3>{{ miner.name }}</h3>
     <a class="btn btn-outline-success" routerLink="/monitor/{{ miner.id }}">
         <fa-icon icon="heartbeat"></fa-icon>
         Monitor {{ miner.name }}

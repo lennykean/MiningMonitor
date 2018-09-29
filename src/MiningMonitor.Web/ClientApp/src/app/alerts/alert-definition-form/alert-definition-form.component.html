@@ -1,0 +1,32 @@
+<form (submit)="Submit(); $event.preventDefault();">
+    <div class="form-group row">
+        <label for="displayName" class="col-sm-2">
+            Name
+            <small class="form-text text-muted">Optional</small>
+        </label>
+        <div class="col col-sm-10">
+            <input name="displayName" class="form-control" [(ngModel)]="alertDefinition.displayName">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="displayName" class="col-sm-2">
+            Miner
+        </label>
+        <div class="col col-sm-10">
+            <select name="minerId" class="form-control" [disabled]="alertDefinition.id" [(ngModel)]="alertDefinition.minerId">
+                <option *ngFor="let miner of miners | async" [ngValue]="miner.id">{{ miner.name }}</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="enabled" class="col-sm-2">
+            Enabled
+        </label>
+        <div class="col col-sm-10">
+            <input type="checkbox" name="enabled" [(ngModel)]="alertDefinition.enabled">
+        </div>
+    </div>
+    <miningmonitor-alert-definition-parameters>
+    </miningmonitor-alert-definition-parameters>
+    <button type="submit" class="btn btn-outline-info">Save Changes</button>
+</form>

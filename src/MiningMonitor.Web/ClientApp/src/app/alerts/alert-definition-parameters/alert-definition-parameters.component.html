@@ -1,0 +1,32 @@
+<fieldset>
+    <legend>Alert Parameters</legend>
+    <div class="form-group row">
+        <label for="alertMessage" class="col-sm-2">
+            Alert Message
+            <small class="form-text text-muted">Optional</small>
+        </label>
+        <div class="col col-sm-10">
+            <input name="alertMessage" class="form-control" [(ngModel)]="alertParameters.alertMessage">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="alertType" class="col-sm-2">
+            Alert Type
+        </label>
+        <div class="col col-sm-10">
+            <select name="alertType" class="form-control" [(ngModel)]="alertParameters.alertType">
+                <option *ngFor="let alertType of alertType | enum" [ngValue]="alertType.value">
+                    {{ alertType.key }}
+                </option>
+            </select>
+        </div>
+    </div>
+    <div [ngSwitch]="alertParameters.alertType">
+        <miningmonitor-alert-definition-hashrate-parameters *ngSwitchCase="alertType.Hashrate">
+        </miningmonitor-alert-definition-hashrate-parameters>
+        <miningmonitor-alert-definition-gpu-threshold-parameters *ngSwitchCase="alertType.GpuThreshold">
+        </miningmonitor-alert-definition-gpu-threshold-parameters>
+        <miningmonitor-alert-definition-connectivity-parameters *ngSwitchCase="alertType.Connectivity">
+        </miningmonitor-alert-definition-connectivity-parameters>
+    </div>
+</fieldset>

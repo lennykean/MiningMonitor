@@ -4,6 +4,8 @@ import { RouterModule } from '@angular/router';
 import { AdminComponent } from './admin/admin.component';
 import { AuthGuard } from './auth.guard';
 import { CollectorsComponent } from './admin/collectors/collectors.component';
+import { AlertDefinitionCreateComponent } from './alerts/alert-definition-create/alert-definition-create.component';
+import { AlertDefinitionEditComponent } from './alerts/alert-definition-edit/alert-definition-edit.component';
 import { AlertDefinitionsComponent } from './alerts/alert-definitions/alert-definitions.component';
 import { AlertDetailComponent } from './alerts/alert-detail/alert-detail.component';
 import { AlertsComponent } from './alerts/alerts/alerts.component';
@@ -34,6 +36,8 @@ import { UsersComponent } from './admin/users/users.component';
                         ]
                     },
                     { path: 'alert/:id', component: AlertDetailComponent },
+                    { path: 'alertdefinition/new', component: AlertDefinitionCreateComponent },
+                    { path: 'alertdefinition/:id', component: AlertDefinitionEditComponent },
                     { path: 'alertdefinitions', component: AlertDefinitionsComponent },
                     { path: 'alerts', component: AlertsComponent },
                     { path: 'miner/new', component: MinerCreateComponent },

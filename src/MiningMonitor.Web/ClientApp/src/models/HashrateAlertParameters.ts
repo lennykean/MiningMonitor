@@ -1,9 +1,5 @@
 ﻿import { AlertParameters } from './AlertParameters';
-import { Metric } from './Metric';
 
-export interface GpuThresholdParameters extends AlertParameters {
-    metric: Metric;
+export interface HashrateAlertParameters extends AlertParameters {
     minValue: number;
-    maxValue: number;
 }
-
