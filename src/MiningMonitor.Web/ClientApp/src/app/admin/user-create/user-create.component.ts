@@ -3,7 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 
 import { User } from '../../../models/User';
-import { UserService } from '../../user.service';
+import { UserService } from '../user.service';
 
 @Component({
     templateUrl: './user-create.component.html',

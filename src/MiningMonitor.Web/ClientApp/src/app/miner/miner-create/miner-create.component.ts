@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { Miner } from '../../models/Miner';
+import { Miner } from '../../../models/Miner';
 import { MinerService } from '../miner.service';
 
 @Component({

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, ReplaySubject, BehaviorSubject } from 'rxjs';
 
-import { Miner } from '../models/Miner';
+import { Miner } from '../../models/Miner';
 
 @Injectable({ providedIn: 'root' })
 export class MinerService {

@@ -28,7 +28,8 @@ namespace MiningMonitor.Service.Mapper
             {
                 UserName = collector.Id,
                 CollectorName = collector.Name,
-                IsApproved = collector.Approved
+                IsApproved = collector.Approved,
+                Email = ""
             };
         }
 

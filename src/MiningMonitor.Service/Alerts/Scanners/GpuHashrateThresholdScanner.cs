@@ -30,7 +30,7 @@ namespace MiningMonitor.Service.Alerts
             if (!ShouldAlert(definition, snapshots))
                 return null;
 
-            return Alert.CreateFromDefinition(definition, definition.CustomMessage ?? "GPU hashrate out of range");
+            return Alert.CreateFromDefinition(definition, definition.Parameters.AlertMessage ?? "GPU hashrate out of range");
         }
 
         private static bool ShouldAlert(AlertDefinition definition, IEnumerable<Snapshot> snapshots)

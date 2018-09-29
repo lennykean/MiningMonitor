@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { Collector } from '../../../models/Collector';
-import { CollectorService } from '../../collector.service';
+import { CollectorService } from '../collector.service';
 
 @Component({
     templateUrl: './collectors.component.html',

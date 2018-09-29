@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Alert } from '../../../models/Alert';
-import { AlertService } from '../../alert.service';
+import { AlertService } from '../alert.service';
 
 @Component({
     templateUrl: './alert-detail.component.html'

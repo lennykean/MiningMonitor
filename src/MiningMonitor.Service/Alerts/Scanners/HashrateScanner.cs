@@ -29,7 +29,7 @@ namespace MiningMonitor.Service.Alerts.Scanners
             if (!ShouldAlert(definition, snapshots))
                 return null;
 
-            return Alert.CreateFromDefinition(definition, definition.CustomMessage ?? "Hashrate too low");
+            return Alert.CreateFromDefinition(definition, definition.Parameters.AlertMessage ?? "Hashrate too low");
         }
 
         private static bool ShouldAlert(AlertDefinition definition, IEnumerable<Snapshot> snapshots)

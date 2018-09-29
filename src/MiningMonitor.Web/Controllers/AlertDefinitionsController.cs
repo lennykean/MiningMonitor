@@ -19,10 +19,13 @@ namespace MiningMonitor.Test.Service
             _alertDefinitionService = alertDefinitionService;
         }
 
-        [HttpGet("miner/{minerId}")]
-        public IEnumerable<AlertDefinition> GetByMiner(Guid minerId)
+        [HttpGet]
+        public IEnumerable<AlertDefinition> Get(Guid? minerId = null)
         {
-            return _alertDefinitionService.GetByMiner(minerId);
+            if (minerId != null)
+                return _alertDefinitionService.GetByMiner((Guid)minerId);
+
+            return _alertDefinitionService.GetAll();
         }
 
         [HttpGet("{id}")]

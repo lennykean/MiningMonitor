@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { LoginService } from '../../login.service';
-import { SettingsService } from '../../settings.service';
+import { SettingsService } from '../settings.service';
 
 @Component({
     templateUrl: './settings.component.html',

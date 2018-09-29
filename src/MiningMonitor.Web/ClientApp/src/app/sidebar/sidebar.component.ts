@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { Miner } from '../../models/Miner';
-import { MinerService } from '../miner.service';
+import { MinerService } from '../miner/miner.service';
 
 @Component({
     selector: 'miningmonitor-sidebar',

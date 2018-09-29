@@ -2,9 +2,9 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { timer, Observable, Subscription } from 'rxjs';
 
-import { GpuDataIndex } from '../../models/GpuDataIndex';
-import { Miner } from '../../models/Miner';
-import { Snapshot } from '../../models/Snapshot';
+import { GpuDataIndex } from '../../../models/GpuDataIndex';
+import { Miner } from '../../../models/Miner';
+import { Snapshot } from '../../../models/Snapshot';
 import { MinerService } from '../miner.service';
 import { SnapshotService } from '../snapshot.service';
 
@@ -44,7 +44,9 @@ export class MonitorComponent implements OnInit, OnDestroy {
     }
 
     public ngOnDestroy() {
-        this.subscription.unsubscribe();
+        if (this.subscription) {
+            this.subscription.unsubscribe();
+        }
     }
 
     private TransformSnapshots(stats: Snapshot[]) {

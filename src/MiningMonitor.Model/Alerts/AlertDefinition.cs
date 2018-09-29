@@ -13,8 +13,7 @@ namespace MiningMonitor.Model.Alerts
         [BsonId(autoId: false)]
         public Guid Id { get; set; }
         public Guid MinerId { get; set; }
-        public string Name { get; set; }
-        public string CustomMessage { get; set; }
+        public string DisplayName { get; set; }
         public bool Enabled { get; set; }
         [JsonConverter(typeof(AlertParametersConverter))]
         public AlertParameters Parameters { get; set; }
@@ -22,6 +21,28 @@ namespace MiningMonitor.Model.Alerts
         public DateTime? Updated { get; set; }
         public DateTime? LastEnabled { get; set; }
         public DateTime? LastScan { get; set; }
+
+        [BsonIgnore]        
+        public string Name 
+        { 
+            get 
+            { 
+                if (DisplayName != null)
+                    return DisplayName;
+                
+                switch (Parameters.AlertType)
+                {
+                    case AlertType.Hashrate:
+                        return "Hashrate alert";
+                    case AlertType.GpuThreshold:
+                        return "GPU threshold alert";
+                    case AlertType.Connectivity:
+                        return "Connectivity alert";
+                    default:
+                        return $"{Parameters.AlertType} alert";
+                }
+            }
+        }
 
         [JsonIgnore, BsonIgnore]
         public DateTime NextScanStartTime
