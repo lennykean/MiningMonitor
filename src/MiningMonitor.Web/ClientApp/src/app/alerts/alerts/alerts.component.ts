@@ -12,14 +12,14 @@ export class AlertsComponent implements OnInit {
     public alerts: Observable<Alert[]>;
 
     constructor(
-        private alertSerivce: AlertService) {
+        private alertService: AlertService) {
     }
 
     public ngOnInit() {
-        this.alerts = this.alertSerivce.alerts;
+        this.alerts = this.alertService.alerts;
     }
 
     public async Acknowledge(id: string) {
-        await this.alertSerivce.Acknowledge(id);
+        await this.alertService.Acknowledge(id);
     }
 }

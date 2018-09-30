@@ -14,7 +14,7 @@
         </li>
         <li class="list-group-item d-flex justify-content-between">
             <strong>Status</strong>
-            <span [ngClass]="{'text-danger': alert.active, 'text-warning': !alert.active}">
+            <span [ngClass]="{'text-danger': alert.active, 'text-muted': !alert.active}">
                 {{ alert.active ? 'Active' : 'Inactive' }}
             </span>
         </li>

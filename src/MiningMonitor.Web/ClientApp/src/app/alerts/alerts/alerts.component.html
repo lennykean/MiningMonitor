@@ -11,7 +11,7 @@
         <th class="acknowledge"></th>
     </thead>
     <tbody>
-        <tr *ngFor="let alert of alerts | async" [ngClass]="{'table-danger': alert.active, 'table-warning': !alert.active}">
+        <tr *ngFor="let alert of alerts | async" [ngClass]="{'table-danger': alert.active}">
             <td class="icon" title="View Alert Details">
                 <a routerLink="/alert/{{ alert.id }}">
                     <fa-icon icon="exclamation-triangle"></fa-icon>
