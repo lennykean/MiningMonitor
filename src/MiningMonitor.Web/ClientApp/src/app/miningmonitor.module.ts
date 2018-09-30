@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { fas } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faCog, faExclamationTriangle, faHeartbeat, faSignInAlt, faSignOutAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { ChartsModule } from 'ng2-charts';
 
 import { AdminComponent } from './admin/admin.component';
@@ -42,7 +42,7 @@ import { MiningMonitorRoutingModule } from './miningmonitor-routing.module';
 import { MiningMonitorComponent } from './miningmonitor.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 
-library.add(fas);
+library.add(faCheck, faTimes, faExclamationTriangle, faCog, faSignOutAlt, faSignInAlt, faHeartbeat);
 
 @NgModule({
     declarations: [
