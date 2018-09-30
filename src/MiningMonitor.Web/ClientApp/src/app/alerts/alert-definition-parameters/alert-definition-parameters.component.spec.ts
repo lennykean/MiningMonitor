@@ -2,6 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 
 import { EnumPipe } from '../../enum.pipe';
+import { HumanizePipe } from '../../humanize.pipe';
 import { ConnectivityParametersComponent } from '../connectivity-parameters/connectivity-parameters.component';
 import { GpuThresholdParametersComponent } from '../gpu-threshold-parameters/gpu-threshold-parameters.component';
 import { HashrateParametersComponent } from '../hashrate-parameters/hashrate-parameters.component';
@@ -14,11 +15,12 @@ describe('AlertDefinitionParametersComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [
+                AlertDefinitionParametersComponent,
                 ConnectivityParametersComponent,
+                EnumPipe,
                 GpuThresholdParametersComponent,
                 HashrateParametersComponent,
-                AlertDefinitionParametersComponent,
-                EnumPipe
+                HumanizePipe
             ],
             imports: [
                 FormsModule

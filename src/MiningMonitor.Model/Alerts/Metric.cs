@@ -4,6 +4,6 @@
     {
         Hashrate = 0,
         Temperature = 1,
-        FansSpeed = 2
+        FanSpeed = 2
     }
 }

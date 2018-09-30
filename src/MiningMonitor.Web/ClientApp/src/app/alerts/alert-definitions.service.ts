@@ -20,8 +20,12 @@ export class AlertDefinitionsService {
         return await this.http.get<AlertDefinition[]>(AlertDefinitionsService.baseUrl).toPromise();
     }
 
+    public async Get(id: string) {
+        return await this.http.get<AlertDefinition>(`${AlertDefinitionsService.baseUrl}/${id}`).toPromise();
+    }
+
     public async Create(alertdefinition: AlertDefinition) {
-        return await this.http.post<AlertDefinitionsService>(AlertDefinitionsService.baseUrl, alertdefinition).toPromise();
+        return await this.http.post<AlertDefinition>(AlertDefinitionsService.baseUrl, alertdefinition).toPromise();
     }
 
     public async Update(alertdefinition: AlertDefinition) {

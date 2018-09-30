@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { MinerService } from '../../miner/miner.service';
@@ -15,8 +15,17 @@ export class AlertDefinitionFormComponent implements OnInit {
     public alertDefinition: AlertDefinition = {
         displayName: null,
         minerId: null,
-        enabled: true
+        enabled: true,
+        parameters: {
+            alertType: null
+        }
     };
+    @Input()
+    public validationErrors: { [key: string]: string[] } = {};
+
+    @Output()
+    public save = new EventEmitter<AlertDefinition>();
+
     public miners: Observable<Miner[]>;
 
     constructor(
@@ -25,5 +34,9 @@ export class AlertDefinitionFormComponent implements OnInit {
 
     public ngOnInit() {
         this.miners = this.minerService.miners;
+    }
+
+    public Submit() {
+        this.save.emit(this.alertDefinition);
     }
 }

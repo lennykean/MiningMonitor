@@ -27,6 +27,7 @@ import { AuthInterceptor } from './auth.interceptor';
 import { EnumPipe } from './enum.pipe';
 import { HeaderComponent } from './header/header.component';
 import { HomeComponent } from './home/home.component';
+import { HumanizePipe } from './humanize.pipe';
 import { LoginComponent } from './login/login.component';
 import { LogoutComponent } from './logout/logout.component';
 import { MainComponent } from './main/main.component';
@@ -62,6 +63,7 @@ library.add(fas);
         HashrateParametersComponent,
         HeaderComponent,
         HomeComponent,
+        HumanizePipe,
         MainComponent,
         MinerCreateComponent,
         MinerEditComponent,

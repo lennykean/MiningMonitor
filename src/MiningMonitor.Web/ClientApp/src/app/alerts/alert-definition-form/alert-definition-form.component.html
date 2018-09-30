@@ -5,7 +5,10 @@
             <small class="form-text text-muted">Optional</small>
         </label>
         <div class="col col-sm-10">
-            <input name="displayName" class="form-control" [(ngModel)]="alertDefinition.displayName">
+            <input name="displayName" class="form-control" [(ngModel)]="alertDefinition.displayName" [ngClass]="{'is-invalid': validationErrors.displayName}">
+            <small class="invalid-feedback" *ngFor="let message of validationErrors.displayName">
+                {{ message }}
+            </small>
         </div>
     </div>
     <div class="form-group row">
@@ -13,9 +16,13 @@
             Miner
         </label>
         <div class="col col-sm-10">
-            <select name="minerId" class="form-control" [disabled]="alertDefinition.id" [(ngModel)]="alertDefinition.minerId">
+            <select name="minerId" class="form-control" [(ngModel)]="alertDefinition.minerId" [ngClass]="{'is-invalid': validationErrors.minerId}"
+                [disabled]="alertDefinition.id">
                 <option *ngFor="let miner of miners | async" [ngValue]="miner.id">{{ miner.name }}</option>
             </select>
+            <small class="invalid-feedback" *ngFor="let message of validationErrors.minerId">
+                {{ message }}
+            </small>
         </div>
     </div>
     <div class="form-group row">
@@ -26,7 +33,8 @@
             <input type="checkbox" name="enabled" [(ngModel)]="alertDefinition.enabled">
         </div>
     </div>
-    <mm-alert-definition-parameters>
-        </mm-alert-definition-parameters>
-        <button type="submit" class="btn btn-outline-info">Save Changes</button>
+    <mm-alert-definition-parameters [alertParameters]="alertDefinition.parameters" [validationErrors]="validationErrors"
+        [isNew]="!alertDefinition.id">
+    </mm-alert-definition-parameters>
+    <button type="submit" class="btn btn-outline-info">Save Changes</button>
 </form>

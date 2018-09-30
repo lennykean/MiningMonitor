@@ -5,7 +5,7 @@ export interface AlertDefinition {
     minerId: string;
     displayName: string;
     enabled: boolean;
-    parameters?: AlertParameters;
+    parameters: AlertParameters;
     created?: Date;
     updated?: Date;
     lastEnabled?: Date;

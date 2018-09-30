@@ -2,6 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 
 import { EnumPipe } from '../../enum.pipe';
+import { HumanizePipe } from '../../humanize.pipe';
 import { GpuThresholdParametersComponent } from './gpu-threshold-parameters.component';
 
 describe('GpuThresholdParametersComponent', () => {
@@ -11,8 +12,9 @@ describe('GpuThresholdParametersComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [
+                EnumPipe,
                 GpuThresholdParametersComponent,
-                EnumPipe
+                HumanizePipe
             ],
             imports: [
                 FormsModule

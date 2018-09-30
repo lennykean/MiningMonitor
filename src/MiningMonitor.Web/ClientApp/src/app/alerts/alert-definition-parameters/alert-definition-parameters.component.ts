@@ -9,9 +9,13 @@ import { AlertType } from '../../models/AlertType';
 })
 export class AlertDefinitionParametersComponent {
     @Input()
+    public isNew: boolean;
+    @Input()
     public alertParameters: AlertParameters = {
-        alertMessage: null,
         alertType: null
     };
+    @Input()
+    public validationErrors: { [key: string]: string[] } = {};
+
     public alertType = AlertType;
 }

@@ -15,7 +15,8 @@ namespace MiningMonitor.Model.Serialization
                 bson =>
                 {
                     var document = bson.AsDocument;
-                    var alertType = (AlertType)Enum.Parse(typeof(AlertType), document[nameof(AlertParameters.AlertType)].AsString);
+                    if (!Enum.TryParse<AlertType>(document[nameof(AlertParameters.AlertType)].AsString, out var alertType))
+                        return null;
 
                     switch (alertType)
                     {

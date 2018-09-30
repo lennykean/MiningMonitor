@@ -1,1 +1,5 @@
 @import "~bootswatch/dist/darkly/bootstrap.css";
+
+.form-control:disabled {
+    background-color: darkgray;
+}

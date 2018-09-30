@@ -1,8 +1,10 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
+import { RouterTestingModule } from '@angular/router/testing';
 
 import { EnumPipe } from '../../enum.pipe';
+import { HumanizePipe } from '../../humanize.pipe';
 import { AlertDefinitionFormComponent } from '../alert-definition-form/alert-definition-form.component';
 import { AlertDefinitionParametersComponent } from '../alert-definition-parameters/alert-definition-parameters.component';
 import { ConnectivityParametersComponent } from '../connectivity-parameters/connectivity-parameters.component';
@@ -24,10 +26,12 @@ describe('AlertDefinitionCreateComponent', () => {
                 EnumPipe,
                 GpuThresholdParametersComponent,
                 HashrateParametersComponent,
+                HumanizePipe
             ],
             imports: [
                 FormsModule,
-                HttpClientTestingModule
+                HttpClientTestingModule,
+                RouterTestingModule
             ]
         }).compileComponents();
     }));

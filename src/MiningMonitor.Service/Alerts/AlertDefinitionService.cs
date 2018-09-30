@@ -57,6 +57,8 @@ namespace MiningMonitor.Service.Alerts
             alertDefinition.Created = current.Created;
             alertDefinition.LastScan = current.LastScan;
             alertDefinition.Updated = DateTime.UtcNow;
+            if (alertDefinition.Parameters.AlertType != current.Parameters.AlertType)
+                alertDefinition.Parameters = current.Parameters;
 
             if (!current.Enabled && alertDefinition.Enabled)
                 alertDefinition.LastEnabled = DateTime.UtcNow;

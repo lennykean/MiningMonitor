@@ -12,7 +12,7 @@ namespace MiningMonitor.Service.Alerts
     {
         public bool ShouldScan(AlertDefinition definition)
         {
-            return definition.Parameters is GpuThresholdParameters parameters && parameters.Metric == Metric.FansSpeed;
+            return definition.Parameters is GpuThresholdParameters parameters && parameters.Metric == Metric.FanSpeed;
         }
 
         public DateTime CalculateScanStart(AlertDefinition definition)

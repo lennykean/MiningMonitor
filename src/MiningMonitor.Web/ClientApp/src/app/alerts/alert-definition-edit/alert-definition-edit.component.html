@@ -1,3 +1,9 @@
-<p>
-  alert-definition-edit works!
-</p>
+<div *ngIf="alertDefinition; else loading;">
+    <button class="btn btn-outline-danger float-right" (click)="Delete()">Delete Definition</button>
+    <h3>{{ alertDefinition.name }}</h3>
+    <mm-alert-definition-form [alertDefinition]="alertDefinition" [validationErrors]="validationErrors" (save)="Save($event)">
+    </mm-alert-definition-form>
+</div>
+<ng-template #loading>
+    Loading alert definition...
+</ng-template>

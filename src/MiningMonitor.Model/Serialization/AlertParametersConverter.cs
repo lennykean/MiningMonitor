@@ -22,8 +22,10 @@ namespace MiningMonitor.Model.Serialization
             var jsonObject = JObject.Load(reader);
             var value = jsonObject.GetValue(nameof(AlertParameters.AlertType), StringComparison.OrdinalIgnoreCase);
 
-            AlertParameters parameters;
+            if (value.Type == JTokenType.Null)
+                return null;
             
+            AlertParameters parameters;
             switch ((AlertType)value.Value<int>())
             {
                 case AlertType.Hashrate:

@@ -14,17 +14,23 @@
             Alert Type
         </label>
         <div class="col col-sm-10">
-            <select name="alertType" class="form-control" [(ngModel)]="alertParameters.alertType">
+            <select name="alertType" class="form-control" [disabled]="!isNew" [(ngModel)]="alertParameters.alertType"
+                [ngClass]="{'is-invalid': validationErrors.parameters}">
                 <option *ngFor="let alertType of alertType | enum" [ngValue]="alertType.value">
-                    {{ alertType.key }}
+                    {{ alertType.key | humanize }}
                 </option>
             </select>
+            <small class="invalid-feedback" *ngFor="let message of validationErrors.parameters">
+                {{ message }}
+            </small>
         </div>
     </div>
     <div [ngSwitch]="alertParameters.alertType">
-        <mm-hashrate-parameters *ngSwitchCase="alertType.Hashrate">
-            </mm-hashrate-parameters>
-            <mm-gpu-threshold-parameters *ngSwitchCase="alertType.GpuThreshold"></mm-gpu-threshold-parameters>
-            <mm-connectivity-parameters *ngSwitchCase="alertType.Connectivity"></mm-connectivity-parameters>
+        <mm-hashrate-parameters *ngSwitchCase="alertType.Hashrate" [alertParameters]="alertParameters">
+        </mm-hashrate-parameters>
+        <mm-gpu-threshold-parameters *ngSwitchCase="alertType.GpuThreshold" [alertParameters]="alertParameters">
+        </mm-gpu-threshold-parameters>
+        <mm-connectivity-parameters *ngSwitchCase="alertType.Connectivity" [alertParameters]="alertParameters">
+        </mm-connectivity-parameters>
     </div>
 </fieldset>
