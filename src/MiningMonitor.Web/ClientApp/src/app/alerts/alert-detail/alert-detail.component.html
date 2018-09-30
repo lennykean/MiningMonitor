@@ -13,8 +13,14 @@
             <a routerLink="/miner/{{ alert.minerId }}">{{ alert.minerId | minerName | async }}</a>
         </li>
         <li class="list-group-item d-flex justify-content-between">
+            <strong>Severity</strong>
+            <span [ngClass]="{'text-danger': alert.severity === alertSeverity.High, 'text-warning': alert.severity === alertSeverity.Medium}">
+                {{ alertSeverity[alert.severity] }}
+            </span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between">
             <strong>Status</strong>
-            <span [ngClass]="{'text-danger': alert.active, 'text-muted': !alert.active}">
+            <span [ngClass]="{'text-muted': !alert.active}">
                 {{ alert.active ? 'Active' : 'Inactive' }}
             </span>
         </li>

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Alert } from '../../models/Alert';
+import { AlertSeverity } from '../../models/AlertSeverity';
 import { AlertService } from '../alert.service';
 
 @Component({
@@ -9,6 +10,8 @@ import { AlertService } from '../alert.service';
 })
 export class AlertDetailComponent implements OnInit {
     public alert: Alert;
+
+    public alertSeverity = AlertSeverity;
 
     constructor(
         private alertService: AlertService,

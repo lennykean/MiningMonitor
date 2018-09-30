@@ -12,7 +12,7 @@
         </div>
     </div>
     <div class="form-group row">
-        <label for="displayName" class="col-sm-2">
+        <label for="minerId" class="col-sm-2">
             Miner
         </label>
         <div class="col col-sm-10">
@@ -21,6 +21,21 @@
                 <option *ngFor="let miner of miners | async" [ngValue]="miner.id">{{ miner.name }}</option>
             </select>
             <small class="invalid-feedback" *ngFor="let message of validationErrors.minerId">
+                {{ message }}
+            </small>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="severity" class="col-sm-2">
+            Severity
+        </label>
+        <div class="col col-sm-10">
+            <select name="severity" class="form-control" [(ngModel)]="alertDefinition.severity" [ngClass]="{'is-invalid': validationErrors.severity}">
+                <option *ngFor="let alertSeverity of alertSeverity | enum" [ngValue]="alertSeverity.value">
+                    {{ alertSeverity.key | humanize }}
+                </option>
+            </select>
+            <small class="invalid-feedback" *ngFor="let message of validationErrors.severity">
                 {{ message }}
             </small>
         </div>

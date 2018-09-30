@@ -13,6 +13,7 @@ namespace MiningMonitor.Model.Alerts
         public Guid Id { get; set; }
         public Guid MinerId { get; set; }
         public Guid AlertDefinitionId { get; set; }
+        public AlertSeverity Severity { get; set; }
         public string Message { get; set; }
         [JsonIgnore]
         public Dictionary<string, string> Metadata { get; set; }
@@ -31,6 +32,7 @@ namespace MiningMonitor.Model.Alerts
             {
                 MinerId = definition.MinerId,
                 AlertDefinitionId = definition.Id,
+                Severity = definition.Severity ?? AlertSeverity.None,
                 Message = message
             };
         }

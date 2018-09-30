@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { Alert } from '../../models/Alert';
+import { AlertSeverity } from '../../models/AlertSeverity';
 import { AlertService } from '../alert.service';
 
 @Component({
@@ -10,6 +11,8 @@ import { AlertService } from '../alert.service';
 })
 export class AlertsComponent implements OnInit {
     public alerts: Observable<Alert[]>;
+
+    public alertSeverity = AlertSeverity;
 
     constructor(
         private alertService: AlertService) {

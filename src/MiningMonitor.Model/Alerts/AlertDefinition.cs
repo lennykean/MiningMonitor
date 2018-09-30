@@ -17,6 +17,8 @@ namespace MiningMonitor.Model.Alerts
         public Guid Id { get; set; }
         [RequiredGuid(ErrorMessage = "Miner is required")]
         public Guid MinerId { get; set; }
+        [Required(ErrorMessage = "Severity is required")]
+        public AlertSeverity? Severity { get; set; }
         public string DisplayName { get; set; }
         public bool Enabled { get; set; }
         [JsonConverter(typeof(AlertParametersConverter))]

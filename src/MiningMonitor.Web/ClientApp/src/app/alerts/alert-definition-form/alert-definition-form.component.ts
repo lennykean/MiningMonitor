@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 
 import { MinerService } from '../../miner/miner.service';
 import { AlertDefinition } from '../../models/AlertDefinition';
+import { AlertSeverity } from '../../models/AlertSeverity';
 import { Miner } from '../../models/Miner';
 
 @Component({
@@ -22,11 +23,11 @@ export class AlertDefinitionFormComponent implements OnInit {
     };
     @Input()
     public validationErrors: { [key: string]: string[] } = {};
-
     @Output()
     public save = new EventEmitter<AlertDefinition>();
 
     public miners: Observable<Miner[]>;
+    public alertSeverity = AlertSeverity;
 
     constructor(
         private minerService: MinerService) {
