@@ -1,7 +1,10 @@
+import { AlertSeverity } from './AlertSeverity';
+
 export interface Alert {
     id: string;
     minerId: string;
     alertDefinitionId: string;
+    severity: AlertSeverity;
     message: string;
     start: Date;
     lastActive: Date;
