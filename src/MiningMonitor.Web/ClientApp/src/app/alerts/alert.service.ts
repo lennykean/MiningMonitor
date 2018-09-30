@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, timer } from 'rxjs';
 
-import { Alert } from '../models/alert';
+import { Alert } from '../models/Alert';
 
 @Injectable({
     providedIn: 'root'
