@@ -111,6 +111,7 @@ namespace MiningMonitor.Web
             services.AddTransient<IAlertScanner, GpuHashrateThresholdScanner>();
             services.AddTransient<IAlertScanner, GpuTemperatureThresholdScanner>();
             services.AddTransient<IAlertScanner, GpuFanSpeedThresholdScanner>();
+            services.AddTransient<IAlertScanner, ConnectivityScanner>();
 
             // Security
             services.AddSingleton(service => new LiteDbContext(service.GetService<Microsoft.AspNetCore.Hosting.IHostingEnvironment>())

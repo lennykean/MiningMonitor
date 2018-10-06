@@ -15,26 +15,29 @@ namespace MiningMonitor.Service.Alerts
             return definition.Parameters is GpuThresholdParameters parameters && parameters.Metric == Metric.Hashrate;
         }
 
-        public DateTime CalculateScanStart(AlertDefinition definition)
+        public (DateTime start, DateTime end) CalculateScanRange(AlertDefinition definition, DateTime scanTime)
         {
-            return definition.NextScanStartTime;
+            return (definition.LastScanEnd, scanTime);
         }
 
-        public bool EndAlert(AlertDefinition definition, Alert alert, IEnumerable<Snapshot> snapshots)
+        public bool EndAlert(AlertDefinition definition, Miner miner, Alert alert, IEnumerable<Snapshot> snapshots, DateTime scanTime)
         {
-            return !ShouldAlert(definition, snapshots);
+            return !ShouldAlert(definition, miner, snapshots);
         }
 
-        public Alert PerformScan(AlertDefinition definition, IEnumerable<Snapshot> snapshots)
+        public Alert PerformScan(AlertDefinition definition, Miner miner, IEnumerable<Snapshot> snapshots, DateTime scanTime)
         {
-            if (!ShouldAlert(definition, snapshots))
+            if (!ShouldAlert(definition, miner, snapshots))
                 return null;
 
             return Alert.CreateFromDefinition(definition, definition.Parameters.AlertMessage ?? "GPU hashrate out of range");
         }
 
-        private static bool ShouldAlert(AlertDefinition definition, IEnumerable<Snapshot> snapshots)
+        private static bool ShouldAlert(AlertDefinition definition, Miner miner, IEnumerable<Snapshot> snapshots)
         {
+            if (!miner.CollectData)
+                return false;
+
             var parameters = (GpuThresholdParameters)definition.Parameters;
 
             return (

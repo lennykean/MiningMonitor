@@ -8,7 +8,7 @@ namespace MiningMonitor.Service.Alerts
     public interface IScan
     {
         AlertDefinition Definition { get; }
-        DateTime ScanStart { get; }
+        (DateTime start, DateTime end) ScanRange { get; }
 
         bool EndAlert(Alert alert, IEnumerable<Snapshot> snapshots);
         Alert PerformScan(IEnumerable<Snapshot> snapshots);

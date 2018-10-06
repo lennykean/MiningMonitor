@@ -50,15 +50,19 @@ namespace MiningMonitor.BackgroundWorker.Alerts
                 var scanTime = DateTime.UtcNow;
                 var scansByMiner =
                     from definition in _alertDefinitionService.GetEnabled()
-                    let scan = _scanFactory.CreateScan(definition)
-                    group scan by definition.MinerId into grouping
-                    let miner = _minerService.GetById(grouping.Key)
-                    select new { Miner = miner, Scans = grouping.ToList() };
+                    group definition by definition.MinerId into definitions
+                    let miner = _minerService.GetById(definitions.Key)
+                    select new
+                    {
+                        Miner = miner,
+                        Scans = definitions.Select(d => _scanFactory.CreateScan(d, miner, scanTime)).ToList()
+                    };
 
                 foreach (var scans in scansByMiner)
                 {
-                    var scanStart = scans.Scans.Min(s => s.ScanStart);
-                    var snapshots = _snapshotService.GetByMiner(scans.Miner.Id, from: scanStart, to: scanTime, fillGaps: false).ToList();
+                    var scanStart = scans.Scans.Min(s => s.ScanRange.start);
+                    var scanEnd = scans.Scans.Max(s => s.ScanRange.end);
+                    var snapshots = _snapshotService.GetByMiner(scans.Miner.Id, from: scanStart, to: scanEnd, fillGaps: false).ToList();
 
                     ScanMiner(scanTime, scans.Miner, scans.Scans, snapshots);
                 }
@@ -73,17 +77,13 @@ namespace MiningMonitor.BackgroundWorker.Alerts
         private void ScanMiner(DateTime scanTime, Miner miner, IEnumerable<IScan> scans, IList<Snapshot> snapshots)
         {
             _logger.LogInformation($"Starting scan of miner {miner.Id}");
-
-            if (miner?.CollectData != true) {
-                _logger.LogInformation($"Miner {miner.Id} is not collecting data, skipping scan");
-                return;
-            }            
+   
             foreach (var scan in scans)
             {
                 _logger.LogInformation($"Starting scan for alert definition {scan.Definition.Id}");
                 try
                 {
-                    var snapshotsForDefinition = snapshots.Where(s => s.SnapshotTime > scan.ScanStart);
+                    var snapshotsForDefinition = snapshots.Where(s => s.SnapshotTime >= scan.ScanRange.start && s.SnapshotTime <= scan.ScanRange.end);
                     var activeAlert = _alertService.GetLatestActiveByDefinition(scan.Definition.Id, since: scan.Definition.LastEnabled);
                     if (activeAlert == null)
                     {

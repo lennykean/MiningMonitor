@@ -45,7 +45,7 @@ namespace MiningMonitor.Model.Alerts
         
 
         [JsonIgnore, BsonIgnore]
-        public DateTime NextScanStartTime
+        public DateTime LastScanEnd
         {
             get
             {

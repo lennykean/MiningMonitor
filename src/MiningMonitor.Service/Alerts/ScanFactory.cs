@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
+using MiningMonitor.Model;
 using MiningMonitor.Model.Alerts;
 using MiningMonitor.Service.Alerts.Scanners;
 
@@ -15,9 +17,9 @@ namespace MiningMonitor.Service.Alerts
             _scanners = scanners;
         }
 
-        public IScan CreateScan(AlertDefinition definition)
+        public IScan CreateScan(AlertDefinition definition, Miner miner, DateTime scanTime)
         {
-            return new Scan(definition, _scanners.Single(s => s.ShouldScan(definition)));
+            return new Scan(definition, miner, _scanners.Single(s => s.ShouldScan(definition)), scanTime);
         }
     }
 }

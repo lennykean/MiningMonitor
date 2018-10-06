@@ -9,25 +9,29 @@ namespace MiningMonitor.Service.Alerts
 {
     public class Scan : IScan
     {
+        private readonly Miner _miner;
         private readonly IAlertScanner _scanner;
+        private readonly DateTime _scanTime;
 
-        public Scan(AlertDefinition alertDefinition, IAlertScanner scanner)
+        public Scan(AlertDefinition alertDefinition, Miner miner, IAlertScanner scanner, DateTime scanTime)
         {
             Definition = alertDefinition;
+            _miner = miner;
             _scanner = scanner;
+            _scanTime = scanTime;
         }
 
         public AlertDefinition Definition { get; }
-        public DateTime ScanStart => _scanner.CalculateScanStart(Definition);
+        public (DateTime start, DateTime end) ScanRange => _scanner.CalculateScanRange(Definition, _scanTime);
 
         public bool EndAlert(Alert alert, IEnumerable<Snapshot> snapshots)
         {
-            return _scanner.EndAlert(Definition, alert, snapshots);
+            return _scanner.EndAlert(Definition, _miner, alert, snapshots, _scanTime);
         }
 
         public Alert PerformScan(IEnumerable<Snapshot> snapshots)
         {
-            return _scanner.PerformScan(Definition, snapshots);
+            return _scanner.PerformScan(Definition, _miner, snapshots, _scanTime);
         }
     }
 }

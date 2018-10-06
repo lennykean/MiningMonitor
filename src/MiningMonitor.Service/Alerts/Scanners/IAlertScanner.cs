@@ -9,8 +9,8 @@ namespace MiningMonitor.Service.Alerts.Scanners
     public interface IAlertScanner
     {
         bool ShouldScan(AlertDefinition definition);
-        DateTime CalculateScanStart(AlertDefinition definition);
-        bool EndAlert(AlertDefinition definition, Alert alert, IEnumerable<Snapshot> snapshots);
-        Alert PerformScan(AlertDefinition definition, IEnumerable<Snapshot> snapshots);
+        (DateTime start, DateTime end) CalculateScanRange(AlertDefinition definition, DateTime scanTime);
+        bool EndAlert(AlertDefinition definition, Miner miner, Alert alert, IEnumerable<Snapshot> snapshots, DateTime scanTime);
+        Alert PerformScan(AlertDefinition definition, Miner miner, IEnumerable<Snapshot> snapshots, DateTime scanTime);
     }
 }
