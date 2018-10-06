@@ -24,18 +24,16 @@ namespace MiningMonitor.Service
             return _collection.FindAll();
         }
 
-        public IEnumerable<Snapshot> GetByMiner(Guid minerId, DateTime? from = null, DateTime? to = null, TimeSpan? interval = null, bool fillGaps = true)
+        public IEnumerable<Snapshot> GetByMiner(Guid minerId, Period period)
         {
-            var end = to ?? DateTime.UtcNow;
-            var start = from ?? end.AddMinutes(-60);
-            var snapshots = _collection.Find(snapshot => snapshot.MinerId == minerId && snapshot.SnapshotTime >= start && snapshot.SnapshotTime <= end);
-
-            if (!fillGaps || interval == null)
-                return snapshots.ToList();
-            
-            return snapshots.FillGaps(start, end, (TimeSpan)interval).ToList();
+            return _collection.Find(snapshot => snapshot.MinerId == minerId && snapshot.SnapshotTime >= period.Start && snapshot.SnapshotTime <= period.End);
         }
-        
+
+        public IEnumerable<Snapshot> GetByMinerFillGaps(Guid minerId, ConcretePeriod period, TimeSpan interval)
+        {
+            return GetByMiner(minerId, period).FillGaps(period, interval).ToList();
+        }
+
         public void Add(Snapshot snapshot)
         {
             snapshot.Id = Guid.NewGuid();

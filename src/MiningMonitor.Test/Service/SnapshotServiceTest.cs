@@ -45,7 +45,7 @@ namespace MiningMonitor.Test.Web.Controllers
                 .ToList());
             
             // Act
-            var result = _subject.GetByMiner(minerId, null, null, TimeSpan.FromMinutes(1));
+            var result = _subject.GetByMinerFillGaps(minerId, new ConcretePeriod(now, now), TimeSpan.FromMinutes(1));
 
             // Assert
             Assert.That(result, Is.Not.Empty);
@@ -65,7 +65,7 @@ namespace MiningMonitor.Test.Web.Controllers
             _collection.InsertBulk(snapshots);
             
             // Act
-            var result = _subject.GetByMiner(minerId, from, to, TimeSpan.FromMinutes(1)).ToList();
+            var result = _subject.GetByMinerFillGaps(minerId, new ConcretePeriod(from, to), TimeSpan.FromMinutes(1)).ToList();
 
             // Assert
             Assert.That(result.Select(s => s.SnapshotTime), Is.SupersetOf(snapshots.Select(s => s.SnapshotTime)));

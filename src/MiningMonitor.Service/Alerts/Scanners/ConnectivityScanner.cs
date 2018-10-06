@@ -14,7 +14,7 @@ namespace MiningMonitor.Service.Alerts.Scanners
             return definition.Parameters.AlertType == AlertType.Connectivity;
         }
 
-        public (DateTime start, DateTime end) CalculateScanRange(AlertDefinition definition, DateTime scanTime)
+        public ConcretePeriod CalculateScanPeriod(AlertDefinition definition, DateTime scanTime)
         {
             var durationMinutes = (definition.Parameters as ConnectivityAlertParameters)?.DurationMinutes;
             var duration = durationMinutes != null
@@ -25,7 +25,7 @@ namespace MiningMonitor.Service.Alerts.Scanners
                 ? scanTime - (TimeSpan)duration 
                 : definition.LastScanEnd;
 
-            return (start, scanTime);
+            return new ConcretePeriod(start, scanTime);
         }
 
         public bool EndAlert(AlertDefinition definition, Miner miner, Alert alert, IEnumerable<Snapshot> snapshots, DateTime scanTime)
@@ -35,10 +35,12 @@ namespace MiningMonitor.Service.Alerts.Scanners
 
         public Alert PerformScan(AlertDefinition definition, Miner miner, IEnumerable<Snapshot> snapshots, DateTime scanTime)
         {
-            if (!ShouldAlert(definition, miner, snapshots, scanTime))
-                return null;
+            return ShouldAlert(definition, miner, snapshots, scanTime) ? Alert.CreateFromDefinition(definition, definition.Parameters.AlertMessage ?? "No Connectivity") : null;
+        }
 
-            return Alert.CreateFromDefinition(definition, definition.Parameters.AlertMessage ?? "No connectivity");
+        Period IAlertScanner.CalculateScanPeriod(AlertDefinition definition, DateTime scanTime)
+        {
+            return CalculateScanPeriod(definition, scanTime);
         }
 
         private bool ShouldAlert(AlertDefinition definition, Miner miner, IEnumerable<Snapshot> snapshots, DateTime scanTime)
@@ -46,13 +48,13 @@ namespace MiningMonitor.Service.Alerts.Scanners
             if (!miner.CollectData)
                 return false;
 
-            var scanRange = CalculateScanRange(definition, scanTime);
+            var scanRange = CalculateScanPeriod(definition, scanTime);
             var durationMinutes = (definition.Parameters as ConnectivityAlertParameters)?.DurationMinutes;
             var duration = durationMinutes != null ? TimeSpan.FromMinutes((int)durationMinutes) : default(TimeSpan?);
 
             var indexedSnapshotTimes = snapshots
                 .Select(snapshot => snapshot.SnapshotTime)
-                .Union(new [] {scanRange.start, scanRange.end})
+                .Union(new [] {scanRange.Start, scanRange.End})
                 .OrderBy(snapshotTime => snapshotTime)
                 .Select((snapshotTime, index) => new {snapshotTime, index})
                 .ToList();
@@ -60,9 +62,9 @@ namespace MiningMonitor.Service.Alerts.Scanners
             var snapshotGaps =
                 from s1 in indexedSnapshotTimes
                 join s2 in indexedSnapshotTimes on s1.index + 1 equals s2.index
-                select new {s1.snapshotTime, next = s2.snapshotTime};
+                select new ConcretePeriod(s1.snapshotTime, s2.snapshotTime);
 
-            return snapshotGaps.Any(gap => gap.next - gap.snapshotTime >= duration);
+            return snapshotGaps.Any(gap => gap.Duration >= duration);
         }
     }
 }

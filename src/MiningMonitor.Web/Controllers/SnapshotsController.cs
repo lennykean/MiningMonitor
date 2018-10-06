@@ -33,7 +33,7 @@ namespace MiningMonitor.Web.Controllers
             [FromQuery]DateTime? from = null,
             [FromQuery]DateTime? to = null)
         {
-            return _snapshotService.GetByMiner(minerId, from, to, _snapshotDataCollectorSchedule.Interval);
+            return _snapshotService.GetByMinerFillGaps(minerId, new ConcretePeriod(from ?? DateTime.UtcNow.AddMinutes(-60), to ?? DateTime.UtcNow), _snapshotDataCollectorSchedule.Interval);
         }
 
         [HttpPost("collector/{collector}/{minerId}"), Authorize(Policy = "Collector")]

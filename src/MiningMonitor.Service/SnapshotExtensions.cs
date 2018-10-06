@@ -8,12 +8,12 @@ namespace MiningMonitor.Service
 {
     public static class SnapshotExtensions
     {
-        public static IEnumerable<Snapshot> FillGaps(this IEnumerable<Snapshot> snapshots, DateTime expectedStart, DateTime expectedEnd, TimeSpan expectedInterval)
+        public static IEnumerable<Snapshot> FillGaps(this IEnumerable<Snapshot> snapshots, ConcretePeriod expectedPeriod, TimeSpan expectedInterval)
         {
             var bufferTime = expectedInterval + expectedInterval;
             var previous = new Snapshot
             {
-                SnapshotTime = expectedStart
+                SnapshotTime = expectedPeriod.Start
             };
             foreach (var snapshot in snapshots.OrderBy(s => s.SnapshotTime))
             {
@@ -31,7 +31,7 @@ namespace MiningMonitor.Service
                 previous = snapshot;
             }
 
-            while (expectedInterval > TimeSpan.Zero && previous.SnapshotTime <= expectedEnd - bufferTime)
+            while (expectedInterval > TimeSpan.Zero && previous.SnapshotTime <= expectedPeriod.End - bufferTime)
             {
                 previous = new Snapshot
                 {

@@ -22,7 +22,7 @@ namespace MiningMonitor.Service.Alerts
         }
 
         public AlertDefinition Definition { get; }
-        public (DateTime start, DateTime end) ScanRange => _scanner.CalculateScanRange(Definition, _scanTime);
+        public Period ScanPeriod => _scanner.CalculateScanPeriod(Definition, _scanTime);
 
         public bool EndAlert(Alert alert, IEnumerable<Snapshot> snapshots)
         {

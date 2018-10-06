@@ -14,9 +14,9 @@ namespace MiningMonitor.Service.Alerts.Scanners
             return definition.Parameters.AlertType == AlertType.Hashrate;
         }
 
-        public (DateTime start, DateTime end) CalculateScanRange(AlertDefinition definition, DateTime scanTime)
+        public Period CalculateScanPeriod(AlertDefinition definition, DateTime scanTime)
         {
-            return (definition.LastScanEnd, scanTime);
+            return new Period(definition.LastScanEnd, scanTime);
         }
 
         public bool EndAlert(AlertDefinition definition, Miner miner, Alert alert, IEnumerable<Snapshot> snapshots, DateTime scanTime)

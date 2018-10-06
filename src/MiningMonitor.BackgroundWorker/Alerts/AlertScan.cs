@@ -60,9 +60,8 @@ namespace MiningMonitor.BackgroundWorker.Alerts
 
                 foreach (var scans in scansByMiner)
                 {
-                    var scanStart = scans.Scans.Min(s => s.ScanRange.start);
-                    var scanEnd = scans.Scans.Max(s => s.ScanRange.end);
-                    var snapshots = _snapshotService.GetByMiner(scans.Miner.Id, from: scanStart, to: scanEnd, fillGaps: false).ToList();
+                    var scanPeriod = Period.Merge(scans.Scans.Select(s => s.ScanPeriod));
+                    var snapshots = _snapshotService.GetByMiner(scans.Miner.Id, scanPeriod).ToList();
 
                     ScanMiner(scanTime, scans.Miner, scans.Scans, snapshots);
                 }
@@ -83,7 +82,7 @@ namespace MiningMonitor.BackgroundWorker.Alerts
                 _logger.LogInformation($"Starting scan for alert definition {scan.Definition.Id}");
                 try
                 {
-                    var snapshotsForDefinition = snapshots.Where(s => s.SnapshotTime >= scan.ScanRange.start && s.SnapshotTime <= scan.ScanRange.end);
+                    var snapshotsForDefinition = snapshots.Where(s => scan.ScanPeriod.Contains(s.SnapshotTime));
                     var activeAlert = _alertService.GetLatestActiveByDefinition(scan.Definition.Id, since: scan.Definition.LastEnabled);
                     if (activeAlert == null)
                     {

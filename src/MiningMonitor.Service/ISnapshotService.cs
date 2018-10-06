@@ -8,7 +8,8 @@ namespace MiningMonitor.Service
     public interface ISnapshotService
     {
         IEnumerable<Snapshot> GetAll();
-        IEnumerable<Snapshot> GetByMiner(Guid minerId, DateTime? from = null, DateTime? to= null, TimeSpan? interval = null, bool fillGaps = true);
+        IEnumerable<Snapshot> GetByMiner(Guid minerId, Period period);
+        IEnumerable<Snapshot> GetByMinerFillGaps(Guid minerId, ConcretePeriod period, TimeSpan interval);
         void Add(Snapshot snapshot);
         void Upsert(Snapshot snapshot);
         void Delete(Guid snapshotId);
