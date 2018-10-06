@@ -21,7 +21,9 @@ export class AlertDetailComponent implements OnInit {
 
     public ngOnInit() {
         this.route.paramMap.subscribe(async paramMap => {
-            this.alert = await this.alertService.Get(paramMap.get('id'));
+            this.alertService.alerts.subscribe(alerts => {
+                this.alert = alerts.find(alert => alert.id === paramMap.get('id'));
+            });
         });
     }
 

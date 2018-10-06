@@ -23,11 +23,7 @@ export class AlertService {
         }
         return this._alertsSubject;
     }
-
-    public async Get(id: string) {
-        return await this.http.get<Alert>(`${AlertService.baseUrl}/${id}`).toPromise();
-    }
-
+    
     public async Acknowledge(id: string) {
         await this.http.post(`${AlertService.baseUrl}/${id}/acknowledge`, null).toPromise();
         this.RefreshAlerts();
