@@ -23,24 +23,32 @@ namespace MiningMonitor.Service.Alerts.Scanners
             
             var start = scanTime - duration < definition.LastScan 
                 ? scanTime - (TimeSpan)duration 
-                : definition.LastScanEnd;
+                : definition.NeedsScanAfter;
 
             return new ConcretePeriod(start, scanTime);
-        }
-
-        public bool EndAlert(AlertDefinition definition, Miner miner, Alert alert, IEnumerable<Snapshot> snapshots, DateTime scanTime)
-        {
-            return !ShouldAlert(definition, miner, snapshots, scanTime);
-        }
-
-        public Alert PerformScan(AlertDefinition definition, Miner miner, IEnumerable<Snapshot> snapshots, DateTime scanTime)
-        {
-            return ShouldAlert(definition, miner, snapshots, scanTime) ? Alert.CreateFromDefinition(definition, definition.Parameters.AlertMessage ?? "No Connectivity") : null;
         }
 
         Period IAlertScanner.CalculateScanPeriod(AlertDefinition definition, DateTime scanTime)
         {
             return CalculateScanPeriod(definition, scanTime);
+        }
+
+        public bool EndAlert(AlertDefinition definition, Miner miner, Alert alert, IEnumerable<Snapshot> snapshots, DateTime scanTime)
+        {
+            var snapshotsList = snapshots.ToList();
+
+            if (!snapshotsList.Any())
+                return false;
+
+            return !ShouldAlert(definition, miner, snapshotsList, scanTime);
+        }
+
+        public ScanResult PerformScan(AlertDefinition definition, Miner miner, IEnumerable<Snapshot> snapshots, DateTime scanTime)
+        {
+            if (!ShouldAlert(definition, miner, snapshots, scanTime))
+                return ScanResult.Success;
+
+            return ScanResult.Fail(new [] {Alert.CreateFromDefinition(definition, definition.Parameters.AlertMessage ?? "No Connectivity")});
         }
 
         private bool ShouldAlert(AlertDefinition definition, Miner miner, IEnumerable<Snapshot> snapshots, DateTime scanTime)

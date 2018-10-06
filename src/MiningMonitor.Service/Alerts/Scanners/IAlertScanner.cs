@@ -11,6 +11,6 @@ namespace MiningMonitor.Service.Alerts.Scanners
         bool ShouldScan(AlertDefinition definition);
         Period CalculateScanPeriod(AlertDefinition definition, DateTime scanTime);
         bool EndAlert(AlertDefinition definition, Miner miner, Alert alert, IEnumerable<Snapshot> snapshots, DateTime scanTime);
-        Alert PerformScan(AlertDefinition definition, Miner miner, IEnumerable<Snapshot> snapshots, DateTime scanTime);
+        ScanResult PerformScan(AlertDefinition definition, Miner miner, IEnumerable<Snapshot> snapshots, DateTime scanTime);
     }
 }

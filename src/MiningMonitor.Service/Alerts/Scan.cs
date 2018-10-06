@@ -29,7 +29,7 @@ namespace MiningMonitor.Service.Alerts
             return _scanner.EndAlert(Definition, _miner, alert, snapshots, _scanTime);
         }
 
-        public Alert PerformScan(IEnumerable<Snapshot> snapshots)
+        public ScanResult PerformScan(IEnumerable<Snapshot> snapshots)
         {
             return _scanner.PerformScan(Definition, _miner, snapshots, _scanTime);
         }

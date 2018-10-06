@@ -24,6 +24,7 @@ namespace MiningMonitor.Service.Alerts
         {
             return _alertCollection.Find(a => includeAcknowledged || a.AcknowledgedAt == null)
                 .OrderByDescending(a => a.Active)
+                .ThenByDescending(a => a.Severity)
                 .ThenBy(a => a.Start);
         }
         
@@ -32,22 +33,15 @@ namespace MiningMonitor.Service.Alerts
             return _alertCollection.Find(a => a.MinerId == minerId && (includeAcknowledged || a.AcknowledgedAt == null))
                 .OrderBy(a => a.Start);
         }
+        
+        public IEnumerable<Alert> GetActiveByDefinition(Guid definitionId, DateTime? since = null)
+        {
+            return _alertCollection.Find(a => a.AlertDefinitionId == definitionId && a.End == null && (since == null || since < a.LastActive));
+        }
 
         public Alert GetById(Guid id)
         {
             return _alertCollection.FindById(id);
-        }
-
-        public Alert GetLatestActiveByDefinition(Guid definitionId, DateTime? since = null)
-        {
-            var latest = _alertCollection.Find(a => a.AlertDefinitionId == definitionId && (since == null || a.Start > since))
-                .OrderByDescending(a => a.Start)
-                .FirstOrDefault();
-
-            if (latest?.Active == true)
-                return latest;
-
-            return null;
         }
 
         public void Add(Alert alert)

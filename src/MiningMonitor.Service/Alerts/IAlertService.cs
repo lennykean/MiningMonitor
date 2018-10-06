@@ -9,8 +9,8 @@ namespace MiningMonitor.Service.Alerts
     {
         IEnumerable<Alert> Get(bool includeAcknowledged);
         IEnumerable<Alert> GetByMiner(Guid minerId, bool includeAcknowledged);
+        IEnumerable<Alert> GetActiveByDefinition(Guid definitionId, DateTime? since = null);
         Alert GetById(Guid id);
-        Alert GetLatestActiveByDefinition(Guid definitionId, DateTime? since = null);
         void Add(Alert alert);
         bool Update(Alert alert);
         bool Delete(Guid id);

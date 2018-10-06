@@ -16,20 +16,25 @@ namespace MiningMonitor.Service.Alerts.Scanners
 
         public Period CalculateScanPeriod(AlertDefinition definition, DateTime scanTime)
         {
-            return new Period(definition.LastScanEnd, scanTime);
+            return new Period(definition.NeedsScanAfter, scanTime);
         }
 
         public bool EndAlert(AlertDefinition definition, Miner miner, Alert alert, IEnumerable<Snapshot> snapshots, DateTime scanTime)
         {
-            return !ShouldAlert(definition, miner, snapshots);
+            var snapshotsList = snapshots.ToList();
+
+            if (!snapshotsList.Any())
+                return false;
+
+            return !ShouldAlert(definition, miner, snapshotsList);
         }
 
-        public Alert PerformScan(AlertDefinition definition, Miner miner, IEnumerable<Snapshot> snapshots, DateTime scanTime)
+        public ScanResult PerformScan(AlertDefinition definition, Miner miner, IEnumerable<Snapshot> snapshots, DateTime scanTime)
         {
             if (!ShouldAlert(definition, miner, snapshots))
-                return null;
+                return ScanResult.Success;
 
-            return Alert.CreateFromDefinition(definition, definition.Parameters.AlertMessage ?? "Hashrate too low");
+            return ScanResult.Fail(new[] {Alert.CreateFromDefinition(definition, definition.Parameters.AlertMessage ?? "Hashrate too low")});
         }
 
         private static bool ShouldAlert(AlertDefinition definition, Miner miner, IEnumerable<Snapshot> snapshots)

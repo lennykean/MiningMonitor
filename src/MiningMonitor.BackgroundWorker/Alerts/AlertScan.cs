@@ -82,30 +82,33 @@ namespace MiningMonitor.BackgroundWorker.Alerts
                 _logger.LogInformation($"Starting scan for alert definition {scan.Definition.Id}");
                 try
                 {
-                    var snapshotsForDefinition = snapshots.Where(s => scan.ScanPeriod.Contains(s.SnapshotTime));
-                    var activeAlert = _alertService.GetLatestActiveByDefinition(scan.Definition.Id, since: scan.Definition.LastEnabled);
-                    if (activeAlert == null)
+                    var snapshotsForDefinition = snapshots.Where(s => scan.ScanPeriod.Contains(s.SnapshotTime)).ToList();
+                    var activeAlerts = _alertService.GetActiveByDefinition(scan.Definition.Id, since: scan.Definition.LastEnabled).ToList();
+                    if (!activeAlerts.Any())
                     {
-                        var alert = scan.PerformScan(snapshots);
-                        if (alert != null)
+                        var result = scan.PerformScan(snapshots);
+                        if (!result.IsSuccess)
                         {
-                            _logger.LogInformation($"Creating alert for miner {miner.Id} definition {scan.Definition.Id}");
-                            _alertService.Add(alert);
+                            _logger.LogInformation($"Creating {result.Alerts.Count()} alert(s) for miner {miner.Id} definition {scan.Definition.Id}");
+                            result.Alerts.ToList().ForEach(alert => _alertService.Add(alert));
                         }
                     }
                     else
                     {
-                        if (scan.EndAlert(activeAlert, snapshotsForDefinition))
+                        foreach (var activeAlert in activeAlerts)
                         {
-                            _logger.LogInformation($"Ending alert {activeAlert.Id} for miner {miner.Id} with definition {scan.Definition.Id}");
-                            activeAlert.End = DateTime.UtcNow;
+                            if (scan.EndAlert(activeAlert, snapshotsForDefinition))
+                            {
+                                _logger.LogInformation($"Ending alert {activeAlert.Id} for miner {miner.Id} with definition {scan.Definition.Id}");
+                                activeAlert.End = DateTime.UtcNow;
+                            }
+                            else
+                            {
+                                _logger.LogInformation($"Continuing alert {activeAlert.Id} for miner {miner.Id} with definition {scan.Definition.Id}");
+                                activeAlert.LastActive = DateTime.UtcNow;
+                            }
+                            _alertService.Update(activeAlert);
                         }
-                        else
-                        {
-                            _logger.LogInformation($"Continuing alert {activeAlert.Id} for miner {miner.Id} with definition {scan.Definition.Id}");
-                            activeAlert.LastActive = DateTime.UtcNow;
-                        }
-                        _alertService.Update(activeAlert);
                     }
                     _alertDefinitionService.MarkScanned(scan.Definition.Id, scanTime);
                 }
