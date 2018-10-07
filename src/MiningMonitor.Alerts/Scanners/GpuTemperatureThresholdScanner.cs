@@ -3,7 +3,6 @@ using System.Linq;
 
 using ClaymoreMiner.RemoteManagement.Models;
 
-using MiningMonitor.BackgroundScheduler;
 using MiningMonitor.Model;
 using MiningMonitor.Model.Alerts;
 
@@ -11,10 +10,6 @@ namespace MiningMonitor.Alerts.Scanners
 {
     public class GpuTemperatureThresholdScanner : GpuThresholdScanner
     {
-        public GpuTemperatureThresholdScanner(DataCollectorSchedule dataCollectorSchedule) : base(dataCollectorSchedule)
-        {
-        }
-
         public override string DefaultAlertMessage => "GPU temperature out of range";
 
         public override bool ShouldScan(AlertDefinition definition)

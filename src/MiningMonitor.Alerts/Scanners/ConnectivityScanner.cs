@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using MiningMonitor.BackgroundScheduler;
 using MiningMonitor.Common;
 using MiningMonitor.Model;
 using MiningMonitor.Model.Alerts;
@@ -11,10 +10,6 @@ namespace MiningMonitor.Alerts.Scanners
 {
     public class ConnectivityScanner : AlertScanner
     {
-        public ConnectivityScanner(DataCollectorSchedule dataCollectorSchedule) : base(dataCollectorSchedule)
-        {
-        }
-
         public override bool ShouldScan(AlertDefinition definition)
         {
             return definition.Parameters.AlertType == AlertType.Connectivity;

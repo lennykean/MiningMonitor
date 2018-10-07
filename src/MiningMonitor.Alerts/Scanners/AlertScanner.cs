@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using MiningMonitor.BackgroundScheduler;
 using MiningMonitor.Common;
 using MiningMonitor.Model;
 using MiningMonitor.Model.Alerts;
@@ -10,17 +9,10 @@ namespace MiningMonitor.Alerts.Scanners
 {
     public abstract class AlertScanner : IAlertScanner
     {
-        private readonly DataCollectorSchedule _dataCollectorSchedule;
-
-        protected AlertScanner(DataCollectorSchedule dataCollectorSchedule)
-        {
-            _dataCollectorSchedule = dataCollectorSchedule;
-        }
-
         public virtual Period CalculateScanPeriod(AlertDefinition definition, DateTime scanTime)
         {
             var duration = definition.Parameters.DurationMinutes.MinutesToTimeSpan();
-            var paddedDuration = duration + _dataCollectorSchedule.Interval + _dataCollectorSchedule.Interval;
+            var paddedDuration = duration + duration;
 
             return definition.NextScanPeriod(scanTime, paddedDuration);
         }

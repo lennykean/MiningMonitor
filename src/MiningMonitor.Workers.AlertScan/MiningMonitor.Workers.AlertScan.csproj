@@ -9,6 +9,7 @@
     <ProjectReference Include="..\MiningMonitor.Alerts\MiningMonitor.Alerts.csproj" />
     <ProjectReference Include="..\MiningMonitor.Model\MiningMonitor.Model.csproj" />
     <ProjectReference Include="..\MiningMonitor.Service\MiningMonitor.Service.csproj" />
+    <ProjectReference Include="..\MiningMonitor.Workers\MiningMonitor.Workers.csproj" />
   </ItemGroup>
 
 </Project>

@@ -4,7 +4,6 @@ using System.Linq;
 
 using ClaymoreMiner.RemoteManagement.Models;
 
-using MiningMonitor.BackgroundScheduler;
 using MiningMonitor.Common;
 using MiningMonitor.Model;
 using MiningMonitor.Model.Alerts;
@@ -13,10 +12,6 @@ namespace MiningMonitor.Alerts.Scanners
 {
     public abstract class GpuThresholdScanner : AlertScanner
     {
-        protected GpuThresholdScanner(DataCollectorSchedule dataCollectorSchedule) : base(dataCollectorSchedule)
-        {
-        }
-
         public abstract string DefaultAlertMessage { get; }
 
         public override bool EndAlert(AlertDefinition definition, Miner miner, Alert alert, IEnumerable<Snapshot> snapshots, DateTime scanTime)
