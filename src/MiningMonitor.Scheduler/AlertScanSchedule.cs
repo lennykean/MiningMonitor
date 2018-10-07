@@ -1,8 +1,6 @@
 ﻿using System;
 
-using MiningMonitor.BackgroundWorker.Scheduler;
-
-namespace MiningMonitor.BackgroundWorker.Alerts
+namespace MiningMonitor.Scheduler
 {
     public class AlertScanSchedule : ISchedule
     {

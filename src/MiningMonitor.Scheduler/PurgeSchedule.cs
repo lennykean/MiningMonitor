@@ -1,8 +1,6 @@
 ﻿using System;
 
-using MiningMonitor.BackgroundWorker.Scheduler;
-
-namespace MiningMonitor.BackgroundWorker.Maintenance
+namespace MiningMonitor.Scheduler
 {
     public class PurgeSchedule : ISchedule
     {

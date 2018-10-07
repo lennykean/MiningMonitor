@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
 
+using MiningMonitor.Scheduler;
 using MiningMonitor.Service;
 
 namespace MiningMonitor.BackgroundWorker.DataCollector

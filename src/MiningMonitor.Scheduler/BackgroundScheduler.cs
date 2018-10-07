@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace MiningMonitor.BackgroundWorker.Scheduler
+namespace MiningMonitor.Scheduler
 {
     public class BackgroundScheduler<TWorker, TSchedule> : BackgroundService
         where TWorker : IBackgroundWorker

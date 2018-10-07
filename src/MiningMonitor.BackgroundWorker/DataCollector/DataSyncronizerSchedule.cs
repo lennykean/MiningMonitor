@@ -1,6 +1,6 @@
 ﻿using System;
 
-using MiningMonitor.BackgroundWorker.Scheduler;
+using MiningMonitor.Scheduler;
 
 namespace MiningMonitor.BackgroundWorker.DataCollector
 {

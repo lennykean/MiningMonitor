@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
 using MiningMonitor.Model;
-using MiningMonitor.Model.Alerts;
+using MiningMonitor.Scheduler;
 using MiningMonitor.Service;
 using MiningMonitor.Service.Alerts;
 

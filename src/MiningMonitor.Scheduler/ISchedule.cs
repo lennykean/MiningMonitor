@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MiningMonitor.BackgroundWorker.Scheduler
+namespace MiningMonitor.Scheduler
 {
     public interface ISchedule
     {

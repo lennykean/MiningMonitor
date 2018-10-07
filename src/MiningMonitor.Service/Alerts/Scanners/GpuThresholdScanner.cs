@@ -6,12 +6,17 @@ using ClaymoreMiner.RemoteManagement.Models;
 
 using MiningMonitor.Model;
 using MiningMonitor.Model.Alerts;
+using MiningMonitor.Scheduler;
 using MiningMonitor.Service.Alerts.Scanners;
 
 namespace MiningMonitor.Service.Alerts
 {
     public abstract class GpuThresholdScanner : AlertScanner
     {
+        protected GpuThresholdScanner(SnapshotDataCollectorSchedule snapshotDataCollectorSchedule) : base(snapshotDataCollectorSchedule)
+        {
+        }
+
         public abstract string DefaultAlertMessage { get; }
 
         public override Period CalculateScanPeriod(AlertDefinition definition, DateTime scanTime)

@@ -3,18 +3,28 @@ using System.Collections.Generic;
 
 using MiningMonitor.Model;
 using MiningMonitor.Model.Alerts;
+using MiningMonitor.Scheduler;
 
 namespace MiningMonitor.Service.Alerts.Scanners
 {
     public abstract class AlertScanner : IAlertScanner
     {
+        protected AlertScanner(SnapshotDataCollectorSchedule snapshotDataCollectorSchedule)
+        {
+            SnapshotDataCollectorSchedule = snapshotDataCollectorSchedule;
+        }
+
+        protected SnapshotDataCollectorSchedule SnapshotDataCollectorSchedule { get; }
+
         public Period CalculateScanPeriod(AlertDefinition definition, TimeSpan? minDuration, DateTime scanTime)
         {
-            if (scanTime - minDuration < definition.NeedsScanAfter)
+            var paddedDuration = minDuration + SnapshotDataCollectorSchedule.Interval + SnapshotDataCollectorSchedule.Interval;
+
+            if (scanTime - paddedDuration < definition.NeedsScanAfter)
             {
-                if (scanTime - minDuration >= definition.NoScanBefore)
+                if (scanTime - paddedDuration >= definition.NoScanBefore)
                 {
-                    return new ConcretePeriod(scanTime - (TimeSpan)minDuration, scanTime);
+                    return new ConcretePeriod(scanTime - (TimeSpan)paddedDuration, scanTime);
                 }
                 return new ConcretePeriod(definition.NeedsScanAfter, scanTime);
             }

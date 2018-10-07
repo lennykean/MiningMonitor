@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-using MiningMonitor.BackgroundWorker.DataCollector;
 using MiningMonitor.Model;
+using MiningMonitor.Scheduler;
 using MiningMonitor.Service;
 
 namespace MiningMonitor.Web.Controllers

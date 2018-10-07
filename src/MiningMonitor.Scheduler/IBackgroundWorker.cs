@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace MiningMonitor.BackgroundWorker
+namespace MiningMonitor.Scheduler
 {
     public interface IBackgroundWorker
     {

@@ -1,8 +1,6 @@
 ﻿using System;
 
-using MiningMonitor.BackgroundWorker.Scheduler;
-
-namespace MiningMonitor.BackgroundWorker.DataCollector
+namespace MiningMonitor.Scheduler
 {
     public class SnapshotDataCollectorSchedule : ISchedule
     {

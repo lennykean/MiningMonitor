@@ -4,11 +4,16 @@ using System.Linq;
 
 using MiningMonitor.Model;
 using MiningMonitor.Model.Alerts;
+using MiningMonitor.Scheduler;
 
 namespace MiningMonitor.Service.Alerts.Scanners
 {
     public class ConnectivityScanner : AlertScanner
     {
+        public ConnectivityScanner(SnapshotDataCollectorSchedule snapshotDataCollectorSchedule) : base(snapshotDataCollectorSchedule)
+        {
+        }
+
         public override bool ShouldScan(AlertDefinition definition)
         {
             return definition.Parameters.AlertType == AlertType.Connectivity;

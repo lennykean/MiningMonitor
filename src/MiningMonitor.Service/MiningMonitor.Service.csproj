@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MiningMonitor.Model\MiningMonitor.Model.csproj" />
+    <ProjectReference Include="..\MiningMonitor.Scheduler\MiningMonitor.Scheduler.csproj" />
   </ItemGroup>
 
 </Project>
