@@ -30,9 +30,7 @@ namespace MiningMonitor.Workers.DataCollector
             _logger = logger;
         }
 
-        Task IWorker.DoWorkAsync(CancellationToken cancellationToken) => Collect();
-
-        public async Task Collect()
+        public async Task DoWorkAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Starting snapshot collection");
             try

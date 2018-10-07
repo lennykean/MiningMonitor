@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
 
@@ -8,7 +6,7 @@ using MiningMonitor.Service;
 
 namespace MiningMonitor.Workers.Maintenance
 {
-    public class MaintenanceWorker : IWorker
+    public class MaintenanceWorker : SynchronousWorker
     {
         private readonly ISettingsService _settingsService;
         private readonly ISnapshotService _snapshotService;
@@ -20,13 +18,8 @@ namespace MiningMonitor.Workers.Maintenance
             _snapshotService = snapshotService;
             _logger = logger;
         }
-
-        public async Task DoWorkAsync(CancellationToken cancellationToken)
-        {
-            await Task.Run(() => DoWork(), cancellationToken);
-        }
-
-        public void DoWork()
+        
+        protected override void DoWork()
         {
             var (_, enablePurgeSetting) = _settingsService.GetSetting("EnablePurge");
             var (_, purgeAgeMinutesSetting) = _settingsService.GetSetting("PurgeAgeMinutes");

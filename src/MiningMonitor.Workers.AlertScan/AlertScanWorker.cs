@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
 
@@ -13,7 +11,7 @@ using MiningMonitor.Service;
 
 namespace MiningMonitor.Workers.AlertScan
 {
-    public class AlertScanWorker : IWorker
+    public class AlertScanWorker : SynchronousWorker
     {
         private readonly IAlertDefinitionService _alertDefinitionService;
         private readonly IAlertService _alertService;
@@ -38,12 +36,7 @@ namespace MiningMonitor.Workers.AlertScan
             _logger = logger;
         }
 
-        public async Task DoWorkAsync(CancellationToken cancellationToken)
-        {
-            await Task.Run(() => DoWork(), cancellationToken);
-        }
-
-        public void DoWork()
+        protected override void DoWork()
         {
             _logger.LogInformation("Starting alert scan");
             try
