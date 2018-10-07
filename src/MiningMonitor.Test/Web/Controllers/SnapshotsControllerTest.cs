@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Linq;
 
-using MiningMonitor.BackgroundWorker.DataCollector;
+using MiningMonitor.BackgroundScheduler;
+using MiningMonitor.Common;
 using MiningMonitor.Model;
 using MiningMonitor.Service;
 using MiningMonitor.Web.Controllers;
@@ -31,7 +32,7 @@ namespace MiningMonitor.Test.Web.Controllers
             // Arrange
             var now = new DateTime(2018, 6, 1);
             var minerId = new Guid("56f5fb3a-4b59-417c-aae0-ace175bb7c5b");
-            var schedule = new SnapshotDataCollectorSchedule { Interval = TimeSpan.FromMinutes(1) };
+            var schedule = new DataCollectorSchedule { Interval = TimeSpan.FromMinutes(1) };
             var snapshots = Enumerable.Range(0, 3).Select(i => new Snapshot { SnapshotTime = now }).ToList();
             _snapshotService.Setup(m => m.GetByMinerFillGaps(minerId, It.IsAny<ConcretePeriod>(), It.IsAny<TimeSpan>()))
                 .Returns(() => snapshots)
@@ -53,7 +54,7 @@ namespace MiningMonitor.Test.Web.Controllers
             // Arrange
             var collector = "12345";
             var minerId = new Guid("56f5fb3a-4b59-417c-aae0-ace175bb7c5b");
-            var schedule = new SnapshotDataCollectorSchedule { Interval = TimeSpan.FromMinutes(1) };
+            var schedule = new DataCollectorSchedule { Interval = TimeSpan.FromMinutes(1) };
             var snapshot = new Snapshot();
             _collectorService.Setup(m => m.SnapshotSync(collector, minerId, snapshot))
                 .Returns(() => success)

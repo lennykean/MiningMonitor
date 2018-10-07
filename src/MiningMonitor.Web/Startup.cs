@@ -17,19 +17,20 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-using MiningMonitor.BackgroundWorker.Alerts;
-using MiningMonitor.BackgroundWorker.DataCollector;
-using MiningMonitor.BackgroundWorker.Maintenance;
+using MiningMonitor.Alerts;
+using MiningMonitor.Alerts.Scanners;
+using MiningMonitor.BackgroundScheduler;
 using MiningMonitor.Model;
 using MiningMonitor.Model.Alerts;
 using MiningMonitor.Model.Serialization;
-using MiningMonitor.Scheduler;
 using MiningMonitor.Service;
-using MiningMonitor.Service.Alerts;
-using MiningMonitor.Service.Alerts.Scanners;
 using MiningMonitor.Service.Mapper;
 using MiningMonitor.Web.Configuration;
 using MiningMonitor.Web.Security;
+using MiningMonitor.Workers.AlertScan;
+using MiningMonitor.Workers.DataCollector;
+using MiningMonitor.Workers.DataSynchronizer;
+using MiningMonitor.Workers.Maintenance;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -87,26 +88,26 @@ namespace MiningMonitor.Web
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IAlertDefinitionService, AlertDefinitionService>();
             services.AddTransient<IAlertService, AlertService>();
-            services.AddTransient<IScanFactory, ScanFactory>();
 
             // API Client
             services.AddTransient<IRemoteManagementClientFactory, RemoteManagementClientFactory>();
 
             // Background workers
-            services.AddSingleton<IHostedService, BackgroundScheduler<SnapshotDataCollector, SnapshotDataCollectorSchedule>>();
-            services.AddSingleton<IHostedService, BackgroundScheduler<DataSynchronizer, DataSynchronizerSchedule>>();
-            services.AddSingleton<IHostedService, BackgroundScheduler<Purge, PurgeSchedule>>();
-            services.AddSingleton<IHostedService, BackgroundScheduler<AlertScan, AlertScanSchedule>>();
-            services.ConfigurePOCO<SnapshotDataCollectorSchedule>(_configuration.GetSection("Scheduler:SnapshotDataCollector"));
+            services.AddSingleton<IHostedService, BackgroundScheduler<DataCollectorWorker, DataCollectorSchedule>>();
+            services.AddSingleton<IHostedService, BackgroundScheduler<DataSynchronizerWorker, DataSynchronizerSchedule>>();
+            services.AddSingleton<IHostedService, BackgroundScheduler<MaintenanceWorker, MaintenanceSchedule>>();
+            services.AddSingleton<IHostedService, BackgroundScheduler<AlertScanWorker, AlertScanSchedule>>();
+            services.ConfigurePOCO<DataCollectorSchedule>(_configuration.GetSection("Scheduler:DataCollector"));
             services.ConfigurePOCO<DataSynchronizerSchedule>(_configuration.GetSection("Scheduler:DataSynchronizer"));
-            services.ConfigurePOCO<PurgeSchedule>(_configuration.GetSection("Scheduler:Purge"));
+            services.ConfigurePOCO<MaintenanceSchedule>(_configuration.GetSection("Scheduler:Maintenance"));
             services.ConfigurePOCO<AlertScanSchedule>(_configuration.GetSection("Scheduler:AlertScan"));
-            services.AddTransient<SnapshotDataCollector>();
-            services.AddTransient<DataSynchronizer>();
-            services.AddTransient<Purge>();
-            services.AddTransient<AlertScan>();
+            services.AddTransient<DataCollectorWorker>();
+            services.AddTransient<DataSynchronizerWorker>();
+            services.AddTransient<MaintenanceWorker>();
+            services.AddTransient<AlertScanWorker>();
 
-            // Alert Scanners
+            // Alerts
+            services.AddTransient<IScanFactory, ScanFactory>();
             services.AddTransient<IAlertScanner, HashrateScanner>();
             services.AddTransient<IAlertScanner, GpuHashrateThresholdScanner>();
             services.AddTransient<IAlertScanner, GpuTemperatureThresholdScanner>();

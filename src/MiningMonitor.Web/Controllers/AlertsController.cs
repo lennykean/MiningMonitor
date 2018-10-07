@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using MiningMonitor.Model.Alerts;
-using MiningMonitor.Service.Alerts;
+using MiningMonitor.Service;
 
-namespace MiningMonitor.Test.Service
+namespace MiningMonitor.Web.Controllers
 {
     [Route("api/[controller]"), Authorize(Policy = "Basic")]
     public class AlertsController : Controller

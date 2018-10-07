@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using MiningMonitor.Common;
 using MiningMonitor.Model;
 
 namespace MiningMonitor.Service

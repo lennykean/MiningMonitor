@@ -4,6 +4,7 @@ using System.Linq;
 
 using LiteDB;
 
+using MiningMonitor.Common;
 using MiningMonitor.Model;
 
 namespace MiningMonitor.Service

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MiningMonitor.BackgroundScheduler\MiningMonitor.BackgroundScheduler.csproj" />
+    <ProjectReference Include="..\MiningMonitor.Common\MiningMonitor.Common.csproj" />
+    <ProjectReference Include="..\MiningMonitor.Model\MiningMonitor.Model.csproj" />
+  </ItemGroup>
+
+</Project>

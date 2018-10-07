@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using MiningMonitor.Common;
 using MiningMonitor.Model;
 
 namespace MiningMonitor.Service

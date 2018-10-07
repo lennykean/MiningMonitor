@@ -4,12 +4,13 @@ using System.Linq;
 
 using LiteDB;
 
+using MiningMonitor.Common;
 using MiningMonitor.Model;
 using MiningMonitor.Service;
 
 using NUnit.Framework;
 
-namespace MiningMonitor.Test.Web.Controllers
+namespace MiningMonitor.Test.Service
 {
     [TestFixture]
     public class SnapshotsServiceTest

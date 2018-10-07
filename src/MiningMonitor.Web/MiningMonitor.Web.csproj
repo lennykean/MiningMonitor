@@ -30,14 +30,21 @@
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="2.1.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.0.1916590" />
   </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\MiningMonitor.BackgroundWorker\MiningMonitor.BackgroundWorker.csproj" />
-  </ItemGroup>
   
   <ItemGroup>
     <Content Remove="$(SpaRoot)**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\MiningMonitor.Alerts\MiningMonitor.Alerts.csproj" />
+    <ProjectReference Include="..\MiningMonitor.BackgroundScheduler\MiningMonitor.BackgroundScheduler.csproj" />
+    <ProjectReference Include="..\MiningMonitor.Model\MiningMonitor.Model.csproj" />
+    <ProjectReference Include="..\MiningMonitor.Service\MiningMonitor.Service.csproj" />
+    <ProjectReference Include="..\MiningMonitor.Workers.AlertScan\MiningMonitor.Workers.AlertScan.csproj" />
+    <ProjectReference Include="..\MiningMonitor.Workers.DataCollector\MiningMonitor.Workers.DataCollector.csproj" />
+    <ProjectReference Include="..\MiningMonitor.Workers.DataSynchronizer\MiningMonitor.Workers.DataSynchronizer.csproj" />
+    <ProjectReference Include="..\MiningMonitor.Workers.Maintenance\MiningMonitor.Workers.Maintenance.csproj" />
   </ItemGroup>
 
   <Target Name="EnsureNodeEnv" BeforeTargets="Build" Condition=" !Exists('$(SpaRoot)node_modules') ">
