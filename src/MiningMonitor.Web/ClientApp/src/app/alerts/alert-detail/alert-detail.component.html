@@ -1,43 +1,51 @@
 <div *ngIf="alert; else loading;">
-    <ul class="list-group mb-2">
-        <li class="list-group-item">
+    <div class="card">
+        <div class="card-header">
             <div class="d-flex justify-content-between">
                 <h5>Alert</h5>
                 <button class="btn btn-sm btn-primary" *ngIf="!alert.acknowledged" (click)="Acknowledge(alert.id)">Acknowledge</button>
                 <strong class="text-info" *ngIf="alert.acknowledged">Acknowledged</strong>
             </div>
             <p>{{ alert.message }}</p>
-        </li>
-        <li class="list-group-item d-flex justify-content-between">
-            <strong>Miner</strong>
-            <a routerLink="/miner/{{ alert.minerId }}">{{ alert.minerId | minerName | async }}</a>
-        </li>
-        <li class="list-group-item d-flex justify-content-between">
-            <strong>Severity</strong>
-            <span [ngClass]="{'text-danger': alert.severity === alertSeverity.High, 'text-warning': alert.severity === alertSeverity.Medium}">
-                {{ alertSeverity[alert.severity] }}
-            </span>
-        </li>
-        <li class="list-group-item d-flex justify-content-between">
-            <strong>Status</strong>
-            <span [ngClass]="{'text-muted': !alert.active}">
-                {{ alert.active ? 'Active' : 'Inactive' }}
-            </span>
-        </li>
-        <li class="list-group-item d-flex justify-content-between">
-            <strong>Started</strong>
-            <span>{{ alert.start | date:'short' }}</span>
-        </li>
-        <li class="list-group-item d-flex justify-content-between" *ngIf="alert.active">
-            <strong>Last Active</strong>
-            <span>{{ alert.lastActive | date:'short' }}</span>
-        </li>
-        <li class="list-group-item d-flex justify-content-between" *ngIf="!alert.active">
-            <strong>Ended</strong>
-            <span>{{ alert.end | date:'short' }}</span>
-        </li>
-    </ul>
-    <a class="btn btn-outline-info" routerLink="/alertdefinition/{{ alert.alertDefinitionId }}">Alert Definition</a>
+        </div>
+        <ul class="list-group">
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>Miner</strong>
+                <a routerLink="/miner/{{ alert.minerId }}">{{ alert.minerId | minerName | async }}</a>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>Severity</strong>
+                <span [ngClass]="{'text-danger': alert.severity === alertSeverity.High, 'text-warning': alert.severity === alertSeverity.Medium}">
+                    {{ alertSeverity[alert.severity] }}
+                </span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>Status</strong>
+                <span [ngClass]="{'text-muted': !alert.active}">
+                    {{ alert.active ? 'Active' : 'Inactive' }}
+                </span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>Started</strong>
+                <span>{{ alert.start | date:'short' }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between" *ngIf="alert.active">
+                <strong>Last Active</strong>
+                <span>{{ alert.lastActive | date:'short' }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between" *ngIf="!alert.active">
+                <strong>Ended</strong>
+                <span>{{ alert.end | date:'short' }}</span>
+            </li>
+            <li class="list-group-item" *ngIf="alert.detailMessages">
+                <strong>Details</strong>
+            </li>
+            <li class="list-group-item" *ngFor="let message of alert.detailMessages">
+                <span>{{ message }}</span>
+            </li>
+        </ul>
+    </div>
+    <a class="btn btn-outline-info mt-2" routerLink="/alertdefinition/{{ alert.alertDefinitionId }}">Alert Definition</a>
 </div>
 <ng-template #loading>
     Loading Alert...

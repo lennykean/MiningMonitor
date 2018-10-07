@@ -7,19 +7,19 @@ using MiningMonitor.Model.Alerts;
 
 namespace MiningMonitor.Service.Alerts.Scanners
 {
-    public class HashrateScanner : IAlertScanner
+    public class HashrateScanner : AlertScanner
     {
-        public bool ShouldScan(AlertDefinition definition)
+        public override bool ShouldScan(AlertDefinition definition)
         {
             return definition.Parameters.AlertType == AlertType.Hashrate;
         }
 
-        public Period CalculateScanPeriod(AlertDefinition definition, DateTime scanTime)
+        public override Period CalculateScanPeriod(AlertDefinition definition, DateTime scanTime)
         {
-            return new Period(definition.NeedsScanAfter, scanTime);
+            return new ConcretePeriod(definition.NeedsScanAfter, scanTime);
         }
 
-        public bool EndAlert(AlertDefinition definition, Miner miner, Alert alert, IEnumerable<Snapshot> snapshots, DateTime scanTime)
+        public override bool EndAlert(AlertDefinition definition, Miner miner, Alert alert, IEnumerable<Snapshot> snapshots, DateTime scanTime)
         {
             var snapshotsList = snapshots.ToList();
 
@@ -29,9 +29,9 @@ namespace MiningMonitor.Service.Alerts.Scanners
             return !ShouldAlert(definition, miner, snapshotsList);
         }
 
-        public ScanResult PerformScan(AlertDefinition definition, Miner miner, IEnumerable<Snapshot> snapshots, DateTime scanTime)
+        public override ScanResult PerformScan(IEnumerable<Alert> activeAlerts, AlertDefinition definition, Miner miner, IEnumerable<Snapshot> snapshots, DateTime scanTime)
         {
-            if (!ShouldAlert(definition, miner, snapshots))
+            if (activeAlerts.Any() || !ShouldAlert(definition, miner, snapshots))
                 return ScanResult.Success;
 
             return ScanResult.Fail(new[] {Alert.CreateFromDefinition(definition, definition.Parameters.AlertMessage ?? "Hashrate too low")});

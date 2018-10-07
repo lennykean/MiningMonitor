@@ -43,6 +43,8 @@ namespace MiningMonitor.Model.Alerts
             }
         }
         
+        [JsonIgnore, BsonIgnore]
+        public DateTime NoScanBefore => LastEnabled ?? Created;
 
         [JsonIgnore, BsonIgnore]
         public DateTime NeedsScanAfter

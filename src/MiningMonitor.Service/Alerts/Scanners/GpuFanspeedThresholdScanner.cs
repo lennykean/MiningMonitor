@@ -1,55 +1,67 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
-using MiningMonitor.Model;
+using ClaymoreMiner.RemoteManagement.Models;
+
 using MiningMonitor.Model.Alerts;
-using MiningMonitor.Service.Alerts.Scanners;
 
 namespace MiningMonitor.Service.Alerts
 {
-    public class GpuFanSpeedThresholdScanner : IAlertScanner
+    public class GpuFanSpeedThresholdScanner : GpuThresholdScanner
     {
-        public bool ShouldScan(AlertDefinition definition)
+        public override string DefaultAlertMessage => "GPU fan speed out of range";
+
+        public override bool ShouldScan(AlertDefinition definition)
         {
             return definition.Parameters is GpuThresholdParameters parameters && parameters.Metric == Metric.FanSpeed;
         }
 
-        public Period CalculateScanPeriod(AlertDefinition definition, DateTime scanTime)
+        protected override GpuThresholdState SelectAlertState(GpuStats stats, GpuThresholdParameters parameters)
         {
-            return new Period(definition.NeedsScanAfter, scanTime);
+            if (stats.FanSpeed < parameters.MinValue)
+                return GpuThresholdState.Low;
+            if (stats.FanSpeed > parameters.MaxValue)
+                return GpuThresholdState.High;
+
+            return GpuThresholdState.Ok;
         }
 
-        public bool EndAlert(AlertDefinition definition, Miner miner, Alert alert, IEnumerable<Snapshot> snapshots, DateTime scanTime)
+        protected override AlertMetadata CreateMetadata(Alert alert, GpuThresholdParameters parameters, GpuThresholdPeriod statePeriod)
         {
-            var snapshotsList = snapshots.ToList();
+            var fanSpeeds = statePeriod.GpuStats
+                .Select(s => (int?) s.FanSpeed)
+                .Concat(new[] {alert?.Metadata?.Value?.Min, alert?.Metadata?.Value?.Max})
+                .ToList();
 
-            if (!snapshotsList.Any())
-                return false;
-
-            return !ShouldAlert(definition, miner, snapshotsList);
+            return new AlertMetadata
+            {
+                GpuIndex = statePeriod.GpuIndex,
+                Threshold = new AlertThresholdMetadata
+                {
+                    Min = parameters.MaxValue,
+                    Max = parameters.MaxValue,
+                    GpuMetric = Metric.FanSpeed
+                },
+                Value = new AlertValueMetadata
+                {
+                    GpuThresholdState = statePeriod.State,
+                    Min = fanSpeeds.Min(),
+                    Max = fanSpeeds.Max()
+                }
+            };
         }
 
-        public ScanResult PerformScan(AlertDefinition definition, Miner miner, IEnumerable<Snapshot> snapshots, DateTime scanTime)
+        protected override IEnumerable<string> CreateDetailMessages(Alert alert, GpuThresholdParameters parameters)
         {
-            if (!ShouldAlert(definition, miner, snapshots))
-                return ScanResult.Success;
+            var durationMessage = parameters.DurationMinutes == null ? null : $" for more than {parameters.DurationMinutes} minute(s)";
 
-            return ScanResult.Fail(new[] {Alert.CreateFromDefinition(definition, definition.Parameters.AlertMessage ?? "GPU fan speed out of range")});
-        }
+            if (alert.Metadata.Value.GpuThresholdState == GpuThresholdState.High)
+                yield return $"GPU {alert.Metadata.GpuIndex + 1} fan speed above threshold of {parameters.MaxValue}%{durationMessage}";
+            if (alert.Metadata.Value.GpuThresholdState == GpuThresholdState.Low)
+                yield return $"GPU {alert.Metadata.GpuIndex + 1} fan speed below threshold of {parameters.MinValue}%{durationMessage}";
 
-        private static bool ShouldAlert(AlertDefinition definition, Miner miner, IEnumerable<Snapshot> snapshots)
-        {
-            if (!miner.CollectData)
-                return false;
-
-            var parameters = (GpuThresholdParameters)definition.Parameters;
-
-            return (
-                from snapshot in snapshots
-                from gpu in snapshot.MinerStatistics.Gpus
-                where gpu.FanSpeed < parameters.MinValue || gpu.FanSpeed > parameters.MaxValue
-                select gpu).Any();
+            yield return $"GPU {alert.Metadata.GpuIndex + 1} min fan speed during alert: {alert.Metadata.Value.Min}%";
+            yield return $"GPU {alert.Metadata.GpuIndex + 1} max fan speed during alert: {alert.Metadata.Value.Max}%";
         }
     }
 }

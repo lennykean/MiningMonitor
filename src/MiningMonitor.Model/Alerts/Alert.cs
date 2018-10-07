@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 
 using LiteDB;
 
@@ -16,7 +17,8 @@ namespace MiningMonitor.Model.Alerts
         public AlertSeverity Severity { get; set; }
         public string Message { get; set; }
         [JsonIgnore]
-        public Dictionary<string, string> Metadata { get; set; }
+        public AlertMetadata Metadata { get; set; }
+        public IEnumerable<string> DetailMessages { get; set; }
         public DateTime Start { get; set; }
         public DateTime LastActive { get; set; }
         public DateTime? End { get; set; }

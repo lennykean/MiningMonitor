@@ -12,4 +12,5 @@ export interface Alert {
     acknowledgedAt: Date;
     acknowledged: boolean;
     active: boolean;
+    detailMessages: string[];
 }

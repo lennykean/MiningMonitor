@@ -12,11 +12,7 @@ namespace MiningMonitor.Model
             Start = start;
             End = end;
         }
-
-        public ConcretePeriod(DateTime start, TimeSpan duration) : this(start, start + duration)
-        {
-        }
-
+        
         public DateTime Start { get; }
         public DateTime End { get; }
         public TimeSpan Duration => End - Start;

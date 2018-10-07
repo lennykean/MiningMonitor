@@ -1,55 +1,67 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
-using MiningMonitor.Model;
+using ClaymoreMiner.RemoteManagement.Models;
+
 using MiningMonitor.Model.Alerts;
-using MiningMonitor.Service.Alerts.Scanners;
 
 namespace MiningMonitor.Service.Alerts
 {
-    public class GpuHashrateThresholdScanner : IAlertScanner
+    public class GpuHashrateThresholdScanner : GpuThresholdScanner
     {
-        public bool ShouldScan(AlertDefinition definition)
+        public override string DefaultAlertMessage => "GPU hashrate out of range";
+
+        public override bool ShouldScan(AlertDefinition definition)
         {
             return definition.Parameters is GpuThresholdParameters parameters && parameters.Metric == Metric.Hashrate;
         }
 
-        public Period CalculateScanPeriod(AlertDefinition definition, DateTime scanTime)
+        protected override GpuThresholdState SelectAlertState(GpuStats stats, GpuThresholdParameters parameters)
         {
-            return new Period(definition.NeedsScanAfter, scanTime);
+            if (stats.EthereumHashrate / 1000m < parameters.MinValue)
+                return GpuThresholdState.Low;
+            if (stats.EthereumHashrate / 1000m > parameters.MaxValue)
+                return GpuThresholdState.High;
+
+            return GpuThresholdState.Ok;
         }
 
-        public bool EndAlert(AlertDefinition definition, Miner miner, Alert alert, IEnumerable<Snapshot> snapshots, DateTime scanTime)
+        protected override AlertMetadata CreateMetadata(Alert alert, GpuThresholdParameters parameters, GpuThresholdPeriod statePeriod)
         {
-            var snapshotsList = snapshots.ToList();
+            var hashrates = statePeriod.GpuStats
+                .Select(s => (int?)s.EthereumHashrate)
+                .Concat(new[] {alert?.Metadata?.Value?.Min, alert?.Metadata?.Value?.Max})
+                .ToList();
 
-            if (!snapshotsList.Any())
-                return false;
-
-            return !ShouldAlert(definition, miner, snapshotsList);
+            return new AlertMetadata
+            {
+                GpuIndex = statePeriod.GpuIndex,
+                Threshold = new AlertThresholdMetadata
+                {
+                    Min = parameters.MaxValue,
+                    Max = parameters.MaxValue,
+                    GpuMetric = Metric.Hashrate
+                },
+                Value = new AlertValueMetadata
+                {
+                    GpuThresholdState = statePeriod.State,
+                    Min = hashrates.Min(),
+                    Max = hashrates.Max()
+                }
+            };
         }
 
-        public ScanResult PerformScan(AlertDefinition definition, Miner miner, IEnumerable<Snapshot> snapshots, DateTime scanTime)
+        protected override IEnumerable<string> CreateDetailMessages(Alert alert, GpuThresholdParameters parameters)
         {
-            if (!ShouldAlert(definition, miner, snapshots))
-                return ScanResult.Success;
+            var durationMessage = parameters.DurationMinutes == null ? null : $" for more than {parameters.DurationMinutes} minute(s)";
 
-            return ScanResult.Fail(new[] {Alert.CreateFromDefinition(definition, definition.Parameters.AlertMessage ?? "GPU hashrate out of range")});
-        }
+            if (alert.Metadata.Value.GpuThresholdState == GpuThresholdState.High)
+                yield return $"GPU {alert.Metadata.GpuIndex + 1} hashrate above threshold of {parameters.MaxValue} MH/s{durationMessage}";
+            if (alert.Metadata.Value.GpuThresholdState == GpuThresholdState.Low)
+                yield return $"GPU {alert.Metadata.GpuIndex + 1} hashrate below threshold of {parameters.MinValue} MH/s{durationMessage}";
 
-        private static bool ShouldAlert(AlertDefinition definition, Miner miner, IEnumerable<Snapshot> snapshots)
-        {
-            if (!miner.CollectData)
-                return false;
-
-            var parameters = (GpuThresholdParameters)definition.Parameters;
-
-            return (
-                from snapshot in snapshots
-                from gpu in snapshot.MinerStatistics.Gpus
-                where gpu.EthereumHashrate / 1000m < parameters.MinValue || gpu.EthereumHashrate / 1000m > parameters.MaxValue
-                select gpu).Any();
+            yield return $"GPU {alert.Metadata.GpuIndex + 1} min hashrate speed during alert: {alert.Metadata.Value.Min / 1000m} MH/s";
+            yield return $"GPU {alert.Metadata.GpuIndex + 1} max hashrate speed during alert: {alert.Metadata.Value.Max / 1000m} MH/s";
         }
     }
 }

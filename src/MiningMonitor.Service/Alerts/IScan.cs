@@ -11,6 +11,6 @@ namespace MiningMonitor.Service.Alerts
         Period ScanPeriod { get; }
 
         bool EndAlert(Alert alert, IEnumerable<Snapshot> snapshots);
-        ScanResult PerformScan(IEnumerable<Snapshot> snapshots);
+        ScanResult PerformScan(IEnumerable<Alert> activeAlerts, IEnumerable<Snapshot> snapshots);
     }
 }
