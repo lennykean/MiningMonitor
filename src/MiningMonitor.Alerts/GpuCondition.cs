@@ -2,9 +2,9 @@
 
 namespace MiningMonitor.Alerts
 {
-    public class GpuThresholdPeriods
+    public class GpuCondition
     {
         public int GpuIndex { get; set; }
-        public IEnumerable<GpuThresholdPeriod> StatePeriods { get; set; }
+        public IEnumerable<GpuConditionPeriod> Periods { get; set; }
     }
 }

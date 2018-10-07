@@ -10,11 +10,8 @@ import { Metric } from '../../models/Metric';
 export class GpuThresholdParametersComponent {
     @Input()
     public alertParameters: GpuThresholdParameters = {
-        alertMessage: null,
         alertType: null,
-        metric: null,
-        minValue: null,
-        maxValue: null,
+        metric: null
     };
     public metric = Metric;
 }

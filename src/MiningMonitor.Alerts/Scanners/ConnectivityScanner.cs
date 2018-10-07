@@ -19,16 +19,6 @@ namespace MiningMonitor.Alerts.Scanners
         {
             return definition.Parameters.AlertType == AlertType.Connectivity;
         }
-
-        public override Period CalculateScanPeriod(AlertDefinition definition, DateTime scanTime)
-        {
-            var durationMinutes = ((ConnectivityAlertParameters)definition.Parameters).DurationMinutes;
-            var duration = durationMinutes != null
-                ? TimeSpan.FromMinutes((int)durationMinutes)
-                : default(TimeSpan?);
-
-            return CalculateScanPeriod(definition, duration, scanTime);
-        }
         
         public override bool EndAlert(AlertDefinition definition, Miner miner, Alert alert, IEnumerable<Snapshot> snapshots, DateTime scanTime)
         {

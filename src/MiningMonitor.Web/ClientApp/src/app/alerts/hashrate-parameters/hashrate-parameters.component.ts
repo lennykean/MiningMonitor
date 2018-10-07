@@ -9,8 +9,6 @@ import { HashrateAlertParameters } from '../../models/HashrateAlertParameters';
 export class HashrateParametersComponent {
     @Input()
     public alertParameters: HashrateAlertParameters = {
-        alertMessage: null,
-        alertType: null,
-        minValue: null
+        alertType: null
     };
 }

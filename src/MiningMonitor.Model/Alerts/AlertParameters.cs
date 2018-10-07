@@ -4,5 +4,6 @@
     {
         public abstract AlertType AlertType { get; }
         public string AlertMessage { get; set; }
+        public int? DurationMinutes { get; set; }
     }
 }

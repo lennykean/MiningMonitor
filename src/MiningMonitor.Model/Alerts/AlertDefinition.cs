@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 
 using LiteDB;
 
+using MiningMonitor.Common;
 using MiningMonitor.Model.Serialization;
 using MiningMonitor.Model.Validation;
 
@@ -42,20 +43,42 @@ namespace MiningMonitor.Model.Alerts
                 return $"{Regex.Replace(Parameters.AlertType.ToString(), "([A-Z][a-z])", " $1")} alert";
             }
         }
-        
+
         [JsonIgnore, BsonIgnore]
-        public DateTime NoScanBefore => LastEnabled ?? Created;
+        public DateTime NoScanBefore
+        {
+            get
+            {
+                if (Updated > Created)
+                    return (DateTime)Updated;
+
+                return Created;
+            }
+        }
 
         [JsonIgnore, BsonIgnore]
         public DateTime NeedsScanAfter
         {
             get
             {
-                if (LastEnabled > LastScan)
-                    return (DateTime)LastEnabled;
+                if (LastScan > NoScanBefore)
+                    return (DateTime)LastScan;
 
-                return LastScan ?? Created;
+                return NoScanBefore;
             }
+        }
+
+        public ConcretePeriod NextScanPeriod(DateTime scanTime, TimeSpan? requestedDuration = null)
+        {
+            if (scanTime - requestedDuration >= NoScanBefore)
+            {
+                if (scanTime - requestedDuration >= NeedsScanAfter)
+                {
+                    return new ConcretePeriod(NeedsScanAfter, scanTime);
+                }
+                return new ConcretePeriod(scanTime - (TimeSpan)requestedDuration, scanTime);
+            }
+            return new ConcretePeriod(NeedsScanAfter, scanTime);
         }
     }
 }

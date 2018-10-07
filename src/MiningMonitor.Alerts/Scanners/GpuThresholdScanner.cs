@@ -19,16 +19,6 @@ namespace MiningMonitor.Alerts.Scanners
 
         public abstract string DefaultAlertMessage { get; }
 
-        public override Period CalculateScanPeriod(AlertDefinition definition, DateTime scanTime)
-        {
-            var durationMinutes = ((GpuThresholdParameters)definition.Parameters).DurationMinutes;
-            var duration = durationMinutes != null
-                ? TimeSpan.FromMinutes((int)durationMinutes)
-                : default(TimeSpan?);
-
-            return CalculateScanPeriod(definition, duration, scanTime);
-        }
-
         public override bool EndAlert(AlertDefinition definition, Miner miner, Alert alert, IEnumerable<Snapshot> snapshots, DateTime scanTime)
         {
             var snapshotsList = snapshots.ToList();
@@ -38,21 +28,21 @@ namespace MiningMonitor.Alerts.Scanners
 
             var parameters = (GpuThresholdParameters)definition.Parameters;
 
-            var statePeriods = (
-                from gpu in snapshotsList.SelectGpuThresholdStatePeriods(stats => SelectAlertState(stats, parameters))
-                from gpuStatePeriod in gpu.StatePeriods
-                where gpuStatePeriod.GpuIndex == alert.Metadata?.GpuIndex
-                orderby gpuStatePeriod.Period.Start
-                select gpuStatePeriod).ToList();
+            var conditionPeriods = (
+                from gpuCondition in snapshotsList.ToGpuConditions(stats => MapToCondition(stats, parameters))
+                from gpuConditionPeriod in gpuCondition.Periods
+                where gpuConditionPeriod.GpuIndex == alert.Metadata?.GpuIndex
+                orderby gpuConditionPeriod.Period.Start
+                select gpuConditionPeriod).ToList();
 
-            var statePeriod = statePeriods.LastOrDefault(s => s.State == alert.Metadata?.Value?.GpuThresholdState);
-            if (statePeriod != null)
+            var conditionPeriod = conditionPeriods.LastOrDefault(s => s.Condition == alert.Metadata?.Value?.Condition);
+            if (conditionPeriod != null)
             {
-                alert.Metadata = CreateMetadata(alert, parameters, statePeriod);
+                alert.Metadata = CreateMetadata(alert, parameters, conditionPeriod);
                 alert.DetailMessages = CreateDetailMessages(alert, parameters);
-                return statePeriod.Period.HasEnd;
+                return conditionPeriod.Period.HasEnd;
             }
-            return statePeriods.Any();
+            return conditionPeriods.Any();
         }
 
         public override ScanResult PerformScan(IEnumerable<Alert> activeAlerts, AlertDefinition definition, Miner miner, IEnumerable<Snapshot> snapshots, DateTime scanTime)
@@ -61,31 +51,28 @@ namespace MiningMonitor.Alerts.Scanners
                 return ScanResult.Skip;
 
             var parameters = (GpuThresholdParameters)definition.Parameters;
-            var durationMinutes = parameters.DurationMinutes;
-            var duration = durationMinutes != null
-                ? TimeSpan.FromMinutes((int)durationMinutes)
-                : default(TimeSpan?);
+            var duration = parameters.DurationMinutes.MinutesToTimeSpan();
 
             var outOfRangePeriods = 
-                from statePeriods in snapshots.SelectGpuThresholdStatePeriods(stats => SelectAlertState(stats, parameters))
+                from gpuConditions in snapshots.ToGpuConditions(stats => MapToCondition(stats, parameters))
                 let lastOutOfRangePeriod = (
-                    from statePeriod in statePeriods.StatePeriods
-                    where statePeriod.State != GpuThresholdState.Ok
-                    orderby statePeriod.Period.Start
-                    select statePeriod).LastOrDefault()
+                    from conditionPeriod in gpuConditions.Periods
+                    where conditionPeriod.Condition != Condition.Ok
+                    orderby conditionPeriod.Period.Start
+                    select conditionPeriod).LastOrDefault()
                 where lastOutOfRangePeriod != null
                 select lastOutOfRangePeriod;
             
             var inEffectOutOfRangePeriods = 
-                from statePeriod in outOfRangePeriods
-                where !statePeriod.Period.HasEnd
-                where duration == null || scanTime - statePeriod?.Period.Start > duration
-                select statePeriod;
+                from conditionPeriod in outOfRangePeriods
+                where !conditionPeriod.Period.HasEnd
+                where duration == null || scanTime - conditionPeriod?.Period.Start > duration
+                select conditionPeriod;
             
             var alerts = (
-                from statePeriod in inEffectOutOfRangePeriods
-                where activeAlerts.All(activeAlert => activeAlert.Metadata?.GpuIndex != statePeriod.GpuIndex)
-                select CreateAlert(definition, parameters, statePeriod)).ToList();
+                from conditionPeriod in inEffectOutOfRangePeriods
+                where activeAlerts.All(activeAlert => activeAlert.Metadata?.GpuIndex != conditionPeriod.GpuIndex)
+                select CreateAlert(definition, parameters, conditionPeriod)).ToList();
 
             if (alerts.Any())
                 return ScanResult.Fail(alerts);
@@ -93,19 +80,19 @@ namespace MiningMonitor.Alerts.Scanners
             return ScanResult.Success;
         }
 
-        private Alert CreateAlert(AlertDefinition definition, GpuThresholdParameters parameters, GpuThresholdPeriod statePeriod)
+        private Alert CreateAlert(AlertDefinition definition, GpuThresholdParameters parameters, GpuConditionPeriod conditionPeriod)
         {
             var alert = Alert.CreateFromDefinition(definition, definition.Parameters.AlertMessage ?? DefaultAlertMessage);
 
-            alert.Metadata = CreateMetadata(alert, parameters, statePeriod);
+            alert.Metadata = CreateMetadata(alert, parameters, conditionPeriod);
             alert.DetailMessages = CreateDetailMessages(alert, parameters);
 
             return alert;
         }
 
-        protected abstract GpuThresholdState SelectAlertState(GpuStats stats, GpuThresholdParameters parameters);
+        protected abstract Condition MapToCondition(GpuStats stats, GpuThresholdParameters parameters);
 
-        protected abstract AlertMetadata CreateMetadata(Alert alert, GpuThresholdParameters parameters, GpuThresholdPeriod statePeriod);
+        protected abstract AlertMetadata CreateMetadata(Alert alert, GpuThresholdParameters parameters, GpuConditionPeriod conditionPeriod);
         
         protected abstract IEnumerable<string> CreateDetailMessages(Alert alert, GpuThresholdParameters parameters);
     }

@@ -4,6 +4,7 @@ using System.Linq;
 using ClaymoreMiner.RemoteManagement.Models;
 
 using MiningMonitor.BackgroundScheduler;
+using MiningMonitor.Model;
 using MiningMonitor.Model.Alerts;
 
 namespace MiningMonitor.Alerts.Scanners
@@ -21,26 +22,26 @@ namespace MiningMonitor.Alerts.Scanners
             return definition.Parameters is GpuThresholdParameters parameters && parameters.Metric == Metric.Hashrate;
         }
 
-        protected override GpuThresholdState SelectAlertState(GpuStats stats, GpuThresholdParameters parameters)
+        protected override Condition MapToCondition(GpuStats stats, GpuThresholdParameters parameters)
         {
             if (stats.EthereumHashrate / 1000m < parameters.MinValue)
-                return GpuThresholdState.Low;
+                return Condition.Low;
             if (stats.EthereumHashrate / 1000m > parameters.MaxValue)
-                return GpuThresholdState.High;
+                return Condition.High;
 
-            return GpuThresholdState.Ok;
+            return Condition.Ok;
         }
 
-        protected override AlertMetadata CreateMetadata(Alert alert, GpuThresholdParameters parameters, GpuThresholdPeriod statePeriod)
+        protected override AlertMetadata CreateMetadata(Alert alert, GpuThresholdParameters parameters, GpuConditionPeriod conditionPeriod)
         {
-            var hashrates = statePeriod.GpuStats
+            var hashrates = conditionPeriod.GpuStats
                 .Select(s => (int?)s.EthereumHashrate)
                 .Concat(new[] {alert?.Metadata?.Value?.Min, alert?.Metadata?.Value?.Max})
                 .ToList();
 
             return new AlertMetadata
             {
-                GpuIndex = statePeriod.GpuIndex,
+                GpuIndex = conditionPeriod.GpuIndex,
                 Threshold = new AlertThresholdMetadata
                 {
                     Min = parameters.MaxValue,
@@ -49,7 +50,7 @@ namespace MiningMonitor.Alerts.Scanners
                 },
                 Value = new AlertValueMetadata
                 {
-                    GpuThresholdState = statePeriod.State,
+                    Condition = conditionPeriod.Condition,
                     Min = hashrates.Min(),
                     Max = hashrates.Max()
                 }
@@ -60,9 +61,9 @@ namespace MiningMonitor.Alerts.Scanners
         {
             var durationMessage = parameters.DurationMinutes == null ? null : $" for more than {parameters.DurationMinutes} minute(s)";
 
-            if (alert.Metadata.Value.GpuThresholdState == GpuThresholdState.High)
+            if (alert.Metadata.Value.Condition == Condition.High)
                 yield return $"GPU {alert.Metadata.GpuIndex + 1} hashrate above threshold of {parameters.MaxValue} MH/s{durationMessage}";
-            if (alert.Metadata.Value.GpuThresholdState == GpuThresholdState.Low)
+            if (alert.Metadata.Value.Condition == Condition.Low)
                 yield return $"GPU {alert.Metadata.GpuIndex + 1} hashrate below threshold of {parameters.MinValue} MH/s{durationMessage}";
 
             yield return $"GPU {alert.Metadata.GpuIndex + 1} min hashrate speed during alert: {alert.Metadata.Value.Min / 1000m} MH/s";

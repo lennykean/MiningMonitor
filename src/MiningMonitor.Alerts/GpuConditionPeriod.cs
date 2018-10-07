@@ -3,18 +3,14 @@ using System.Linq;
 
 using ClaymoreMiner.RemoteManagement.Models;
 
-using MiningMonitor.Common;
-using MiningMonitor.Model;
 using MiningMonitor.Model.Alerts;
 
 namespace MiningMonitor.Alerts
 {
-    public class GpuThresholdPeriod
+    public class GpuConditionPeriod : ConditionPeriod
     {
         public int GpuIndex { get; set; }
-        public GpuThresholdState State { get; set; }
-        public Period Period { get; set; }
-        public IList<Snapshot> Snapshots { get; set; }
+        public Metric Metric { get; set; }
         public IEnumerable<GpuStats> GpuStats =>
             from s in Snapshots.Select((snapshot, index) => new {snapshot, index})
             where s.snapshot.MinerStatistics.Gpus.Count > GpuIndex

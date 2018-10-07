@@ -2,7 +2,7 @@
 {
     public class AlertValueMetadata
     {
-        public GpuThresholdState? GpuThresholdState { get; set; }
+        public Condition? Condition { get; set; }
         public int? Min { get; set; }
         public int? Max { get; set; }
     }
