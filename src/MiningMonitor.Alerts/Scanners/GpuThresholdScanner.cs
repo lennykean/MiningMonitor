@@ -67,7 +67,7 @@ namespace MiningMonitor.Alerts.Scanners
             var alerts = (
                 from conditionPeriod in inEffectOutOfRangePeriods
                 where activeAlerts.All(activeAlert => activeAlert.Metadata?.GpuIndex != conditionPeriod.GpuIndex)
-                select CreateAlert(definition, parameters, conditionPeriod)).ToList();
+                select CreateAlert(definition, parameters, conditionPeriod)).ToArray();
 
             if (alerts.Any())
                 return ScanResult.Fail(alerts);

@@ -29,7 +29,7 @@ namespace MiningMonitor.Alerts
 
         public static ScanResult Skip => new ScanResult(skip: true);
         public static ScanResult Success => new ScanResult(skip: false, success: true);
-        public static ScanResult Fail(IEnumerable<Alert> alerts) => new ScanResult(alerts, success: false);
+        public static ScanResult Fail(params Alert[] alerts) => new ScanResult(alerts, success: false);
 
     }
 }

@@ -22,25 +22,25 @@ namespace MiningMonitor.Alerts.Scanners
             if (!snapshotsList.Any())
                 return false;
 
-            return !ShouldAlert(definition, miner, snapshotsList, scanTime);
+            return !ShouldAlert(definition, snapshotsList, scanTime);
         }
 
         public override ScanResult PerformScan(IEnumerable<Alert> activeAlerts, AlertDefinition definition, Miner miner, IEnumerable<Snapshot> snapshots, DateTime scanTime)
         {
-            if (activeAlerts.Any() || !ShouldAlert(definition, miner, snapshots, scanTime))
+            if (!miner.CollectData)
+                return ScanResult.Skip;
+            if (activeAlerts.Any())
                 return ScanResult.Success;
+            if (ShouldAlert(definition, snapshots, scanTime))
+                return ScanResult.Fail(CreateAlert(definition));
 
-            return ScanResult.Fail(new [] {Alert.CreateFromDefinition(definition, definition.Parameters.AlertMessage ?? "No Connectivity")});
+            return ScanResult.Success;
         }
 
-        private bool ShouldAlert(AlertDefinition definition, Miner miner, IEnumerable<Snapshot> snapshots, DateTime scanTime)
+        private bool ShouldAlert(AlertDefinition definition, IEnumerable<Snapshot> snapshots, DateTime scanTime)
         {
-            if (!miner.CollectData)
-                return false;
-
             var scanRange = CalculateScanPeriod(definition, scanTime);
-            var durationMinutes = ((ConnectivityAlertParameters)definition.Parameters).DurationMinutes;
-            var duration = durationMinutes != null ? TimeSpan.FromMinutes((int)durationMinutes) : default(TimeSpan?);
+            var duration = TimeSpan.FromMinutes(((ConnectivityAlertParameters)definition.Parameters).DurationMinutes ?? 1);
 
             var indexedSnapshotTimes = snapshots
                 .Select(snapshot => (DateTime?)snapshot.SnapshotTime)
@@ -49,12 +49,23 @@ namespace MiningMonitor.Alerts.Scanners
                 .Select((snapshotTime, index) => new {snapshotTime, index})
                 .ToList();
 
-            var snapshotGaps =
+            var snapshotGaps = 
                 from s1 in indexedSnapshotTimes
                 join s2 in indexedSnapshotTimes on s1.index + 1 equals s2.index
                 select new Period(s1.snapshotTime, s2.snapshotTime);
 
-            return snapshotGaps.Any(gap => gap.Duration >= duration);
+            var lastGap = snapshotGaps.Last();
+
+            return lastGap.Duration >= duration;
+        }
+
+        private static Alert CreateAlert(AlertDefinition definition)
+        {
+            var alert = Alert.CreateFromDefinition(definition, definition.Parameters.AlertMessage ?? "No Connectivity");
+
+            alert.DetailMessages = new[] {$"No connection with miner for more than {definition.Parameters.DurationMinutes} minute(s)"};
+                
+            return alert;
         }
     }
 }

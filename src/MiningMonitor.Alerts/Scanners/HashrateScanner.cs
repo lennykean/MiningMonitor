@@ -58,7 +58,7 @@ namespace MiningMonitor.Alerts.Scanners
 
             var alerts = (
                 from conditionPeriod in inEffectOutOfRangePeriods
-                select CreateAlert(definition, parameters, snapshotsList)).ToList();
+                select CreateAlert(definition, parameters, snapshotsList)).ToArray();
 
             if (alerts.Any())
                 return ScanResult.Fail(alerts);
