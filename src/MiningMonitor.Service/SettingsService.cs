@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
-using LiteDB;
-
+using MiningMonitor.Data;
 using MiningMonitor.Model;
 
 namespace MiningMonitor.Service
@@ -23,9 +22,9 @@ namespace MiningMonitor.Service
             ["PurgeAgeMinutes"] = "1440",
         }.ToImmutableDictionary(StringComparer.OrdinalIgnoreCase);
 
-        private readonly LiteCollection<Setting> _collection;
+        private readonly IRepository<Setting> _collection;
 
-        public SettingsService(LiteCollection<Setting> collection)
+        public SettingsService(IRepository<Setting> collection)
         {
             _collection = collection;
         }

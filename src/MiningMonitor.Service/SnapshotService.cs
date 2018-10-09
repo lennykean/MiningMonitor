@@ -2,22 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using LiteDB;
-
 using MiningMonitor.Common;
+using MiningMonitor.Data;
 using MiningMonitor.Model;
 
 namespace MiningMonitor.Service
 {
     public class SnapshotService : ISnapshotService
     {
-        private readonly LiteCollection<Snapshot> _collection;
+        private readonly IRepository<Snapshot> _collection;
 
-        public SnapshotService(LiteCollection<Snapshot> collection)
+        public SnapshotService(IRepository<Snapshot> collection)
         {
             _collection = collection;
-            _collection.EnsureIndex(s => s.MinerId);
-            _collection.EnsureIndex(s => s.SnapshotTime);
         }
 
         public IEnumerable<Snapshot> GetAll()

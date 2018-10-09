@@ -20,6 +20,8 @@ using Microsoft.Extensions.Hosting;
 using MiningMonitor.Alerts;
 using MiningMonitor.Alerts.Scanners;
 using MiningMonitor.BackgroundScheduler;
+using MiningMonitor.Data;
+using MiningMonitor.Data.LiteDb;
 using MiningMonitor.Model;
 using MiningMonitor.Model.Alerts;
 using MiningMonitor.Model.Serialization;
@@ -69,6 +71,13 @@ namespace MiningMonitor.Web
             services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<Setting>());
             services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<AlertDefinition>());
             services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<Alert>());
+
+            // Repositories
+            services.AddTransient<IRepository<Snapshot>, LiteDbSnapshotRepository>();
+            services.AddTransient<IRepository<Miner>, LiteDbRepository<Miner>>();
+            services.AddTransient<IRepository<Setting>, LiteDbRepository<Setting>>();
+            services.AddTransient<IRepository<AlertDefinition>, LiteDbAlertDefinitionRepository>();
+            services.AddTransient<IRepository<Alert>, LiteDbAlertRepository>();
 
             // Mappers
             services.AddTransient<IMapper<MiningMonitorUser, User>, UserMapper>();

@@ -5,13 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.4" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.1.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.2.4" />
+    <PackageReference Include="LiteDB" Version="4.1.4" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MiningMonitor.Common\MiningMonitor.Common.csproj" />
     <ProjectReference Include="..\MiningMonitor.Data\MiningMonitor.Data\MiningMonitor.Data.csproj" />
     <ProjectReference Include="..\MiningMonitor.Model\MiningMonitor.Model.csproj" />
   </ItemGroup>

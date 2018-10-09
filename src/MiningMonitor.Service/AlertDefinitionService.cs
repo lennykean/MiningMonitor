@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using LiteDB;
-
+using MiningMonitor.Data;
 using MiningMonitor.Model.Alerts;
 
 namespace MiningMonitor.Service
 {
     public class AlertDefinitionService : IAlertDefinitionService
     {
-        private readonly LiteCollection<AlertDefinition> _alertDefinitionCollection;
+        private readonly IRepository<AlertDefinition> _alertDefinitionCollection;
 
-        public AlertDefinitionService(LiteCollection<AlertDefinition> alertDefinitionCollection)
+        public AlertDefinitionService(IRepository<AlertDefinition> alertDefinitionCollection)
         {
             _alertDefinitionCollection = alertDefinitionCollection;
         }

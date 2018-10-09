@@ -2,22 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using LiteDB;
-
+using MiningMonitor.Data;
 using MiningMonitor.Model.Alerts;
 
 namespace MiningMonitor.Service
 {
     public class AlertService : IAlertService
     {
-        private readonly LiteCollection<Alert> _alertCollection;
+        private readonly IRepository<Alert> _alertCollection;
 
-        public AlertService(LiteCollection<Alert> alertCollection)
+        public AlertService(IRepository<Alert> alertCollection)
         {
             _alertCollection = alertCollection;
-
-            _alertCollection.EnsureIndex(a => a.MinerId);
-            _alertCollection.EnsureIndex(a => a.AlertDefinitionId);
         }
 
         public IEnumerable<Alert> Get(bool includeAcknowledged)

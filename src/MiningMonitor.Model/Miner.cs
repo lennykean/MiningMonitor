@@ -1,15 +1,15 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-using LiteDB;
-
 using Newtonsoft.Json;
+
+using Mongo = MongoDB.Bson.Serialization.Attributes;
 
 namespace MiningMonitor.Model
 {
     public class Miner
     {
-        [BsonId(autoId: false)]
+        [LiteDB.BsonId(autoId: false), Mongo.BsonId]
         public Guid Id { get; set; }
         public string DisplayName { get; set; }
         [Required]
@@ -22,7 +22,7 @@ namespace MiningMonitor.Model
         [JsonIgnore]
         public bool? IsSynced { get; set; }
 
-        [BsonIgnore]
+        [LiteDB.BsonIgnore, Mongo.BsonIgnore]
         public string Name
         {
             get

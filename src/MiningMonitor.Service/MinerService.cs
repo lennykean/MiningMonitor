@@ -2,18 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using LiteDB;
-
+using MiningMonitor.Data;
 using MiningMonitor.Model;
 
 namespace MiningMonitor.Service
 {
     public class MinerService : IMinerService
     {
-        private readonly LiteCollection<Miner> _minerCollection;
+        private readonly IRepository<Miner> _minerCollection;
         private readonly ISnapshotService _snapshotService;
 
-        public MinerService(LiteCollection<Miner> minerCollection, ISnapshotService snapshotService)
+        public MinerService(IRepository<Miner> minerCollection, ISnapshotService snapshotService)
         {
             _minerCollection = minerCollection;
             _snapshotService = snapshotService;
