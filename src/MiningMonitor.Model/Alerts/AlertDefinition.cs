@@ -2,19 +2,19 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 
-using LiteDB;
-
 using MiningMonitor.Common;
 using MiningMonitor.Model.Serialization;
 using MiningMonitor.Model.Validation;
 
 using Newtonsoft.Json;
 
+using Mongo = MongoDB.Bson.Serialization.Attributes;
+
 namespace MiningMonitor.Model.Alerts
 {
     public class AlertDefinition
     {
-        [BsonId(autoId: false)]
+        [LiteDB.BsonId(autoId: false), Mongo.BsonId]
         public Guid Id { get; set; }
         [RequiredGuid(ErrorMessage = "Miner is required")]
         public Guid MinerId { get; set; }
@@ -30,7 +30,7 @@ namespace MiningMonitor.Model.Alerts
         public DateTime? LastEnabled { get; set; }
         public DateTime? LastScan { get; set; }
 
-        [BsonIgnore]        
+        [LiteDB.BsonIgnore, Mongo.BsonIgnore]
         public string Name
         {
             get 
@@ -44,7 +44,7 @@ namespace MiningMonitor.Model.Alerts
             }
         }
 
-        [JsonIgnore, BsonIgnore]
+        [JsonIgnore, LiteDB.BsonIgnore, Mongo.BsonIgnore]
         public DateTime NoScanBefore
         {
             get
@@ -56,7 +56,7 @@ namespace MiningMonitor.Model.Alerts
             }
         }
 
-        [JsonIgnore, BsonIgnore]
+        [JsonIgnore, LiteDB.BsonIgnore, Mongo.BsonIgnore]
         public DateTime NeedsScanAfter
         {
             get

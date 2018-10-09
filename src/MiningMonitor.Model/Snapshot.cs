@@ -2,13 +2,13 @@
 
 using ClaymoreMiner.RemoteManagement.Models;
 
-using LiteDB;
+using Mongo = MongoDB.Bson.Serialization.Attributes;
 
 namespace MiningMonitor.Model
 {
     public class Snapshot
     {
-        [BsonId(autoId: false)]
+        [LiteDB.BsonId(autoId: false), Mongo.BsonId]
         public Guid Id { get; set; }
         public Guid MinerId { get; set; }
         public DateTime SnapshotTime { get; set; }

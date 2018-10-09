@@ -34,6 +34,8 @@ using MiningMonitor.Workers.DataCollector;
 using MiningMonitor.Workers.DataSynchronizer;
 using MiningMonitor.Workers.Maintenance;
 
+using MongoDB.Driver;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -64,20 +66,32 @@ namespace MiningMonitor.Web
                     options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
                 });
 
-            // Database
+            // LiteDB
             services.AddSingleton(service => new LiteDatabase(_configuration.GetConnectionString("miningmonitor"), new MiningMonitorBsonMapper()));
-            services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<Snapshot>());
-            services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<Miner>());
-            services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<Setting>());
-            services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<AlertDefinition>());
-            services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<Alert>());
-
-            // Repositories
-            services.AddTransient<IRepository<Snapshot>, LiteDbSnapshotRepository>();
-            services.AddTransient<IRepository<Miner>, LiteDbRepository<Miner>>();
-            services.AddTransient<IRepository<Setting>, LiteDbRepository<Setting>>();
-            services.AddTransient<IRepository<AlertDefinition>, LiteDbAlertDefinitionRepository>();
-            services.AddTransient<IRepository<Alert>, LiteDbAlertRepository>();
+            //services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<Snapshot>());
+            ////services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<Miner>());
+            //services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<Setting>());
+            //services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<AlertDefinition>());
+            //services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<Alert>());
+            //services.AddTransient<IRepository<Snapshot>, LiteDbSnapshotRepository>();
+            ////services.AddTransient<IRepository<Miner>, LiteDbRepository<Miner>>();
+            //services.AddTransient<IRepository<Setting>, LiteDbRepository<Setting>>();
+            //services.AddTransient<IRepository<AlertDefinition>, LiteDbAlertDefinitionRepository>();
+            //services.AddTransient<IRepository<Alert>, LiteDbAlertRepository>();
+            
+            // MongoDB
+            services.AddSingleton(service => new MongoClient("mongodb://localhost:32768"));
+            services.AddTransient(service => service.GetService<MongoClient>().GetDatabase("miningmonitor"));
+            services.AddTransient(service => service.GetService<IMongoDatabase>().GetCollection<Snapshot>("snapshots"));
+            services.AddTransient(service => service.GetService<IMongoDatabase>().GetCollection<Miner>("miners"));
+            services.AddTransient(service => service.GetService<IMongoDatabase>().GetCollection<Setting>("settings"));
+            services.AddTransient(service => service.GetService<IMongoDatabase>().GetCollection<AlertDefinition>("alertdefinitions"));
+            services.AddTransient(service => service.GetService<IMongoDatabase>().GetCollection<Alert>("alerts"));
+            services.AddTransient<IRepository<Snapshot>, MongoDbRepository<Snapshot>>();
+            services.AddTransient<IRepository<Miner>, MongoDbRepository<Miner>>();
+            services.AddTransient<IRepository<Setting>, MongoDbRepository<Setting>>();
+            services.AddTransient<IRepository<AlertDefinition>, MongoDbRepository<AlertDefinition>>();
+            services.AddTransient<IRepository<Alert>, MongoDbRepository<Alert>>();
 
             // Mappers
             services.AddTransient<IMapper<MiningMonitorUser, User>, UserMapper>();
