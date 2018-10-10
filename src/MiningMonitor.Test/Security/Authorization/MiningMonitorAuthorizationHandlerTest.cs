@@ -9,14 +9,14 @@ using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
 
+using MiningMonitor.Security.Authorization;
 using MiningMonitor.Service;
-using MiningMonitor.Web.Security;
 
 using Moq;
 
 using NUnit.Framework;
 
-namespace MiningMonitor.Test.Web.Security
+namespace MiningMonitor.Test.Security.Authorization
 {
     [TestFixture]
     public class MiningMonitorAuthorizationHandlerTest

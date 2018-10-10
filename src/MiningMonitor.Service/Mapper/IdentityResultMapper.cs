@@ -3,6 +3,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
+using MiningMonitor.Common.Mapper;
+
 namespace MiningMonitor.Service.Mapper
 {
     public class IdentityResultMapper : IMapper<IdentityResult, ModelStateDictionary>

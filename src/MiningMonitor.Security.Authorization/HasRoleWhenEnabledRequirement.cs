@@ -1,4 +1,4 @@
-﻿namespace MiningMonitor.Web.Security
+﻿namespace MiningMonitor.Security.Authorization
 {
     public class HasRoleWhenEnabledRequirement : IWhenEnabledRequirement
     {

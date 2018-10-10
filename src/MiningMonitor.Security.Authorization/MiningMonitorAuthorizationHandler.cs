@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 
 using MiningMonitor.Service;
 
-namespace MiningMonitor.Web.Security
+namespace MiningMonitor.Security.Authorization
 {
     public class MiningMonitorAuthorizationHandler : AuthorizationHandler<IWhenEnabledRequirement>
     {

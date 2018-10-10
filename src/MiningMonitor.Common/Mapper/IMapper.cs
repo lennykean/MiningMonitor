@@ -1,4 +1,4 @@
-﻿namespace MiningMonitor.Service.Mapper
+﻿namespace MiningMonitor.Common.Mapper
 {
     public interface IMapper<in TSource, out TResult>
     {

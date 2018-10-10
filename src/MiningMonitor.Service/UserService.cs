@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
+using MiningMonitor.Common.Mapper;
 using MiningMonitor.Model;
-using MiningMonitor.Service.Mapper;
 
 namespace MiningMonitor.Service
 {

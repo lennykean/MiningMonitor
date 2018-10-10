@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace MiningMonitor.Web.Security
+namespace MiningMonitor.Security.Authorization
 {
     public interface IWhenEnabledRequirement : IAuthorizationRequirement
     {

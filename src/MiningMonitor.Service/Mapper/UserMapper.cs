@@ -1,15 +1,16 @@
-﻿using MiningMonitor.Model;
+﻿using MiningMonitor.Common.Mapper;
+using MiningMonitor.Model;
 
 namespace MiningMonitor.Service.Mapper
 {
     public class UserMapper : IMapper<MiningMonitorUser, User>, IMapper<User, MiningMonitorUser>, IMapper<MiningMonitorUser, Collector>, IUpdateMapper<Collector, MiningMonitorUser>
     {
-        public User Map(MiningMonitorUser identiyUser)
+        public User Map(MiningMonitorUser identityUser)
         {
             return new User
             {
-                Username = identiyUser.UserName,
-                Email = identiyUser.Email?.Address
+                Username = identityUser.UserName,
+                Email = identityUser.Email?.Address
             };
         }
 
