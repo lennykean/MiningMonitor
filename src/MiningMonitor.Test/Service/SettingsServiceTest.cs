@@ -4,6 +4,7 @@ using System.Linq;
 
 using LiteDB;
 
+using MiningMonitor.Data.LiteDb;
 using MiningMonitor.Model;
 using MiningMonitor.Service;
 
@@ -25,7 +26,7 @@ namespace MiningMonitor.Test.Service
             _ms = new MemoryStream();
             _memoryDb = new LiteDatabase(_ms);
             _collection = _memoryDb.GetCollection<Setting>();
-            _subject = new SettingsService(_collection);
+            _subject = new SettingsService(new LiteDbRepository<Setting>(_collection));
         }
 
         [TearDown]

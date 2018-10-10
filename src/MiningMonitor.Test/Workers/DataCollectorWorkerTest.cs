@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 
 using ClaymoreMiner.RemoteManagement;
 using ClaymoreMiner.RemoteManagement.Models;
@@ -53,7 +54,7 @@ namespace MiningMonitor.Test.Workers
                 _logger.Object);
 
             // Act
-            await dataCollector.Collect();
+            await dataCollector.DoWorkAsync(CancellationToken.None);
 
             // Assert
             _snapshotService.Verify(m => m.Add(It.Is<Snapshot>(s => s.MinerStatistics == statistics)));
