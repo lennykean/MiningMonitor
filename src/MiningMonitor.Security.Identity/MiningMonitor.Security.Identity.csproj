@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MiningMonitor.Data\MiningMonitor.Data\MiningMonitor.Data.csproj" />
+    <ProjectReference Include="..\MiningMonitor.Data\MiningMonitor.Data.csproj" />
   </ItemGroup>
 
 </Project>
