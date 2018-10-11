@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-using MiningMonitor.BackgroundScheduler;
 using MiningMonitor.Common;
 using MiningMonitor.Model;
 using MiningMonitor.Service;
@@ -18,16 +17,13 @@ namespace MiningMonitor.Web.Controllers
     {
         private readonly ISnapshotService _snapshotService;
         private readonly ICollectorService _collectorService;
-        private readonly DataCollectorSchedule _dataCollectorSchedule;
 
         public SnapshotsController(
             ISnapshotService snapshotService,
-            ICollectorService collectorService,
-            DataCollectorSchedule dataCollectorSchedule)
+            ICollectorService collectorService)
         {
             _snapshotService = snapshotService;
             _collectorService = collectorService;
-            _dataCollectorSchedule = dataCollectorSchedule;
         }
 
         [HttpGet("{minerId}"), Authorize(Policy = "Basic")]
@@ -37,7 +33,7 @@ namespace MiningMonitor.Web.Controllers
             [FromQuery]DateTime? to = null,
             CancellationToken token = default)
         {
-            return _snapshotService.GetByMinerFillGapsAsync(minerId, new ConcretePeriod(from ?? DateTime.UtcNow.AddMinutes(-60), to ?? DateTime.UtcNow), _dataCollectorSchedule.Interval, token);
+            return _snapshotService.GetByMinerFillGapsAsync(minerId, new ConcretePeriod(from ?? DateTime.UtcNow.AddMinutes(-60), to ?? DateTime.UtcNow), TimeSpan.FromSeconds(30), token);
         }
 
         [HttpPost("collector/{collector}/{minerId}"), Authorize(Policy = "Collector")]

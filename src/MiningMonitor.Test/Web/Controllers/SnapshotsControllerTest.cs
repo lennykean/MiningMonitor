@@ -34,12 +34,11 @@ namespace MiningMonitor.Test.Web.Controllers
             // Arrange
             var now = new DateTime(2018, 6, 1);
             var minerId = new Guid("56f5fb3a-4b59-417c-aae0-ace175bb7c5b");
-            var schedule = new DataCollectorSchedule { Interval = TimeSpan.FromMinutes(1) };
             var snapshots = Enumerable.Range(0, 3).Select(i => new Snapshot { SnapshotTime = now }).ToList();
             _snapshotService.Setup(m => m.GetByMinerFillGapsAsync(minerId, It.IsAny<ConcretePeriod>(), It.IsAny<TimeSpan>(), CancellationToken.None))
                 .ReturnsAsync(() => snapshots)
                 .Verifiable();
-            var controller = new SnapshotsController(_snapshotService.Object, _collectorService.Object, schedule);
+            var controller = new SnapshotsController(_snapshotService.Object, _collectorService.Object);
 
             // Act
             var result = await controller.GetAsync(minerId);
@@ -56,12 +55,11 @@ namespace MiningMonitor.Test.Web.Controllers
             // Arrange
             var collector = "12345";
             var minerId = new Guid("56f5fb3a-4b59-417c-aae0-ace175bb7c5b");
-            var schedule = new DataCollectorSchedule { Interval = TimeSpan.FromMinutes(1) };
             var snapshot = new Snapshot();
             _collectorService.Setup(m => m.SnapshotSyncAsync(collector, minerId, snapshot, CancellationToken.None))
                 .ReturnsAsync(() => success)
                 .Verifiable();
-            var controller = new SnapshotsController(_snapshotService.Object, _collectorService.Object, schedule);
+            var controller = new SnapshotsController(_snapshotService.Object, _collectorService.Object);
 
             // Act
             var result = await controller.PostAsync(collector, minerId, snapshot);
