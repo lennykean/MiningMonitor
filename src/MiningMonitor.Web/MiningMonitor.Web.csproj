@@ -19,6 +19,10 @@
     <Compile Remove="data\**" />
     <Content Remove="data\**" />
     <EmbeddedResource Remove="data\**" />
+    <None Remove="ClientApp\dist\**" />
+    <Compile Remove="ClientApp\dist\**" />
+    <Content Remove="ClientApp\dist\**" />
+    <EmbeddedResource Remove="ClientApp\dist\**" />
   </ItemGroup>
 
   <ItemGroup>

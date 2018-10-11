@@ -64,10 +64,10 @@ namespace MiningMonitor.Web
             // Background workers
             if (!_configuration.GetValue<bool>("disable_background_workers"))
             {
-                services.AddBackgroundWorker<DataCollectorWorker, DataCollectorSchedule>(_configuration.GetSection("Scheduler:DataCollector"));
-                services.AddBackgroundWorker<DataSynchronizerWorker, DataSynchronizerSchedule>(_configuration.GetSection("Scheduler:DataSynchronizer"));
-                services.AddBackgroundWorker<MaintenanceWorker, MaintenanceSchedule>(_configuration.GetSection("Scheduler:Maintenance"));
-                services.AddBackgroundWorker<AlertScanWorker, AlertScanSchedule>(_configuration.GetSection("Scheduler:AlertScan"));
+                services.ScheduleBackgroundWorker<DataCollectorWorker>(_configuration.GetSection("Scheduler:DataCollector"));
+                services.ScheduleBackgroundWorker<DataSynchronizerWorker>(_configuration.GetSection("Scheduler:DataSynchronizer"));
+                services.ScheduleBackgroundWorker<MaintenanceWorker>(_configuration.GetSection("Scheduler:Maintenance"));
+                services.ScheduleBackgroundWorker<AlertScanWorker>(_configuration.GetSection("Scheduler:AlertScan"));
             }
 
             // Security

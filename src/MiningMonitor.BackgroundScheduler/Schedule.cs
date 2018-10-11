@@ -1,8 +1,10 @@
 ﻿using System;
 
+using MiningMonitor.Workers;
+
 namespace MiningMonitor.BackgroundScheduler
 {
-    public class DataSynchronizerSchedule : ISchedule
+    public class Schedule<TWorker> where TWorker : IWorker
     {
         public bool DoWorkOnStartup { get; set; }
         public TimeSpan Interval { get; set; }

@@ -2,20 +2,22 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-using MiningMonitor.Web.Configuration;
 using MiningMonitor.Workers;
 
 namespace MiningMonitor.BackgroundScheduler
 {
     public static class BackgroundSchedulerExtensions
     {
-        public static IServiceCollection AddBackgroundWorker<TWorker, TSchedule>(this IServiceCollection services, IConfigurationSection configSection)
+        public static IServiceCollection ScheduleBackgroundWorker<TWorker>(this IServiceCollection services, IConfiguration scheduleConfig)
             where TWorker : class, IWorker
-            where TSchedule : class, ISchedule, new()
         {
-            services.ConfigurePoco<TSchedule>(configSection);
+            var schedule = new Schedule<TWorker>();
+
+            scheduleConfig.Bind(schedule);
+            services.AddSingleton(schedule);
+
             services.AddTransient<TWorker>();
-            services.AddSingleton<IHostedService, BackgroundScheduler<TWorker, TSchedule>>();
+            services.AddSingleton<IHostedService, BackgroundScheduler<TWorker>>();
 
             return services;
         }

@@ -9,15 +9,13 @@ using MiningMonitor.Workers;
 
 namespace MiningMonitor.BackgroundScheduler
 {
-    public class BackgroundScheduler<TWorker, TSchedule> : BackgroundService
-        where TWorker : IWorker
-        where TSchedule : ISchedule
+    public class BackgroundScheduler<TWorker> : BackgroundService where TWorker : IWorker
     {
         private readonly TWorker _worker;
-        private readonly TSchedule _schedule;
-        private readonly ILogger<BackgroundScheduler<TWorker, TSchedule>> _logger;
+        private readonly Schedule<TWorker> _schedule;
+        private readonly ILogger<BackgroundScheduler<TWorker>> _logger;
 
-        public BackgroundScheduler(TWorker worker, TSchedule schedule, ILogger<BackgroundScheduler<TWorker, TSchedule>> logger)
+        public BackgroundScheduler(TWorker worker, Schedule<TWorker> schedule, ILogger<BackgroundScheduler<TWorker>> logger)
         {
             _worker = worker;
             _schedule = schedule;

@@ -12,5 +12,4 @@
   <ItemGroup>
     <ProjectReference Include="..\MiningMonitor.Workers\MiningMonitor.Workers.csproj" />
   </ItemGroup>
-
 </Project>
