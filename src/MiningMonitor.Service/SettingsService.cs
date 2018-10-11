@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 using MiningMonitor.Data;
 using MiningMonitor.Model;
@@ -29,9 +31,9 @@ namespace MiningMonitor.Service
             _collection = collection;
         }
 
-        public IDictionary<string, string> GetAll()
+        public async Task<IDictionary<string, string>> GetAllAsync(CancellationToken token = default)
         {
-            var settings = _collection.FindAll();
+            var settings = await _collection.FindAllAsync(token);
 
             var mergedSettings = DefaultSettings.ToDictionary(
                 defaultSetting => defaultSetting.Key,
@@ -43,20 +45,20 @@ namespace MiningMonitor.Service
             return mergedSettings;
         }
 
-        public (bool success, string setting) GetSetting(string key)
+        public async Task<(bool success, string setting)> GetSettingAsync(string key, CancellationToken token = default)
         {
             if (!DefaultSettings.ContainsKey(key))
                 return (false, null);
 
             DefaultSettings.TryGetKey(key, out var normalizedKey);
 
-            var setting = _collection.FindOne(s => s.Key.ToLower() == normalizedKey.ToLower());
+            var setting = await _collection.FindOneAsync(s => s.Key.ToLower() == normalizedKey.ToLower(), token);
             var value = setting?.Value ?? DefaultSettings[normalizedKey];
 
             return (true, value);
         }
 
-        public (bool success, IDictionary<string, string> settings) UpdateSettings(IDictionary<string, string> settings)
+        public async Task<(bool success, IDictionary<string, string> settings)> UpdateSettingsAsync(IDictionary<string, string> settings, CancellationToken token = default)
         {
             if (settings.Any(s => !DefaultSettings.ContainsKey(s.Key)))
                 return (false, null);
@@ -64,34 +66,34 @@ namespace MiningMonitor.Service
             foreach (var setting in settings)
             {
                 DefaultSettings.TryGetKey(setting.Key, out var normalizedKey);
-                var originalSetting = _collection.FindOne(s => s.Key.ToLower() == normalizedKey.ToLower());
+                var originalSetting = await _collection.FindOneAsync(s => s.Key.ToLower() == normalizedKey.ToLower(), token);
                 if (originalSetting == null)
                 {
-                    _collection.Insert(new Setting { Key = setting.Key, Value = setting.Value });
+                    await _collection.InsertAsync(new Setting { Key = setting.Key, Value = setting.Value }, token);
                 }
                 else
                 {
                     originalSetting.Value = setting.Value;
-                    _collection.Update(originalSetting);
+                    await _collection.UpdateAsync(originalSetting, token);
                 }
             }
-            return (true, GetAll());
+            return (true, await GetAllAsync(token));
         }
 
-        public bool UpdateSetting(string setting, string value)
+        public async Task<bool> UpdateSettingAsync(string setting, string value, CancellationToken token = default)
         {
             if (!DefaultSettings.TryGetKey(setting, out var normalizedKey))
                 return false;
 
-            var originalSetting = _collection.FindOne(s => s.Key.ToLower() == normalizedKey.ToLower());
+            var originalSetting = await _collection.FindOneAsync(s => s.Key.ToLower() == normalizedKey.ToLower(), token);
             if (originalSetting == null)
             {
-                _collection.Insert(new Setting { Key = setting, Value = value });
+                await _collection.InsertAsync(new Setting { Key = setting, Value = value }, token);
             }
             else
             {
                 originalSetting.Value = value;
-                _collection.Update(originalSetting);
+                await _collection.UpdateAsync(originalSetting, token);
             }
             return true;
         }

@@ -17,12 +17,7 @@ namespace MiningMonitor.Security.Authorization
 
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, IWhenEnabledRequirement requirement)
         {
-            await Task.Run(() => HandleRequirement(context, requirement));
-        }
-
-        private void HandleRequirement(AuthorizationHandlerContext context, IWhenEnabledRequirement requirement)
-        {
-            var (_, securityEnabled) = _settingsService.GetSetting("EnableSecurity");
+            var (_, securityEnabled) = await _settingsService.GetSettingAsync("EnableSecurity");
 
             if (securityEnabled != "true")
             {

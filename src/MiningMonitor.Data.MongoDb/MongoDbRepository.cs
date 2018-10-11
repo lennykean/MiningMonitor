@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
 
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
@@ -17,23 +19,50 @@ namespace MiningMonitor.Data.LiteDb
             _collection = collection;
         }
 
-        public virtual IEnumerable<T> FindAll() => _collection.Find(_ => true).ToList();
+        public virtual async Task<IEnumerable<T>> FindAllAsync(CancellationToken token = default)
+        {
+            return await _collection.Find(_ => true).ToListAsync(token);
+        }
 
-        public virtual IEnumerable<T> Find(Expression<Func<T, bool>> predicate) => _collection.Find(predicate).ToList();
+        public virtual async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate, CancellationToken token = default)
+        {
+            return await _collection.Find(predicate).ToListAsync(token);
+        }
 
-        public virtual T FindOne(Expression<Func<T, bool>> predicate) => _collection.Find(predicate).SingleOrDefault();
+        public virtual async Task<T> FindOneAsync(Expression<Func<T, bool>> predicate, CancellationToken token = default)
+        {
+            return await _collection.Find(predicate).SingleOrDefaultAsync(token);
+        }
 
-        public virtual T FindById(Guid id) => _collection.Find(Builders<T>.Filter.Eq("_id", id)).SingleOrDefault();
-        
-        public virtual void Insert(T document) => _collection.InsertOne(document);
+        public virtual async Task<T> FindByIdAsync(Guid id, CancellationToken token = default)
+        {
+            return await _collection.Find(Builders<T>.Filter.Eq("_id", id)).SingleOrDefaultAsync(token);
+        }
 
-        public virtual void Upsert(T document) => _collection.ReplaceOne(Builders<T>.Filter.Eq("_id", GetId(document)), document, new UpdateOptions{ IsUpsert = true });
+        public virtual async Task InsertAsync(T document, CancellationToken token = default)
+        {
+            await _collection.InsertOneAsync(document, cancellationToken: token);
+        }
 
-        public virtual bool Update(T document) => _collection.ReplaceOne(Builders<T>.Filter.Eq("_id", GetId(document)), document).IsAcknowledged;
-        
-        public virtual bool Delete(Guid id) => _collection.DeleteOne(Builders<T>.Filter.Eq("_id", id)).IsAcknowledged;
+        public virtual async Task UpsertAsync(T document, CancellationToken token = default)
+        {
+            await _collection.ReplaceOneAsync(Builders<T>.Filter.Eq("_id", GetId(document)), document, new UpdateOptions { IsUpsert = true }, token);
+        }
 
-        public virtual int Delete(Expression<Func<T, bool>> predicate) => (int)_collection.DeleteMany(predicate).DeletedCount;
+        public virtual async Task<bool> UpdateAsync(T document, CancellationToken token = default)
+        {
+            return (await _collection.ReplaceOneAsync(Builders<T>.Filter.Eq("_id", GetId(document)), document, cancellationToken: token)).IsAcknowledged;
+        }
+
+        public virtual async Task<bool> DeleteAsync(Guid id, CancellationToken token = default)
+        {
+            return (await _collection.DeleteOneAsync(Builders<T>.Filter.Eq("_id", id), token)).IsAcknowledged;
+        }
+
+        public virtual async Task<int> DeleteAsync(Expression<Func<T, bool>> predicate, CancellationToken token = default)
+        {
+            return (int)(await _collection.DeleteManyAsync(predicate, token)).DeletedCount;
+        }
 
         private static object GetId(T document)
         {

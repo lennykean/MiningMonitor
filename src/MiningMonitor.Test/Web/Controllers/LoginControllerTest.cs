@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,7 +39,7 @@ namespace MiningMonitor.Test.Web.Controllers
             var controller = new LoginController(_loginService.Object, _settingsService.Object);
 
             // Act
-            var result = await controller.Post(new LoginCredentials {Username = "test-user", Password = "hunter2"});
+            var result = await controller.PostAsync(credentials: new LoginCredentials { Username = "test-user", Password = "hunter2" });
 
             // Assert
             _loginService.Verify();
@@ -56,7 +57,7 @@ namespace MiningMonitor.Test.Web.Controllers
             var controller = new LoginController(_loginService.Object, _settingsService.Object);
 
             // Act
-            var result = await controller.Post(new LoginCredentials {Username = "test-user", Password = "hunter2"});
+            var result = await controller.PostAsync(credentials: new LoginCredentials { Username = "test-user", Password = "hunter2" });
 
             // Assert
             _loginService.Verify();

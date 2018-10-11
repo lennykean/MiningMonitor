@@ -1,4 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,15 +20,15 @@ namespace MiningMonitor.Web.Controllers
         }
 
         [HttpGet]
-        public IDictionary<string, string> Get()
+        public async Task<IDictionary<string, string>> GetAsync(CancellationToken token = default)
         {
-            return _settingsService.GetAll();
+            return await _settingsService.GetAllAsync(token);
         }
 
         [HttpGet("{setting}")]
-        public ObjectResult Get(string setting)
+        public async Task<ObjectResult> GetAsync(string setting, CancellationToken token = default)
         {
-            var result = _settingsService.GetSetting(setting);
+            var result = await _settingsService.GetSettingAsync(setting, token);
 
             if (!result.success)
                 return NotFound(null);
@@ -34,9 +37,9 @@ namespace MiningMonitor.Web.Controllers
         }
 
         [HttpPut]
-        public ObjectResult Put([FromBody]IDictionary<string, string> settings)
+        public async Task<ObjectResult> Put([FromBody]IDictionary<string, string> settings, CancellationToken token = default)
         {
-            var result = _settingsService.UpdateSettings(settings);
+            var result = await _settingsService.UpdateSettingsAsync(settings, token);
 
             if (!result.success)
                 return NotFound(null);

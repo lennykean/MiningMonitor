@@ -44,7 +44,7 @@ namespace MiningMonitor.Test.Workers
             var statistics = new MinerStatistics();
             var miners = new[] { new Miner() };
 
-            _minerService.Setup(m => m.GetEnabledMiners()).Returns(() => miners);
+            _minerService.Setup(m => m.GetEnabledMinersAsync(CancellationToken.None)).ReturnsAsync(() => miners);
             _client.Setup(m => m.GetStatisticsAsync()).ReturnsAsync(() => statistics);
 
             var dataCollector = new DataCollectorWorker(
@@ -57,7 +57,7 @@ namespace MiningMonitor.Test.Workers
             await dataCollector.DoWorkAsync(CancellationToken.None);
 
             // Assert
-            _snapshotService.Verify(m => m.Add(It.Is<Snapshot>(s => s.MinerStatistics == statistics)));
+            _snapshotService.Verify(m => m.AddAsync(It.Is<Snapshot>(s => s.MinerStatistics == statistics), CancellationToken.None));
         }
     }
 }

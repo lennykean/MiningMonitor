@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 using MiningMonitor.Common;
 using MiningMonitor.Data;
@@ -17,46 +19,46 @@ namespace MiningMonitor.Service
             _collection = collection;
         }
 
-        public IEnumerable<Snapshot> GetAll()
+        public async Task<IEnumerable<Snapshot>> GetAllAsync(CancellationToken token = default)
         {
-            return _collection.FindAll();
+            return await _collection.FindAllAsync(token);
         }
 
-        public IEnumerable<Snapshot> GetByMiner(Guid minerId, Period period)
+        public async Task<IEnumerable<Snapshot>> GetByMinerAsync(Guid minerId, Period period, CancellationToken token = default)
         {
-            return _collection.Find(snapshot => snapshot.MinerId == minerId && snapshot.SnapshotTime >= period.Start && snapshot.SnapshotTime <= period.End);
+            return await _collection.FindAsync(snapshot => snapshot.MinerId == minerId && snapshot.SnapshotTime >= period.Start && snapshot.SnapshotTime <= period.End, token);
         }
 
-        public IEnumerable<Snapshot> GetByMinerFillGaps(Guid minerId, ConcretePeriod period, TimeSpan interval)
+        public async Task<IEnumerable<Snapshot>> GetByMinerFillGapsAsync(Guid minerId, ConcretePeriod period, TimeSpan interval, CancellationToken token = default)
         {
-            return GetByMiner(minerId, period).FillGaps(period, interval).ToList();
+            return (await GetByMinerAsync(minerId, period, token)).FillGaps(period, interval).ToList();
         }
 
-        public void Add(Snapshot snapshot)
+        public async Task AddAsync(Snapshot snapshot, CancellationToken token = default)
         {
             snapshot.Id = Guid.NewGuid();
 
-            _collection.Insert(snapshot);
+            await _collection.InsertAsync(snapshot, token);
         }
 
-        public void Upsert(Snapshot snapshot)
+        public async Task UpsertAsync(Snapshot snapshot, CancellationToken token = default)
         {
-            _collection.Upsert(snapshot);
+            await _collection.UpsertAsync(snapshot, token);
         }
 
-        public void Delete(Guid snapshotId)
+        public async Task DeleteAsync(Guid snapshotId, CancellationToken token = default)
         {
-            _collection.Delete(snapshotId);
+            await _collection.DeleteAsync(snapshotId, token);
         }
 
-        public void DeleteByMiner(Guid minerId)
+        public async Task DeleteByMinerAsync(Guid minerId, CancellationToken token = default)
         {
-            _collection.Delete(s => s.MinerId == minerId);
+            await _collection.DeleteAsync(s => s.MinerId == minerId, token);
         }
 
-        public int DeleteOld(DateTime cutoff)
+        public async Task<int> DeleteOldAsync(DateTime cutoff, CancellationToken token = default)
         {
-            return _collection.Delete(s => s.SnapshotTime < cutoff);
+            return await _collection.DeleteAsync(s => s.SnapshotTime < cutoff, token);
         }
     }
 }

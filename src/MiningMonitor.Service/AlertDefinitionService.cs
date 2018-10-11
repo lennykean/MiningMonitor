@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 using MiningMonitor.Data;
 using MiningMonitor.Model.Alerts;
@@ -15,27 +17,27 @@ namespace MiningMonitor.Service
             _alertDefinitionCollection = alertDefinitionCollection;
         }
 
-        public IEnumerable<AlertDefinition> GetAll()
+        public async Task<IEnumerable<AlertDefinition>> GetAllAsync(CancellationToken token = default)
         {
-            return _alertDefinitionCollection.FindAll();
+            return await _alertDefinitionCollection.FindAllAsync(token);
         }
 
-        public IEnumerable<AlertDefinition> GetEnabled()
+        public async Task<IEnumerable<AlertDefinition>> GetEnabledAsync(CancellationToken token = default)
         {
-            return _alertDefinitionCollection.Find(a => a.Enabled);
+            return await _alertDefinitionCollection.FindAsync(a => a.Enabled, token);
         }
 
-        public IEnumerable<AlertDefinition> GetByMiner(Guid minerId)
+        public async Task<IEnumerable<AlertDefinition>> GetByMinerAsync(Guid minerId, CancellationToken token = default)
         {
-            return _alertDefinitionCollection.Find(a => a.MinerId == minerId);
+            return await _alertDefinitionCollection.FindAsync(a => a.MinerId == minerId, token);
         }
 
-        public AlertDefinition GetById(Guid id)
+        public async Task<AlertDefinition> GetByIdAsync(Guid id, CancellationToken token = default)
         {
-            return _alertDefinitionCollection.FindById(id);
+            return await _alertDefinitionCollection.FindByIdAsync(id, token);
         }
 
-        public void Add(AlertDefinition alertDefinition)
+        public async Task AddAsync(AlertDefinition alertDefinition, CancellationToken token = default)
         {
             alertDefinition.Id = Guid.NewGuid();
             alertDefinition.Created = DateTime.UtcNow;
@@ -43,12 +45,12 @@ namespace MiningMonitor.Service
             if (alertDefinition.Enabled)
                 alertDefinition.LastEnabled = DateTime.UtcNow;
 
-            _alertDefinitionCollection.Insert(alertDefinition);
+            await _alertDefinitionCollection.InsertAsync(alertDefinition, token);
         }
 
-        public bool Update(AlertDefinition alertDefinition)
+        public async Task<bool> UpdateAsync(AlertDefinition alertDefinition, CancellationToken token = default)
         {
-            var current = _alertDefinitionCollection.FindById(alertDefinition.Id);
+            var current = await _alertDefinitionCollection.FindByIdAsync(alertDefinition.Id, token);
             if (current == null)
                 return false;
 
@@ -64,22 +66,23 @@ namespace MiningMonitor.Service
             else
                 alertDefinition.LastEnabled = current.LastEnabled;
             
-            return _alertDefinitionCollection.Update(alertDefinition);
+            return await _alertDefinitionCollection.UpdateAsync(alertDefinition, token);
         }
 
-        public bool Delete(Guid id)
+        public async Task<bool> DeleteAsync(Guid id, CancellationToken token = default)
         {
-            return _alertDefinitionCollection.Delete(id);
+            return await _alertDefinitionCollection.DeleteAsync(id, token);
         }
 
-        public bool MarkScanned(Guid id, DateTime scanTime)
+        public async Task<bool> MarkScannedAsync(Guid id, DateTime scanTime, CancellationToken token = default)
         {
-            var alertDefinition = _alertDefinitionCollection.FindById(id);
+            var alertDefinition = await _alertDefinitionCollection.FindByIdAsync(id, token);
             if (alertDefinition == null)
                 return false;
 
             alertDefinition.LastScan = scanTime;
-            _alertDefinitionCollection.Update(alertDefinition);
+            await _alertDefinitionCollection.UpdateAsync(alertDefinition, token);
+
             return true;
         }
     }

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Identity;
 
-using MiningMonitor.Model;
+using MiningMonitor.Security.Identity;
 
 namespace MiningMonitor.Service
 {

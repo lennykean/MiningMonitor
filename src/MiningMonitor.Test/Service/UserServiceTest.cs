@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 
 using MiningMonitor.Model;
+using MiningMonitor.Security.Identity;
 using MiningMonitor.Service;
 using MiningMonitor.Service.Mapper;
 
@@ -63,7 +64,7 @@ namespace MiningMonitor.Test.Service
             var userService = new UserService(_userManager, _mapper, _mapper, _resultMapper);
 
             _passwordStore.Setup(m => m.CreateAsync(
-                    It.Is<MiningMonitorUser>(u => u.UserName == user.Username && u.Email.Address == user.Email),
+                    It.Is<MiningMonitorUser>(u => u.UserName == user.Username && u.Email == user.Email),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => identityResult)
                 .Verifiable();
@@ -74,7 +75,7 @@ namespace MiningMonitor.Test.Service
             // Assert
             _passwordStore.Verify();
             _passwordStore.Verify(m => m.SetPasswordHashAsync(
-                It.Is<MiningMonitorUser>(u => u.UserName == user.Username && u.Email.Address == user.Email),
+                It.Is<MiningMonitorUser>(u => u.UserName == user.Username && u.Email == user.Email),
                 It.IsAny<string>(), It.IsAny<CancellationToken>()));
             Assert.That(result, Has.Property(nameof(result.IsValid)).EqualTo(true));
         }

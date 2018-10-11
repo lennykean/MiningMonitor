@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc;
@@ -32,12 +33,12 @@ namespace MiningMonitor.Test.Web.Controllers
         {
             // Arrange
             var collectors = Enumerable.Range(0, 3).Select(i => new Collector()).ToList();
-            _collectorService.Setup(m => m.GetAllAsync())
+            _collectorService.Setup(m => m.GetAllAsync(CancellationToken.None))
                 .ReturnsAsync(() => collectors)
                 .Verifiable();
 
             // Act
-            var result = await _controller.Get();
+            var result = await _controller.GetAsync();
 
             // Assert
             _collectorService.Verify();
@@ -51,12 +52,12 @@ namespace MiningMonitor.Test.Web.Controllers
 
             // Arrange
             var collector = new Collector();
-            _collectorService.Setup(m => m.GetAsync(collectorId))
+            _collectorService.Setup(m => m.GetAsync(collectorId, CancellationToken.None))
                 .ReturnsAsync(() => (true, collector))
                 .Verifiable();
 
             // Act
-            var result = await _controller.Get(collectorId);
+            var result = await _controller.GetAsync(collectorId);
 
             // Assert
             _collectorService.Verify();
@@ -70,12 +71,12 @@ namespace MiningMonitor.Test.Web.Controllers
             const string collectorId = "12345";
 
             // Arrange
-            _collectorService.Setup(m => m.GetAsync(collectorId))
+            _collectorService.Setup(m => m.GetAsync(collectorId, CancellationToken.None))
                 .ReturnsAsync(() => (false, null))
                 .Verifiable();
 
             // Act
-            var result = await _controller.Get(collectorId);
+            var result = await _controller.GetAsync(collectorId);
 
             // Assert
             _collectorService.Verify();
@@ -91,15 +92,15 @@ namespace MiningMonitor.Test.Web.Controllers
             var state = new ModelStateDictionary();
             var response = new RegistrationResponse();
 
-            _collectorService.Setup(m => m.CreateCollectorAsync(collector))
+            _collectorService.Setup(m => m.CreateCollectorAsync(collector, CancellationToken.None))
                 .ReturnsAsync(() => (state, response))
                 .Verifiable();
 
             // Act
-            var result = await _controller.Post(collector);
+            var result = await _controller.PostAsync(collector);
 
             // Assert
-            _collectorService.Verify(m => m.CreateCollectorAsync(collector));
+            _collectorService.Verify(m => m.CreateCollectorAsync(collector, CancellationToken.None));
             Assert.That(result, Has.Property(nameof(result.StatusCode)).EqualTo(200));
             Assert.That(result, Has.Property(nameof(result.Value)).EqualTo(response));
         }
@@ -113,12 +114,12 @@ namespace MiningMonitor.Test.Web.Controllers
             var state = new ModelStateDictionary();
             state.AddModelError("test-key", "test-validation-message");
 
-            _collectorService.Setup(m => m.CreateCollectorAsync(collector))
+            _collectorService.Setup(m => m.CreateCollectorAsync(collector, CancellationToken.None))
                 .ReturnsAsync(() => (state, null))
                 .Verifiable();
 
             // Act
-            var result = await _controller.Post(collector);
+            var result = await _controller.PostAsync(collector);
 
             // Assert
             Assert.That(result, Has.Property(nameof(result.StatusCode)).EqualTo(400));
@@ -132,12 +133,12 @@ namespace MiningMonitor.Test.Web.Controllers
             const string collectorId = "12345";
 
             // Arrange
-            _collectorService.Setup(m => m.DeleteAsync(collectorId))
+            _collectorService.Setup(m => m.DeleteAsync(collectorId, CancellationToken.None))
                 .ReturnsAsync(() => deleted)
                 .Verifiable();
 
             // Act
-            var result = await _controller.Delete(collectorId);
+            var result = await _controller.DeleteAsync(collectorId);
 
             // Assert
             _collectorService.Verify();

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Authorization;
@@ -20,15 +21,15 @@ namespace MiningMonitor.Web.Controllers
         }
 
         [HttpGet, Authorize(Policy = "Basic")]
-        public async Task<IEnumerable<Collector>> Get()
+        public async Task<IEnumerable<Collector>> GetAsync(CancellationToken token = default)
         {
             return await _collectorService.GetAllAsync();
         }
 
         [HttpGet("{collector}"), Authorize(Policy = "Collector")]
-        public async Task<IActionResult> Get(string collector)
+        public async Task<IActionResult> GetAsync(string collector, CancellationToken token = default)
         {
-            var (success, collectorObj) = await _collectorService.GetAsync(collector);
+            var (success, collectorObj) = await _collectorService.GetAsync(collector, token);
 
             if (!success)
                 return NotFound();
@@ -37,9 +38,9 @@ namespace MiningMonitor.Web.Controllers
         }
 
         [HttpPut, Authorize(Policy = "Basic")]
-        public async Task<IActionResult> Put([FromBody]Collector collector)
+        public async Task<IActionResult> PutAsync([FromBody]Collector collector, CancellationToken token = default)
         {
-            var success = await _collectorService.UpdateAsync(collector);
+            var success = await _collectorService.UpdateAsync(collector, token);
 
             if (!success)
                 return NotFound();
@@ -48,9 +49,9 @@ namespace MiningMonitor.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<ObjectResult> Post([FromBody]Collector collector)
+        public async Task<ObjectResult> PostAsync([FromBody]Collector collector, CancellationToken token = default)
         {
-            var (result, response) = await _collectorService.CreateCollectorAsync(collector);
+            var (result, response) = await _collectorService.CreateCollectorAsync(collector, token);
 
             if (!result.IsValid)
                 return BadRequest(result);
@@ -59,9 +60,9 @@ namespace MiningMonitor.Web.Controllers
         }
 
         [HttpDelete("{collectorId}"), Authorize(Policy = "Basic")]
-        public async Task<StatusCodeResult> Delete(string collectorId)
+        public async Task<StatusCodeResult> DeleteAsync(string collectorId, CancellationToken token = default)
         {
-            if (!await _collectorService.DeleteAsync(collectorId))
+            if (!await _collectorService.DeleteAsync(collectorId, token))
                 return NotFound();
 
             return NoContent();

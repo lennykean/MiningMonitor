@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 using MiningMonitor.Data;
 using MiningMonitor.Model;
@@ -18,66 +20,66 @@ namespace MiningMonitor.Service
             _snapshotService = snapshotService;
         }
 
-        public IEnumerable<Miner> GetEnabledMiners()
+        public async Task<IEnumerable<Miner>> GetEnabledMinersAsync(CancellationToken token = default)
         {
-            return _minerCollection.Find(miner => miner.CollectData && miner.CollectorId == null);
+            return await _minerCollection.FindAsync(miner => miner.CollectData && miner.CollectorId == null, token);
         }
 
-        public IEnumerable<Miner> GetAll()
+        public async Task<IEnumerable<Miner>> GetAllAsync(CancellationToken token = default)
         {
-            return _minerCollection.FindAll();
+            return await _minerCollection.FindAllAsync(token);
         }
 
-        public Miner GetById(Guid id)
+        public async Task<Miner> GetByIdAsync(Guid id, CancellationToken token = default)
         {
-            return _minerCollection.FindById(id);
+            return await _minerCollection.FindByIdAsync(id, token);
         }
 
-        public void Add(Miner miner)
+        public async Task AddAsync(Miner miner, CancellationToken token = default)
         {
             miner.Id = Guid.NewGuid();
             miner.IsSynced = false;
 
-            _minerCollection.Insert(miner);
+            await _minerCollection.InsertAsync(miner, token);
         }
 
-        public bool Update(Miner miner)
+        public async Task<bool> UpdateAsync(Miner miner, CancellationToken token = default)
         {
             if (miner.CollectorId != null)
                 return false;
 
             miner.IsSynced = false;
 
-            return _minerCollection.Update(miner);
+            return await _minerCollection.UpdateAsync(miner, token);
         }
 
-        public void Upsert(Miner miner)
+        public async Task UpsertAsync(Miner miner, CancellationToken token = default)
         {
-            _minerCollection.Upsert(miner);
+            await _minerCollection.UpsertAsync(miner, token);
         }
 
-        public bool SetSynced(Miner miner)
+        public async Task<bool> SetSyncedAsync(Miner miner, CancellationToken token = default)
         {
             miner.IsSynced = true;
-            return _minerCollection.Update(miner);
+            return await _minerCollection.UpdateAsync(miner, token);
         }
 
-        public bool Delete(Guid id)
+        public async Task<bool> DeleteAsync(Guid id, CancellationToken token = default)
         {
-            _snapshotService.DeleteByMiner(id);
+            await _snapshotService.DeleteByMinerAsync(id, token);
 
-            return _minerCollection.Delete(id);
+            return await _minerCollection.DeleteAsync(id, token);
         }
 
-        public void DeleteByCollector(string collectorId)
+        public async Task DeleteByCollectorAsync(string collectorId, CancellationToken token = default)
         {
             foreach (var minerId in (
-                from miner in _minerCollection.FindAll()
+                from miner in await _minerCollection.FindAllAsync(token)
                 where miner.CollectorId == collectorId
                 select miner.Id).ToList())
             {
-                _snapshotService.DeleteByMiner(minerId);
-                _minerCollection.Delete(minerId);
+                await _snapshotService.DeleteByMinerAsync(minerId, token);
+                await _minerCollection.DeleteAsync(minerId, token);
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,9 +21,9 @@ namespace MiningMonitor.Web.Controllers
         }
 
         [HttpGet("required")]
-        public bool GetRequired()
+        public async Task<bool> GetRequiredAsync(CancellationToken token = default)
         {
-            var result = _settingsService.GetSetting("EnableSecurity");
+            var result = await _settingsService.GetSettingAsync("EnableSecurity", token);
 
             if (!result.success || !bool.TryParse(result.setting, out var enableSecurity) || !enableSecurity)
                 return false;
@@ -31,7 +32,7 @@ namespace MiningMonitor.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]LoginCredentials credentials)
+        public async Task<IActionResult> PostAsync([FromBody]LoginCredentials credentials, CancellationToken token = default)
         {
             var result = await _loginService.LoginUserAsync(credentials.Username, credentials.Password);
 

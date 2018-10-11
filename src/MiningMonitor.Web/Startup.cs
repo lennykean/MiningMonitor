@@ -1,47 +1,28 @@
 ﻿using System;
-using System.Net.Http;
 
 using AspNetCore.ClaimsValueProvider;
-using AspNetCore.Identity.LiteDB;
-using AspNetCore.Identity.LiteDB.Data;
-
-using LiteDB;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-using MiningMonitor.Alerts;
-using MiningMonitor.Alerts.Scanners;
 using MiningMonitor.BackgroundScheduler;
-using MiningMonitor.Common.Mapper;
-using MiningMonitor.Data;
-using MiningMonitor.Data.LiteDb;
-using MiningMonitor.Model;
-using MiningMonitor.Model.Alerts;
-using MiningMonitor.Model.Serialization;
+using MiningMonitor.Data.MongoDb;
 using MiningMonitor.Security.Authorization;
+using MiningMonitor.Security.Identity;
 using MiningMonitor.Service;
-using MiningMonitor.Service.Mapper;
-using MiningMonitor.Web.Configuration;
-using MiningMonitor.Web.Security;
 using MiningMonitor.Workers.AlertScan;
 using MiningMonitor.Workers.DataCollector;
 using MiningMonitor.Workers.DataSynchronizer;
 using MiningMonitor.Workers.Maintenance;
 
-using MongoDB.Driver;
-
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-
-using IdentityRole = AspNetCore.Identity.LiteDB.IdentityRole;
 
 namespace MiningMonitor.Web
 {
@@ -68,85 +49,30 @@ namespace MiningMonitor.Web
                     options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
                 });
 
-            // LiteDB
-            services.AddSingleton(service => new LiteDatabase(_configuration.GetConnectionString("miningmonitor"), new MiningMonitorBsonMapper()));
-            //services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<Snapshot>());
-            ////services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<Miner>());
-            //services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<Setting>());
-            //services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<AlertDefinition>());
-            //services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<Alert>());
-            //services.AddTransient<IRepository<Snapshot>, LiteDbSnapshotRepository>();
-            ////services.AddTransient<IRepository<Miner>, LiteDbRepository<Miner>>();
-            //services.AddTransient<IRepository<Setting>, LiteDbRepository<Setting>>();
-            //services.AddTransient<IRepository<AlertDefinition>, LiteDbAlertDefinitionRepository>();
-            //services.AddTransient<IRepository<Alert>, LiteDbAlertRepository>();
-            
-            // MongoDB
-            services.AddSingleton(service => new MongoClient("mongodb://localhost:32768"));
-            services.AddTransient(service => service.GetService<MongoClient>().GetDatabase("miningmonitor"));
-            services.AddTransient(service => service.GetService<IMongoDatabase>().GetCollection<Snapshot>("snapshots"));
-            services.AddTransient(service => service.GetService<IMongoDatabase>().GetCollection<Miner>("miners"));
-            services.AddTransient(service => service.GetService<IMongoDatabase>().GetCollection<Setting>("settings"));
-            services.AddTransient(service => service.GetService<IMongoDatabase>().GetCollection<AlertDefinition>("alertdefinitions"));
-            services.AddTransient(service => service.GetService<IMongoDatabase>().GetCollection<Alert>("alerts"));
-            services.AddTransient<IRepository<Snapshot>, MongoDbRepository<Snapshot>>();
-            services.AddTransient<IRepository<Miner>, MongoDbRepository<Miner>>();
-            services.AddTransient<IRepository<Setting>, MongoDbRepository<Setting>>();
-            services.AddTransient<IRepository<AlertDefinition>, MongoDbRepository<AlertDefinition>>();
-            services.AddTransient<IRepository<Alert>, MongoDbRepository<Alert>>();
-
-            // Mappers
-            services.AddTransient<IMapper<MiningMonitorUser, User>, UserMapper>();
-            services.AddTransient<IMapper<User, MiningMonitorUser>, UserMapper>();
-            services.AddTransient<IMapper<MiningMonitorUser, Collector>, UserMapper>();
-            services.AddTransient<IUpdateMapper<Collector, MiningMonitorUser>, UserMapper>();
-            services.AddTransient<IMapper<IdentityResult, ModelStateDictionary>, IdentityResultMapper>();
+            // Repository
+            if (_configuration.GetValue<bool>("use_mongo"))
+                services.AddMongoRepository(_configuration.GetConnectionString("miningmonitor"));
+            else
+                services.AddLiteDbRepository(_configuration.GetConnectionString("miningmonitor"));
 
             // Services
-            services.AddTransient<Func<HttpClient>>(s => () => new HttpClient());
-            services.AddTransient<ICollectorService, CollectorService>();
-            services.AddTransient<ILoginService, LoginService>();
-            services.AddTransient<IMinerService, MinerService>();
-            services.AddTransient<IServerService, ServerService>();
-            services.AddTransient<ISettingsService, SettingsService>();
-            services.AddTransient<ISnapshotService, SnapshotService>();
-            services.AddTransient<IUserService, UserService>();
-            services.AddTransient<IAlertDefinitionService, AlertDefinitionService>();
-            services.AddTransient<IAlertService, AlertService>();
+            services.AddMiningMonitorServices();
 
-            // API Client
-            services.AddTransient<IRemoteManagementClientFactory, RemoteManagementClientFactory>();
+            // Alert Scanners
+            services.AddAlertScanners();
 
             // Background workers
-            services.AddSingleton<IHostedService, BackgroundScheduler<DataCollectorWorker, DataCollectorSchedule>>();
-            services.AddSingleton<IHostedService, BackgroundScheduler<DataSynchronizerWorker, DataSynchronizerSchedule>>();
-            services.AddSingleton<IHostedService, BackgroundScheduler<MaintenanceWorker, MaintenanceSchedule>>();
-            services.AddSingleton<IHostedService, BackgroundScheduler<AlertScanWorker, AlertScanSchedule>>();
-            services.ConfigurePOCO<DataCollectorSchedule>(_configuration.GetSection("Scheduler:DataCollector"));
-            services.ConfigurePOCO<DataSynchronizerSchedule>(_configuration.GetSection("Scheduler:DataSynchronizer"));
-            services.ConfigurePOCO<MaintenanceSchedule>(_configuration.GetSection("Scheduler:Maintenance"));
-            services.ConfigurePOCO<AlertScanSchedule>(_configuration.GetSection("Scheduler:AlertScan"));
-            services.AddTransient<DataCollectorWorker>();
-            services.AddTransient<DataSynchronizerWorker>();
-            services.AddTransient<MaintenanceWorker>();
-            services.AddTransient<AlertScanWorker>();
-
-            // Alerts
-            services.AddTransient<IScanFactory, ScanFactory>();
-            services.AddTransient<IAlertScanner, HashrateScanner>();
-            services.AddTransient<IAlertScanner, GpuHashrateThresholdScanner>();
-            services.AddTransient<IAlertScanner, GpuTemperatureThresholdScanner>();
-            services.AddTransient<IAlertScanner, GpuFanSpeedThresholdScanner>();
-            services.AddTransient<IAlertScanner, ConnectivityScanner>();
+            if (!_configuration.GetValue<bool>("disable_background_workers"))
+            {
+                services.AddBackgroundWorker<DataCollectorWorker, DataCollectorSchedule>(_configuration.GetSection("Scheduler:DataCollector"));
+                services.AddBackgroundWorker<DataSynchronizerWorker, DataSynchronizerSchedule>(_configuration.GetSection("Scheduler:DataSynchronizer"));
+                services.AddBackgroundWorker<MaintenanceWorker, MaintenanceSchedule>(_configuration.GetSection("Scheduler:Maintenance"));
+                services.AddBackgroundWorker<AlertScanWorker, AlertScanSchedule>(_configuration.GetSection("Scheduler:AlertScan"));
+            }
 
             // Security
-            services.AddSingleton(service => new LiteDbContext(service.GetService<Microsoft.AspNetCore.Hosting.IHostingEnvironment>())
-            {
-                LiteDatabase = service.GetService<LiteDatabase>()
-            });
-            services.AddIdentity<MiningMonitorUser, IdentityRole>()
-                .AddUserStore<QueryableLiteDbUserStore<MiningMonitorUser>>()
-                .AddRoleStore<LiteDbRoleStore<IdentityRole>>()
+            services.AddIdentity<MiningMonitorUser, MiningMonitorRole>()
+                .RegisterMiningMonitorStores()
                 .AddDefaultTokenProviders();
             services
                 .AddAuthentication(config =>
@@ -162,7 +88,6 @@ namespace MiningMonitor.Web
                     options.TokenValidationParameters.RequireExpirationTime = false;
                     options.TokenValidationParameters.RequireSignedTokens = false;
                 });
-
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("Basic", policy => policy.AddRequirements(
@@ -184,7 +109,6 @@ namespace MiningMonitor.Web
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                     options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
                 });
-
             services.AddSpaStaticFiles(configuration =>
             {
                 if (Environment.GetEnvironmentVariable("ANGULAR_DEV_SERVER") == "true")

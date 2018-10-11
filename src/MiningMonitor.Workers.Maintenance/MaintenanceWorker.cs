@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
 
@@ -6,7 +8,7 @@ using MiningMonitor.Service;
 
 namespace MiningMonitor.Workers.Maintenance
 {
-    public class MaintenanceWorker : SynchronousWorker
+    public class MaintenanceWorker : IWorker
     {
         private readonly ISettingsService _settingsService;
         private readonly ISnapshotService _snapshotService;
@@ -18,11 +20,11 @@ namespace MiningMonitor.Workers.Maintenance
             _snapshotService = snapshotService;
             _logger = logger;
         }
-        
-        protected override void DoWork()
+
+        public async Task DoWorkAsync(CancellationToken cancellationToken)
         {
-            var (_, enablePurgeSetting) = _settingsService.GetSetting("EnablePurge");
-            var (_, purgeAgeMinutesSetting) = _settingsService.GetSetting("PurgeAgeMinutes");
+            var (_, enablePurgeSetting) = await _settingsService.GetSettingAsync("EnablePurge", cancellationToken);
+            var (_, purgeAgeMinutesSetting) = await _settingsService.GetSettingAsync("PurgeAgeMinutes", cancellationToken);
 
             if (!bool.TryParse(enablePurgeSetting, out var enablePurge) || !int.TryParse(purgeAgeMinutesSetting, out var purgeAgeMinutes) || !enablePurge)
                 return;
@@ -30,7 +32,7 @@ namespace MiningMonitor.Workers.Maintenance
             var purgeCutoff = DateTime.UtcNow - TimeSpan.FromMinutes(purgeAgeMinutes);
             _logger.LogInformation($"Purging snapshot data before {purgeCutoff:MM/dd/yy H:mm}");
 
-            var purgedCount = _snapshotService.DeleteOld(purgeCutoff);
+            var purgedCount = _snapshotService.DeleteOldAsync(purgeCutoff, cancellationToken);
 
             _logger.LogInformation($"Purged {purgedCount} snapshots.");
         }

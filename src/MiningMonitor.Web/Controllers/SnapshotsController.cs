@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,18 +31,19 @@ namespace MiningMonitor.Web.Controllers
         }
 
         [HttpGet("{minerId}"), Authorize(Policy = "Basic")]
-        public IEnumerable<Snapshot> Get(
+        public Task<IEnumerable<Snapshot>> GetAsync(
             [FromRoute]Guid minerId,
             [FromQuery]DateTime? from = null,
-            [FromQuery]DateTime? to = null)
+            [FromQuery]DateTime? to = null,
+            CancellationToken token = default)
         {
-            return _snapshotService.GetByMinerFillGaps(minerId, new ConcretePeriod(from ?? DateTime.UtcNow.AddMinutes(-60), to ?? DateTime.UtcNow), _dataCollectorSchedule.Interval);
+            return _snapshotService.GetByMinerFillGapsAsync(minerId, new ConcretePeriod(from ?? DateTime.UtcNow.AddMinutes(-60), to ?? DateTime.UtcNow), _dataCollectorSchedule.Interval, token);
         }
 
         [HttpPost("collector/{collector}/{minerId}"), Authorize(Policy = "Collector")]
-        public StatusCodeResult Post(string collector, Guid minerId, [FromBody]Snapshot snapshot)
+        public async Task<StatusCodeResult> PostAsync(string collector, Guid minerId, [FromBody]Snapshot snapshot, CancellationToken token = default)
         {
-            var success = _collectorService.SnapshotSync(collector, minerId, snapshot);
+            var success = await _collectorService.SnapshotSyncAsync(collector, minerId, snapshot, token);
 
             if (!success)
                 return BadRequest();

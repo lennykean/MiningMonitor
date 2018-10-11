@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,21 +22,21 @@ namespace MiningMonitor.Web.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Alert> Get(bool includeAcknowledged = false)
+        public async Task<IEnumerable<Alert>> GetAsync(bool includeAcknowledged = false, CancellationToken token = default)
         {
-            return _alertService.Get(includeAcknowledged);
+            return await _alertService.GetAsync(includeAcknowledged, token);
         }
 
         [HttpGet("miner/{minerId}")]
-        public IEnumerable<Alert> GetByMiner(Guid minerId, bool includeAcknowledged = false)
+        public async Task<IEnumerable<Alert>> GetByMinerAsync(Guid minerId, bool includeAcknowledged = false, CancellationToken token = default)
         {
-            return _alertService.GetByMiner(minerId, includeAcknowledged);
+            return await _alertService.GetByMinerAsync(minerId, includeAcknowledged, token);
         }
         
         [HttpGet("{id}")]
-        public ObjectResult Get(Guid id)
+        public async Task<ObjectResult> GetAsync(Guid id, CancellationToken token = default)
         {
-            var alert = _alertService.GetById(id);
+            var alert = await _alertService.GetByIdAsync(id, token);
 
             if (alert == null)
                 return NotFound(null);
@@ -43,9 +45,9 @@ namespace MiningMonitor.Web.Controllers
         }
 
         [HttpPost("{id}/acknowledge")]
-        public StatusCodeResult Acknowledge(Guid id)
+        public async Task<StatusCodeResult> AcknowledgeAsync(Guid id, CancellationToken token = default)
         {
-            if (!_alertService.Acknowledge(id))
+            if (!await _alertService.AcknowledgeAsync(id, token))
                 return NotFound();
 
             return Ok();

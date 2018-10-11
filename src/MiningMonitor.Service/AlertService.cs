@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 using MiningMonitor.Data;
 using MiningMonitor.Model.Alerts;
@@ -16,69 +18,58 @@ namespace MiningMonitor.Service
             _alertCollection = alertCollection;
         }
 
-        public IEnumerable<Alert> Get(bool includeAcknowledged)
+        public async Task<IEnumerable<Alert>> GetAsync(bool includeAcknowledged, CancellationToken token = default)
         {
-            return _alertCollection.Find(a => includeAcknowledged || a.AcknowledgedAt == null)
+            return (await _alertCollection.FindAsync(a => includeAcknowledged || a.AcknowledgedAt == null, token))
                 .OrderByDescending(a => a.Active)
                 .ThenByDescending(a => a.Severity)
                 .ThenBy(a => a.Start);
         }
         
-        public IEnumerable<Alert> GetByMiner(Guid minerId, bool includeAcknowledged)
+        public async Task<IEnumerable<Alert>> GetByMinerAsync(Guid minerId, bool includeAcknowledged, CancellationToken token = default)
         {
-            return _alertCollection.Find(a => a.MinerId == minerId && (includeAcknowledged || a.AcknowledgedAt == null))
+            return (await _alertCollection.FindAsync(a => a.MinerId == minerId && (includeAcknowledged || a.AcknowledgedAt == null), token))
                 .OrderBy(a => a.Start);
         }
         
-        public IEnumerable<Alert> GetActiveByDefinition(Guid definitionId, DateTime? since = null)
+        public async Task<IEnumerable<Alert>> GetActiveByDefinitionAsync(Guid definitionId, DateTime? since = null, CancellationToken token = default)
         {
-            return _alertCollection.Find(a => a.AlertDefinitionId == definitionId && a.End == null && (since == null || since < a.LastActive));
+            return await _alertCollection.FindAsync(a => a.AlertDefinitionId == definitionId && a.End == null && (since == null || since < a.LastActive), token);
         }
 
-        public Alert GetById(Guid id)
+        public async Task<Alert> GetByIdAsync(Guid id, CancellationToken token = default)
         {
-            return _alertCollection.FindById(id);
+            return await _alertCollection.FindByIdAsync(id, token);
         }
 
-        public void Add(Alert alert)
+        public async Task AddAsync(Alert alert, CancellationToken token = default)
         {
             alert.Id = Guid.NewGuid();
             alert.Start =
             alert.LastActive = DateTime.UtcNow;
 
-            _alertCollection.Insert(alert);
+            await _alertCollection.InsertAsync(alert, token);
         }
 
-        public bool Update(Alert alert)
+        public async Task<bool> UpdateAsync(Alert alert, CancellationToken token = default)
         {
-            return _alertCollection.Update(alert);
+            return await _alertCollection.UpdateAsync(alert, token);
+        }
+        
+        public async Task<bool> DeleteAsync(Guid id, CancellationToken token = default)
+        {
+            return await _alertCollection.DeleteAsync(id, token);
         }
 
-        public bool End(Guid alertId)
+        public async Task<bool> AcknowledgeAsync(Guid alertId, CancellationToken token = default)
         {
-            var alert = _alertCollection.FindById(alertId);
-            if (alert == null)
-                return false;
-
-            alert.End = DateTime.UtcNow;
-
-            return _alertCollection.Update(alert);
-        }
-
-        public bool Delete(Guid id)
-        {
-            return _alertCollection.Delete(id);
-        }
-
-        public bool Acknowledge(Guid alertId)
-        {
-            var alert = _alertCollection.FindById(alertId);
+            var alert = await _alertCollection.FindByIdAsync(alertId, token);
             if (alert == null)
                 return false;
 
             alert.AcknowledgedAt = DateTime.UtcNow;
 
-            return _alertCollection.Update(alert);
+            return await _alertCollection.UpdateAsync(alert, token);
         }
     }
 }

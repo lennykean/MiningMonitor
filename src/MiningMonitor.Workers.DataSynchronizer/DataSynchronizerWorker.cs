@@ -28,15 +28,15 @@ namespace MiningMonitor.Workers.DataSynchronizer
 
         public async Task DoWorkAsync(CancellationToken cancellationToken)
         {
-            var (isDataCollector, registered, approved, id) = await Registration();
+            var (isDataCollector, registered, approved, id) = await RegistrationAsync(cancellationToken);
             if (!isDataCollector)
                 return;
                     
             _logger.LogInformation("Starting Data Sync");
             if (registered && approved)
             {
-                await SyncMiners(id);
-                await SyncSnapshots(id);
+                await SyncMinersAsync(id, cancellationToken);
+                await SyncSnapshotsAsync(id, cancellationToken);
             }
             else
             {
@@ -44,21 +44,21 @@ namespace MiningMonitor.Workers.DataSynchronizer
             }
         }
 
-        private async Task SyncSnapshots(string id)
+        private async Task SyncSnapshotsAsync(string id, CancellationToken token)
         {
             try
             {
                 _logger.LogInformation("Starting snapshot sync");
 
-                var snapshots = _snapshotService.GetAll();
+                var snapshots = await _snapshotService.GetAllAsync(token);
 
                 foreach (var snapshot in snapshots.ToList())
                 {
                     _logger.LogInformation($"Syncing snapshot {snapshot.Id}");
-                    await _serverService.SyncSnapshotAsync(id, snapshot);
+                    await _serverService.SyncSnapshotAsync(id, snapshot, token);
 
                     _logger.LogInformation($"Removing snapshot {snapshot.Id}");
-                    _snapshotService.Delete(snapshot.Id);
+                    await _snapshotService.DeleteAsync(snapshot.Id, token);
                 }
                 _logger.LogInformation("Finished snapshot sync");
             }
@@ -69,19 +69,19 @@ namespace MiningMonitor.Workers.DataSynchronizer
             }
         }
 
-        private async Task SyncMiners(string id)
+        private async Task SyncMinersAsync(string id, CancellationToken token)
         {
             try
             {
                 _logger.LogInformation("Starting miner sync");
 
-                var miners = _minerService.GetAll();
+                var miners = await _minerService.GetAllAsync(token);
 
                 foreach (var miner in miners.Where(m => m.IsSynced != true).ToList())
                 {
                     _logger.LogInformation($"Syncing miner {miner.Id}");
-                    await _serverService.SyncMinerAsync(id, miner);
-                    _minerService.SetSynced(miner);
+                    await _serverService.SyncMinerAsync(id, miner, token);
+                    await _minerService.SetSyncedAsync(miner, token);
                 }
                 _logger.LogInformation("Finished miner sync");
             }
@@ -92,30 +92,30 @@ namespace MiningMonitor.Workers.DataSynchronizer
             }
         }
 
-        private async Task<(bool isDataCollector, bool registered, bool approved, string id)> Registration()
+        private async Task<(bool isDataCollector, bool registered, bool approved, string id)> RegistrationAsync(CancellationToken cancellationToken)
         {
             try
             {
-                var (_, isDataCollectorSetting) = _settingsService.GetSetting("IsDataCollector");
+                var (_, isDataCollectorSetting) = await _settingsService.GetSettingAsync("IsDataCollector", cancellationToken);
 
                 if (!bool.TryParse(isDataCollectorSetting, out var isDataCollector) || !isDataCollector)
                     return (isDataCollector, registered: false, approved: false, id: null);
 
                 _logger.LogInformation("Checking for registration");
-                var (_, id) = _settingsService.GetSetting("CollectorId");
+                var (_, id) = await _settingsService.GetSettingAsync("CollectorId", cancellationToken);
                 if (id == null)
                 {
                     string token;
 
                     _logger.LogInformation("Registering as data collector");
-                    (id, token) = await _serverService.RegisterAsCollectorAsync();
+                    (id, token) = await _serverService.RegisterAsCollectorAsync(cancellationToken);
 
-                    _settingsService.UpdateSetting("CollectorId", id);
-                    _settingsService.UpdateSetting("ServerToken", token);
+                    await _settingsService.UpdateSettingAsync("CollectorId", id, cancellationToken);
+                    await _settingsService.UpdateSettingAsync("ServerToken", token, cancellationToken);
                 }
 
                 _logger.LogInformation("Checking approval");
-                var approved = await _serverService.CheckApprovalAsync(id);
+                var approved = await _serverService.CheckApprovalAsync(id, cancellationToken);
 
                 return (isDataCollector: true, registered: true, approved, id);
             }

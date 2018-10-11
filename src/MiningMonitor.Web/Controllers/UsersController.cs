@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Authorization;
@@ -20,15 +21,15 @@ namespace MiningMonitor.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<User>> Get()
+        public async Task<IEnumerable<User>> GetAsync(CancellationToken token = default)
         {
-            return await _userService.GetUsersAsync();
+            return await _userService.GetUsersAsync(token);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]User user)
+        public async Task<IActionResult> PostAsync([FromBody]User user, CancellationToken token = default)
         {
-            var result = await _userService.CreateUserAsync(user);
+            var result = await _userService.CreateUserAsync(user, token);
 
             if (!result.IsValid)
                 return BadRequest(result);

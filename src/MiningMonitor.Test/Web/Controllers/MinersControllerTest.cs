@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 using MiningMonitor.Model;
 using MiningMonitor.Service;
@@ -25,17 +27,17 @@ namespace MiningMonitor.Test.Web.Controllers
         }
 
         [Test]
-        public void GetAll()
+        public async Task GetAllAsync()
         {
             // Arrange
             var miners = Enumerable.Range(0, 3).Select(i => new Miner()).ToList();
 
-            _minerService.Setup(m => m.GetAll()).Returns(() => miners).Verifiable();
+            _minerService.Setup(m => m.GetAllAsync(CancellationToken.None)).ReturnsAsync(() => miners).Verifiable();
 
             var controller = new MinersController(_minerService.Object, _collectorService.Object);
 
             // Act
-            var result = controller.Get();
+            var result = await controller.GetAsync();
 
             // Assert
             _minerService.Verify();
@@ -43,17 +45,19 @@ namespace MiningMonitor.Test.Web.Controllers
         }
 
         [Test]
-        public void GetByMinerId()
+        public async Task GetByMinerId()
         {
             // Arrange
             var miner = new Miner();
 
-            _minerService.Setup(m => m.GetById(It.IsAny<Guid>())).Returns(() => miner).Verifiable();
+            _minerService.Setup(m => m.GetByIdAsync(It.IsAny<Guid>(), CancellationToken.None))
+                .ReturnsAsync(() => miner)
+                .Verifiable();
 
             var controller = new MinersController(_minerService.Object, _collectorService.Object);
 
             // Act
-            var result = controller.Get(Guid.NewGuid());
+            var result = await controller.GetAsync(Guid.NewGuid());
 
             // Assert
             _minerService.Verify();
@@ -62,15 +66,17 @@ namespace MiningMonitor.Test.Web.Controllers
         }
 
         [Test]
-        public void GetByMinerIdNotFound()
+        public async Task GetByMinerIdNotFound()
         {
             // Arrange
-            _minerService.Setup(m => m.GetById(It.IsAny<Guid>())).Returns(() => null).Verifiable();
+            _minerService.Setup(m => m.GetByIdAsync(It.IsAny<Guid>(), CancellationToken.None))
+                .ReturnsAsync(() => null)
+                .Verifiable();
 
             var controller = new MinersController(_minerService.Object, _collectorService.Object);
 
             // Act
-            var result = controller.Get(Guid.NewGuid());
+            var result = await controller.GetAsync(Guid.NewGuid());
 
             // Assert
             _minerService.Verify();
@@ -78,23 +84,23 @@ namespace MiningMonitor.Test.Web.Controllers
         }
 
         [Test]
-        public void PostNewMiner()
+        public async Task PostNewMiner()
         {
             // Arrange
             var miner = new Miner();
             var controller = new MinersController(_minerService.Object, _collectorService.Object);
 
             // Act
-            var result = controller.Post(miner);
+            var result = await controller.PostAsync(miner);
 
             // Assert
-            _minerService.Verify(m => m.Add(It.IsAny<Miner>()));
+            _minerService.Verify(m => m.AddAsync(It.IsAny<Miner>(), CancellationToken.None));
             Assert.That(result, Has.Property(nameof(result.StatusCode)).EqualTo(200));
             Assert.That(result, Has.Property(nameof(result.Value)).EqualTo(miner));
         }
 
         [Test]
-        public void PostInvalidMiner()
+        public async Task PostInvalidMiner()
         {
             // Arrange
             var miner = new Miner();
@@ -103,25 +109,27 @@ namespace MiningMonitor.Test.Web.Controllers
             controller.ModelState.AddModelError("test-key", "test-validation-message");
 
             // Act
-            var result = controller.Post(miner);
+            var result = await controller.PostAsync(miner);
 
             // Assert
-            _minerService.Verify(m => m.Add(It.IsAny<Miner>()), Times.Never);
+            _minerService.Verify(m => m.AddAsync(It.IsAny<Miner>(), CancellationToken.None), Times.Never);
             Assert.That(result, Has.Property(nameof(result.StatusCode)).EqualTo(400));
             Assert.That(result, Has.Property(nameof(result.Value)).ContainKey("test-key"));
         }
 
         [Test]
-        public void PutUpdatedMiner()
+        public async Task PutUpdatedMiner()
         {
             // Arrange
             var miner = new Miner();
             var controller = new MinersController(_minerService.Object, _collectorService.Object);
 
-            _minerService.Setup(m => m.Update(miner)).Returns(() => true).Verifiable();
+            _minerService.Setup(m => m.UpdateAsync(miner, CancellationToken.None))
+                .ReturnsAsync(() => true)
+                .Verifiable();
 
             // Act
-            var result = controller.Put(miner);
+            var result = await controller.PutAsync(miner);
 
             // Assert
             _minerService.Verify();
@@ -130,16 +138,18 @@ namespace MiningMonitor.Test.Web.Controllers
         }
 
         [Test]
-        public void PutUpdatedMinerNotFound()
+        public async Task PutUpdatedMinerNotFound()
         {
             // Arrange
             var miner = new Miner();
             var controller = new MinersController(_minerService.Object, _collectorService.Object);
 
-            _minerService.Setup(m => m.Update(miner)).Returns(() => false).Verifiable();
+            _minerService.Setup(m => m.UpdateAsync(miner, CancellationToken.None))
+                .ReturnsAsync(() => false)
+                .Verifiable();
 
             // Act
-            var result = controller.Put(miner);
+            var result = await controller.PutAsync(miner);
 
             // Assert
             _minerService.Verify();
@@ -147,35 +157,37 @@ namespace MiningMonitor.Test.Web.Controllers
         }
 
         [Test]
-        public void PutInvalidMiner()
+        public async Task PutInvalidMiner()
         {
             // Arrange
             var miner = new Miner();
             var controller = new MinersController(_minerService.Object, _collectorService.Object);
 
-            controller.ModelState.AddModelError("test-key", "test-valation-message");
+            controller.ModelState.AddModelError("test-key", "test-validation-message");
 
             // Act
-            var result = controller.Put(miner);
+            var result = await controller.PutAsync(miner);
 
             // Assert
-            _minerService.Verify(m => m.Update(It.IsAny<Miner>()), Times.Never);
+            _minerService.Verify(m => m.UpdateAsync(It.IsAny<Miner>(), CancellationToken.None), Times.Never);
             Assert.That(result, Has.Property(nameof(result.StatusCode)).EqualTo(400));
             Assert.That(result, Has.Property(nameof(result.Value)).ContainKey("test-key"));
         }
 
         [TestCase(true, 204)]
         [TestCase(false, 404)]
-        public void DeleteByMinerId(bool deleted, int statusCode)
+        public async Task DeleteByMinerId(bool deleted, int statusCode)
         {
             // Arrange
             var minerId = Guid.NewGuid();
             var controller = new MinersController(_minerService.Object, _collectorService.Object);
 
-            _minerService.Setup(m => m.Delete(minerId)).Returns(() => deleted).Verifiable();
+            _minerService.Setup(m => m.DeleteAsync(minerId, CancellationToken.None))
+                .ReturnsAsync(() => deleted)
+                .Verifiable();
 
             // Act
-            var result = controller.Delete(minerId);
+            var result = await controller.Delete(id: minerId);
 
             // Assert
             _minerService.Verify();

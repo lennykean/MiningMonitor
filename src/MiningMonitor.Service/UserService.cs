@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Identity;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 using MiningMonitor.Common.Mapper;
 using MiningMonitor.Model;
+using MiningMonitor.Security.Identity;
 
 namespace MiningMonitor.Service
 {
@@ -29,12 +31,12 @@ namespace MiningMonitor.Service
             _resultMapper = resultMapper;
         }
 
-        public Task<IEnumerable<User>> GetUsersAsync()
+        public Task<IEnumerable<User>> GetUsersAsync(CancellationToken token = default)
         {
-            return Task.Run(() => _userManager.Users.AsEnumerable().Where(t => !t.Roles.Contains("Collector")).Select(_userMapper.Map));
+            return Task.Run(() => _userManager.Users.AsEnumerable().Where(t => !t.Roles.Contains("Collector")).Select(_userMapper.Map), token);
         }
 
-        public async Task<ModelStateDictionary> CreateUserAsync(User user)
+        public async Task<ModelStateDictionary> CreateUserAsync(User user, CancellationToken token = default)
         {
             var identityUser = _identityUserMapper.Map(user);
             

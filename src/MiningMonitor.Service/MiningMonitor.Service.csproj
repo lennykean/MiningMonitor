@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,6 +15,7 @@
     <ProjectReference Include="..\MiningMonitor.Common\MiningMonitor.Common.csproj" />
     <ProjectReference Include="..\MiningMonitor.Data\MiningMonitor.Data\MiningMonitor.Data.csproj" />
     <ProjectReference Include="..\MiningMonitor.Model\MiningMonitor.Model.csproj" />
+    <ProjectReference Include="..\MiningMonitor.Security.Identity\MiningMonitor.Security.Identity.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 using LiteDB;
 
@@ -36,23 +37,23 @@ namespace MiningMonitor.Test.Service
         }
 
         [Test]
-        public void GetAllDefaults()
+        public async Task GetAllDefaults()
         {
             // Act
-            var result = _subject.GetAll().ToList();
+            var result = (await _subject.GetAllAsync()).ToList();
 
             // Assert
             Assert.That(result, Has.Count.EqualTo(SettingsService.DefaultSettings.Count));
         }
 
         [Test]
-        public void GetAll()
+        public async Task GetAll()
         {
             // Arrange
             _collection.Insert(new Setting {Key = "EnableSecurity", Value = "true"});
 
             // Act
-            var result = _subject.GetAll().ToList();
+            var result = (await _subject.GetAllAsync()).ToList();
 
             // Assert
             Assert.That(result, Has.Count.EqualTo(SettingsService.DefaultSettings.Count));
@@ -60,13 +61,13 @@ namespace MiningMonitor.Test.Service
         }
 
         [Test]
-        public void GetByName()
+        public async Task GetByName()
         {
             // Arrange
             _collection.Insert(new Setting {Key = "EnableSecurity", Value = "test"});
 
             // Act
-            var (success, setting) = _subject.GetSetting("EnableSecurity");
+            var (success, setting) = await _subject.GetSettingAsync("EnableSecurity");
 
             // Assert
             Assert.That(success, Is.True);
@@ -74,20 +75,20 @@ namespace MiningMonitor.Test.Service
         }
 
         [Test]
-        public void GetByNameNotFound()
+        public async Task GetByNameNotFound()
         {
             // Act
-            var (success, _) = _subject.GetSetting("fake");
+            var (success, _) = await _subject.GetSettingAsync("fake");
 
             // Assert
             Assert.That(success, Is.False);
         }
 
         [Test]
-        public void GetByNameWithDefault()
+        public async Task GetByNameWithDefault()
         {
             // Act
-            var (success, setting) = _subject.GetSetting("EnableSecurity");
+            var (success, setting) = await _subject.GetSettingAsync("EnableSecurity");
 
             // Assert
             Assert.That(success, Is.True);
@@ -95,7 +96,7 @@ namespace MiningMonitor.Test.Service
         }
 
         [Test]
-        public void UpdateExistingSetting()
+        public async Task UpdateExistingSetting()
         {
             // Arrange
             const string firstValue = "true";
@@ -103,7 +104,7 @@ namespace MiningMonitor.Test.Service
             _collection.Insert(new Setting { Key = "EnableSecurity", Value = firstValue });
 
             // Act
-            var (success, _) = _subject.UpdateSettings(new Dictionary<string, string> { ["EnableSecurity"] = newValue });
+            var (success, _) = await _subject.UpdateSettingsAsync(new Dictionary<string, string> { ["EnableSecurity"] = newValue });
 
             // Assert
             Assert.That(_collection.FindById("EnableSecurity"), Has.Property(nameof(Setting.Value)).EqualTo(newValue));
@@ -111,13 +112,13 @@ namespace MiningMonitor.Test.Service
         }
 
         [Test]
-        public void UpdateDefaultSetting()
+        public async Task UpdateDefaultSetting()
         {
             // Arrange
             const string value = "true";
 
             // Act
-            var (success, _) = _subject.UpdateSettings(new Dictionary<string, string> { ["EnableSecurity"] = value });
+            var (success, _) = await _subject.UpdateSettingsAsync(new Dictionary<string, string> { ["EnableSecurity"] = value });
 
             // Assert
             Assert.That(_collection.FindById("EnableSecurity"), Has.Property(nameof(Setting.Value)).EqualTo(value));
@@ -125,10 +126,10 @@ namespace MiningMonitor.Test.Service
         }
 
         [Test]
-        public void UpdateSettingNotFound()
+        public async Task UpdateSettingNotFound()
         {
             // Act
-            var (success, _) = _subject.UpdateSettings(new Dictionary<string, string> { ["fake"] = "notreal" });
+            var (success, _) = await _subject.UpdateSettingsAsync(new Dictionary<string, string> { ["fake"] = "notreal" });
 
             // Assert
             Assert.That(success, Is.False);

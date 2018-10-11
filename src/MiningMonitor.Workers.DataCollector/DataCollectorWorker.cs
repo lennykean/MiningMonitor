@@ -35,11 +35,11 @@ namespace MiningMonitor.Workers.DataCollector
             _logger.LogInformation("Starting snapshot collection");
             try
             {
-                var miners = _minerService.GetEnabledMiners();
+                var miners = await _minerService.GetEnabledMinersAsync(cancellationToken);
 
                 foreach (var miner in miners.AsParallel())
                 {
-                    await GetSnapshot(miner);
+                    await GetSnapshotAsync(miner, cancellationToken);
                 }
             }
             catch (Exception ex)
@@ -50,7 +50,7 @@ namespace MiningMonitor.Workers.DataCollector
             _logger.LogInformation("Finished snapshot collection");
         }
 
-        private async Task GetSnapshot(Miner miner)
+        private async Task GetSnapshotAsync(Miner miner, CancellationToken token)
         {
             _logger.LogInformation($"Getting statistics for {miner.Name}");
             try
@@ -61,13 +61,13 @@ namespace MiningMonitor.Workers.DataCollector
                 var minerStatistics = await client.GetStatisticsAsync();
                 sw.Stop();
 
-                _snapshotService.Add(new Snapshot
+                await _snapshotService.AddAsync(new Snapshot
                 {
                     MinerId = miner.Id,
                     RetrievalElapsedTime = sw.Elapsed,
                     SnapshotTime = DateTime.UtcNow,
                     MinerStatistics = minerStatistics
-                });
+                }, token);
                 _logger.LogInformation($"Saved statistics for {miner.Name} in {sw.ElapsedMilliseconds}ms");
             }
             catch (Exception ex)

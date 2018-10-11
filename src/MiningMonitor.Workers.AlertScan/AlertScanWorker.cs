@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
 
@@ -11,7 +13,7 @@ using MiningMonitor.Service;
 
 namespace MiningMonitor.Workers.AlertScan
 {
-    public class AlertScanWorker : SynchronousWorker
+    public class AlertScanWorker : IWorker
     {
         private readonly IAlertDefinitionService _alertDefinitionService;
         private readonly IAlertService _alertService;
@@ -36,16 +38,16 @@ namespace MiningMonitor.Workers.AlertScan
             _logger = logger;
         }
 
-        protected override void DoWork()
+        public async Task DoWorkAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Starting alert scan");
             try
             {
                 var scanTime = DateTime.UtcNow;
                 var scansByMiner =
-                    from definition in _alertDefinitionService.GetEnabled()
+                    from definition in await _alertDefinitionService.GetEnabledAsync(cancellationToken)
                     group definition by definition.MinerId into definitions
-                    let miner = _minerService.GetById(definitions.Key)
+                    let miner = _minerService.GetByIdAsync(definitions.Key, cancellationToken).Result
                     select new
                     {
                         Miner = miner,
@@ -55,9 +57,9 @@ namespace MiningMonitor.Workers.AlertScan
                 foreach (var scans in scansByMiner)
                 {
                     var scanPeriod = Period.Merge(scans.Scans.Select(s => s.ScanPeriod));
-                    var snapshots = _snapshotService.GetByMiner(scans.Miner.Id, scanPeriod).ToList();
+                    var snapshots = (await _snapshotService.GetByMinerAsync(scans.Miner.Id, scanPeriod, cancellationToken)).ToList();
 
-                    ScanMiner(scanTime, scans.Miner, scans.Scans, snapshots);
+                    await ScanMinerAsync(scanTime, scans.Miner, scans.Scans, snapshots, cancellationToken);
                 }
             }
             catch (Exception ex)
@@ -67,7 +69,7 @@ namespace MiningMonitor.Workers.AlertScan
             _logger.LogInformation("Finished alert scan");
         }
 
-        private void ScanMiner(DateTime scanTime, Miner miner, IEnumerable<IScan> scans, IList<Snapshot> snapshots)
+        private async Task ScanMinerAsync(DateTime scanTime, Miner miner, IEnumerable<IScan> scans, IList<Snapshot> snapshots, CancellationToken token)
         {
             _logger.LogInformation($"Starting scan of miner {miner.Id}");
    
@@ -76,8 +78,8 @@ namespace MiningMonitor.Workers.AlertScan
                 _logger.LogInformation($"Starting scan for alert definition {scan.Definition.Id}");
                 try
                 {
-                    CheckActiveAlerts(miner, snapshots, scan);
-                    ScanForNewAlerts(miner, snapshots, scan, scanTime);
+                    await CheckActiveAlerts(miner, snapshots, scan, token);
+                    await ScanForNewAlertsAsync(miner, snapshots, scan, scanTime, token);
                 }
                 catch (Exception ex)
                 {
@@ -88,9 +90,9 @@ namespace MiningMonitor.Workers.AlertScan
             _logger.LogInformation($"Finished scan of miner {miner.Id}");
         }
 
-        private void ScanForNewAlerts(Miner miner, IEnumerable<Snapshot> snapshots, IScan scan, DateTime scanTime)
+        private async Task ScanForNewAlertsAsync(Miner miner, IEnumerable<Snapshot> snapshots, IScan scan, DateTime scanTime, CancellationToken token)
         {
-            var activeAlerts = _alertService.GetActiveByDefinition(scan.Definition.Id, since: scan.Definition.LastEnabled).ToList();
+            var activeAlerts = (await _alertService.GetActiveByDefinitionAsync(scan.Definition.Id, since: scan.Definition.LastEnabled, token: token)).ToList();
 
             var result = scan.PerformScan(activeAlerts, snapshots);
 
@@ -104,16 +106,16 @@ namespace MiningMonitor.Workers.AlertScan
 
                 foreach (var alert in result.Alerts)
                 {
-                    _alertService.Add(alert);
+                    await _alertService.AddAsync(alert, token);
                 }
             }
-            _alertDefinitionService.MarkScanned(scan.Definition.Id, scanTime);
+            await _alertDefinitionService.MarkScannedAsync(scan.Definition.Id, scanTime, token);
         }
 
-        private void CheckActiveAlerts(Miner miner, IEnumerable<Snapshot> snapshots, IScan scan)
+        private async Task CheckActiveAlerts(Miner miner, IEnumerable<Snapshot> snapshots, IScan scan, CancellationToken token)
         {
             var snapshotsForDefinition = snapshots.Where(s => scan.ScanPeriod.Contains(s.SnapshotTime)).ToList();
-            var activeAlerts = _alertService.GetActiveByDefinition(scan.Definition.Id, since: scan.Definition.LastEnabled).ToList();
+            var activeAlerts = (await _alertService.GetActiveByDefinitionAsync(scan.Definition.Id, since: scan.Definition.LastEnabled, token: token)).ToList();
 
             foreach (var activeAlert in activeAlerts)
             {
@@ -129,7 +131,7 @@ namespace MiningMonitor.Workers.AlertScan
 
                     activeAlert.LastActive = DateTime.UtcNow;
                 }
-                _alertService.Update(activeAlert);
+                await _alertService.UpdateAsync(activeAlert, token);
             }
         }
     }

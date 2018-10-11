@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc;
@@ -31,12 +32,14 @@ namespace MiningMonitor.Test.Web.Controllers
             // Arrange
             var users = Enumerable.Range(0, 3).Select(i => new User()).ToList();
 
-            _userService.Setup(m => m.GetUsersAsync()).ReturnsAsync(() => users).Verifiable();
+            _userService.Setup(m => m.GetUsersAsync(CancellationToken.None))
+                .ReturnsAsync(() => users)
+                .Verifiable();
 
             var controller = new UsersController(_userService.Object);
 
             // Act
-            var result = await controller.Get();
+            var result = await controller.GetAsync();
 
             // Assert
             _userService.Verify();
@@ -49,14 +52,14 @@ namespace MiningMonitor.Test.Web.Controllers
             // Arrange
             var user = new User();
 
-            _userService.Setup(m => m.CreateUserAsync(It.IsAny<User>()))
+            _userService.Setup(m => m.CreateUserAsync(It.IsAny<User>(), CancellationToken.None))
                 .ReturnsAsync(() => new ModelStateDictionary())
                 .Verifiable();
 
             var controller = new UsersController(_userService.Object);
 
             // Act
-            var result = await controller.Post(user);
+            var result = await controller.PostAsync(user);
 
             // Assert
             _userService.Verify();
@@ -71,14 +74,14 @@ namespace MiningMonitor.Test.Web.Controllers
             var state = new ModelStateDictionary();
             state.AddModelError("err", "error1");
             state.AddModelError("err", "error2");
-            _userService.Setup(m => m.CreateUserAsync(It.IsAny<User>()))
+            _userService.Setup(m => m.CreateUserAsync(It.IsAny<User>(), CancellationToken.None))
                 .ReturnsAsync(() => state)
                 .Verifiable();
 
             var controller = new UsersController(_userService.Object);
 
             // Act
-            var result = await controller.Post(user);
+            var result = await controller.PostAsync(user);
 
             // Assert
             _userService.Verify();

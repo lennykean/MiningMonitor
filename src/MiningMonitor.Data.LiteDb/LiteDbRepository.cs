@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
 
 using LiteDB;
 
@@ -15,22 +17,49 @@ namespace MiningMonitor.Data.LiteDb
             _collection = collection;
         }
 
-        public virtual IEnumerable<T> FindAll() => _collection.FindAll();
+        public virtual Task<IEnumerable<T>> FindAllAsync(CancellationToken token = default)
+        {
+            return Task.Run(() => _collection.FindAll(), token);
+        }
 
-        public virtual IEnumerable<T> Find(Expression<Func<T, bool>> predicate) => _collection.Find(predicate);
+        public virtual Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate, CancellationToken token = default)
+        {
+            return Task.Run(() => _collection.Find(predicate), token);
+        }
 
-        public virtual T FindOne(Expression<Func<T, bool>> predicate) => _collection.FindOne(predicate);
+        public virtual Task<T> FindOneAsync(Expression<Func<T, bool>> predicate, CancellationToken token = default)
+        {
+            return Task.Run(() => _collection.FindOne(predicate), token);
+        }
 
-        public virtual T FindById(Guid id) => _collection.FindById(id);
+        public virtual Task<T> FindByIdAsync(Guid id, CancellationToken token = default)
+        {
+            return Task.Run(() => _collection.FindById(id), token);
+        }
 
-        public virtual void Insert(T document) => _collection.Insert(document);
+        public virtual Task InsertAsync(T document, CancellationToken token = default)
+        {
+            return Task.Run(() => _collection.Insert(document), token);
+        }
 
-        public virtual bool Update(T document) => _collection.Update(document);
+        public virtual Task<bool> UpdateAsync(T document, CancellationToken token = default)
+        {
+            return Task.Run(() => _collection.Update(document), token);
+        }
 
-        public virtual void Upsert(T document) => _collection.Upsert(document);
+        public virtual Task UpsertAsync(T document, CancellationToken token = default)
+        {
+            return Task.Run(() => _collection.Upsert(document), token);
+        }
 
-        public virtual bool Delete(Guid id) => _collection.Delete(id);
+        public virtual Task<bool> DeleteAsync(Guid id, CancellationToken token = default)
+        {
+            return Task.Run(() => _collection.Delete(id), token);
+        }
 
-        public virtual int Delete(Expression<Func<T, bool>> predicate) => _collection.Delete(predicate);
+        public virtual Task<int> DeleteAsync(Expression<Func<T, bool>> predicate, CancellationToken token = default)
+        {
+            return Task.Run(() => _collection.Delete(predicate), token);
+        }
     }
 }

@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 
-using MiningMonitor.Model;
+using MiningMonitor.Security.Identity;
 using MiningMonitor.Service;
 
 using Moq;
@@ -66,7 +66,7 @@ namespace MiningMonitor.Test.Service
 
             var applicationUser = new MiningMonitorUser();
             var principal = new ClaimsPrincipal();
-            var tokenHander = new JwtSecurityTokenHandler();
+            var tokenHandler = new JwtSecurityTokenHandler();
             var authenticationService = new LoginService(_signinManager);
 
             _userStore.Setup(m => m.FindByNameAsync(username, It.IsAny<CancellationToken>()))
@@ -82,7 +82,7 @@ namespace MiningMonitor.Test.Service
 
             // Assert
             Assert.That(result.success, Is.True);
-            Assert.That(tokenHander.ReadJwtToken(result.token), Has.Property(nameof(JwtSecurityToken.Subject)).EqualTo(username));
+            Assert.That(tokenHandler.ReadJwtToken(result.token), Has.Property(nameof(JwtSecurityToken.Subject)).EqualTo(username));
             _authenticationService.Verify(m => m.SignInAsync(_context.Object, It.IsAny<string>(), principal, It.IsAny<AuthenticationProperties>()));
         }
 

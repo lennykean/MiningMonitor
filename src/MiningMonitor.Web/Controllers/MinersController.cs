@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,15 +24,15 @@ namespace MiningMonitor.Web.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Miner> Get()
+        public async Task<IEnumerable<Miner>> GetAsync(CancellationToken token = default)
         {
-            return _minerService.GetAll();
+            return await _minerService.GetAllAsync(token);
         }
 
         [HttpGet("{id}")]
-        public ObjectResult Get(Guid id)
+        public async Task<ObjectResult> GetAsync(Guid id, CancellationToken token = default)
         {
-            var miner = _minerService.GetById(id);
+            var miner = await _minerService.GetByIdAsync(id, token);
 
             if (miner == null)
                 return NotFound(null);
@@ -39,42 +41,42 @@ namespace MiningMonitor.Web.Controllers
         }
 
         [HttpPost]
-        public ObjectResult Post([FromBody]Miner miner)
+        public async Task<ObjectResult> PostAsync([FromBody]Miner miner, CancellationToken token = default)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            _minerService.Add(miner);
+            await _minerService.AddAsync(miner, token);
 
             return Ok(miner);
         }
 
         [HttpPut]
-        public ObjectResult Put([FromBody]Miner miner)
+        public async Task<ObjectResult> PutAsync([FromBody]Miner miner, CancellationToken token = default)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            if (!_minerService.Update(miner))
+            if (!await _minerService.UpdateAsync(miner, token))
                 return NotFound(null);
 
             return Ok(miner);
         }
 
         [HttpDelete("{id}")]
-        public StatusCodeResult Delete(Guid id)
+        public async Task<StatusCodeResult> Delete(Guid id, CancellationToken token = default)
         {
-            if (!_minerService.Delete(id))
+            if (!await _minerService.DeleteAsync(id, token))
                 return NotFound();
 
             return NoContent();
         }
 
         [HttpPost("collector/{collector}"), Authorize(Policy = "Collector")]
-        public StatusCodeResult Post(string collector, [FromBody]Miner miner)
+        public async Task<StatusCodeResult> PostAsync(string collector, [FromBody]Miner miner, CancellationToken token = default)
         {
-            var succcess = _collectorService.MinerSync(collector, miner);
+            var success = await _collectorService.MinerSyncAsync(collector, miner, token);
 
-            if (!succcess)
+            if (!success)
                 return BadRequest();
 
             return Ok();

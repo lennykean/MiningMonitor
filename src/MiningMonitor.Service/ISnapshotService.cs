@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 using MiningMonitor.Common;
 using MiningMonitor.Model;
@@ -8,13 +10,13 @@ namespace MiningMonitor.Service
 {
     public interface ISnapshotService
     {
-        IEnumerable<Snapshot> GetAll();
-        IEnumerable<Snapshot> GetByMiner(Guid minerId, Period period);
-        IEnumerable<Snapshot> GetByMinerFillGaps(Guid minerId, ConcretePeriod period, TimeSpan interval);
-        void Add(Snapshot snapshot);
-        void Upsert(Snapshot snapshot);
-        void Delete(Guid snapshotId);
-        void DeleteByMiner(Guid minerId);
-        int DeleteOld(DateTime cutoff);
+        Task<IEnumerable<Snapshot>> GetAllAsync(CancellationToken token = default);
+        Task<IEnumerable<Snapshot>> GetByMinerAsync(Guid minerId, Period period, CancellationToken token = default);
+        Task<IEnumerable<Snapshot>> GetByMinerFillGapsAsync(Guid minerId, ConcretePeriod period, TimeSpan interval, CancellationToken token = default);
+        Task AddAsync(Snapshot snapshot, CancellationToken token = default);
+        Task UpsertAsync(Snapshot snapshot, CancellationToken token = default);
+        Task DeleteAsync(Guid snapshotId, CancellationToken token = default);
+        Task DeleteByMinerAsync(Guid minerId, CancellationToken token = default);
+        Task<int> DeleteOldAsync(DateTime cutoff, CancellationToken token = default);
     }
 }

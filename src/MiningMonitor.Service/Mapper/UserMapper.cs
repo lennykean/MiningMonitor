@@ -1,5 +1,6 @@
 ﻿using MiningMonitor.Common.Mapper;
 using MiningMonitor.Model;
+using MiningMonitor.Security.Identity;
 
 namespace MiningMonitor.Service.Mapper
 {
@@ -10,7 +11,7 @@ namespace MiningMonitor.Service.Mapper
             return new User
             {
                 Username = identityUser.UserName,
-                Email = identityUser.Email?.Address
+                Email = identityUser.Email
             };
         }
 
@@ -29,8 +30,7 @@ namespace MiningMonitor.Service.Mapper
             {
                 UserName = collector.Id,
                 CollectorName = collector.Name,
-                IsApproved = collector.Approved,
-                Email = ""
+                IsApproved = collector.Approved
             };
         }
 

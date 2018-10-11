@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 using LiteDB;
 
@@ -37,7 +38,7 @@ namespace MiningMonitor.Test.Service
         }
 
         [Test]
-        public void GetByMinerId()
+        public async Task GetByMinerId()
         {
             // Arrange
             var now = new DateTime(2018, 6, 1);
@@ -47,14 +48,14 @@ namespace MiningMonitor.Test.Service
                 .ToList());
             
             // Act
-            var result = _subject.GetByMinerFillGaps(minerId, new ConcretePeriod(now, now), TimeSpan.FromMinutes(1));
+            var result = await _subject.GetByMinerFillGapsAsync(minerId, new ConcretePeriod(now, now), TimeSpan.FromMinutes(1));
 
             // Assert
             Assert.That(result, Is.Not.Empty);
         }
 
         [Test]
-        public void GetAndFillsGaps()
+        public async Task GetAndFillsGaps()
         {
             // Arrange
             var minerId = new Guid("56f5fb3a-4b59-417c-aae0-ace175bb7c5b");
@@ -67,7 +68,7 @@ namespace MiningMonitor.Test.Service
             _collection.InsertBulk(snapshots);
             
             // Act
-            var result = _subject.GetByMinerFillGaps(minerId, new ConcretePeriod(from, to), TimeSpan.FromMinutes(1)).ToList();
+            var result = (await _subject.GetByMinerFillGapsAsync(minerId, new ConcretePeriod(from, to), TimeSpan.FromMinutes(1))).ToList();
 
             // Assert
             Assert.That(result.Select(s => s.SnapshotTime), Is.SupersetOf(snapshots.Select(s => s.SnapshotTime)));

@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MiningMonitor.Service
 {
     public interface ISettingsService
     {
-        IDictionary<string, string> GetAll();
-        (bool success, string setting) GetSetting(string key);
-        (bool success, IDictionary<string, string> settings) UpdateSettings(IDictionary<string, string> settings);
-        bool UpdateSetting(string setting, string value);
+        Task<IDictionary<string, string>> GetAllAsync(CancellationToken token = default);
+        Task<(bool success, string setting)> GetSettingAsync(string key, CancellationToken token = default);
+        Task<(bool success, IDictionary<string, string> settings)> UpdateSettingsAsync(IDictionary<string, string> settings, CancellationToken token = default);
+        Task<bool> UpdateSettingAsync(string setting, string value, CancellationToken token = default);
     }
 }

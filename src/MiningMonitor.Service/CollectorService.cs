@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Identity;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 using MiningMonitor.Common.Mapper;
 using MiningMonitor.Model;
+using MiningMonitor.Security.Identity;
 
 namespace MiningMonitor.Service
 {
@@ -39,12 +41,12 @@ namespace MiningMonitor.Service
             _resultMapper = resultMapper;
         }
 
-        public Task<IEnumerable<Collector>> GetAllAsync()
+        public Task<IEnumerable<Collector>> GetAllAsync(CancellationToken token = default)
         {
             return Task.Run(() => _userManager.Users.Where(u => u.Roles.Contains("Collector")).AsEnumerable().Select(_collectorMapper.Map));
         }
 
-        public async Task<(bool success, Collector collector)> GetAsync(string collectorId)
+        public async Task<(bool success, Collector collector)> GetAsync(string collectorId, CancellationToken token = default)
         {
             var collector = await _userManager.FindByNameAsync(collectorId);
 
@@ -54,7 +56,7 @@ namespace MiningMonitor.Service
             return (true, _collectorMapper.Map(collector));
         }
 
-        public async Task<(ModelStateDictionary modelState, RegistrationResponse registration)> CreateCollectorAsync(Collector collector)
+        public async Task<(ModelStateDictionary modelState, RegistrationResponse registration)> CreateCollectorAsync(Collector collector, CancellationToken token = default)
         {
             collector.Id = Guid.NewGuid().ToString();
             collector.Approved = null;
@@ -71,7 +73,7 @@ namespace MiningMonitor.Service
             } : null);
         }
 
-        public async Task<bool> UpdateAsync(Collector collector)
+        public async Task<bool> UpdateAsync(Collector collector, CancellationToken token = default)
         {
             var user = await _userManager.FindByNameAsync(collector.Id);
             _userMapper.Update(collector, user);
@@ -81,7 +83,7 @@ namespace MiningMonitor.Service
             return result.Succeeded;
         }
 
-        public async Task<bool> DeleteAsync(string collectorId)
+        public async Task<bool> DeleteAsync(string collectorId, CancellationToken token = default)
         {
             var collector = (
                 from u in _userManager.Users
@@ -91,32 +93,32 @@ namespace MiningMonitor.Service
             if (collector == null)
                 return false;
 
-            _minerService.DeleteByCollector(collectorId);
+            await _minerService.DeleteByCollectorAsync(collectorId, token);
             await _userManager.DeleteAsync(collector);
 
             return true;
         }
 
-        public bool MinerSync(string collector, Miner miner)
+        public async Task<bool> MinerSyncAsync(string collector, Miner miner, CancellationToken token = default)
         {
-            var existing = _minerService.GetById(miner.Id);
+            var existing = await _minerService.GetByIdAsync(miner.Id, token);
             if (existing == null || existing.CollectorId != collector)
                 return false;
 
             miner.CollectorId = collector;
-            _minerService.Upsert(miner);
+            await _minerService.UpsertAsync(miner, token);
             
             return true;
         }
 
-        public bool SnapshotSync(string collector, Guid minerId, Snapshot snapshot)
+        public async Task<bool> SnapshotSyncAsync(string collector, Guid minerId, Snapshot snapshot, CancellationToken token = default)
         {
-            var miner = _minerService.GetById(minerId);
+            var miner = await _minerService.GetByIdAsync(minerId, token);
             if (miner?.CollectorId != collector)
                 return false;
 
             snapshot.MinerId = minerId;
-            _snapshotService.Upsert(snapshot);
+            await _snapshotService.UpsertAsync(snapshot, token);
 
             return true;
         }

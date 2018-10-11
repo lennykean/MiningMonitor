@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,18 +22,18 @@ namespace MiningMonitor.Web.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<AlertDefinition> Get(Guid? minerId = null)
+        public async Task<IEnumerable<AlertDefinition>> GetAsync(Guid? minerId = null, CancellationToken token = default)
         {
             if (minerId != null)
-                return _alertDefinitionService.GetByMiner((Guid)minerId);
+                return await _alertDefinitionService.GetByMinerAsync((Guid)minerId, token);
 
-            return _alertDefinitionService.GetAll();
+            return await _alertDefinitionService.GetAllAsync(token);
         }
 
         [HttpGet("{id}")]
-        public ObjectResult Get(Guid id)
+        public async Task<ObjectResult> GetAsync(Guid id, CancellationToken token = default)
         {
-            var alertDefinition = _alertDefinitionService.GetById(id);
+            var alertDefinition = await _alertDefinitionService.GetByIdAsync(id, token);
 
             if (alertDefinition == null)
                 return NotFound(null);
@@ -40,31 +42,31 @@ namespace MiningMonitor.Web.Controllers
         }
 
         [HttpPost]
-        public ObjectResult Post([FromBody]AlertDefinition alertDefinition)
+        public async Task<ObjectResult> PostAsync([FromBody]AlertDefinition alertDefinition, CancellationToken token = default)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            _alertDefinitionService.Add(alertDefinition);
+            await _alertDefinitionService.AddAsync(alertDefinition, token);
 
             return Ok(alertDefinition);
         }
 
         [HttpPut]
-        public ObjectResult Put([FromBody]AlertDefinition alertDefinition)
+        public async Task<ObjectResult> PutAsync([FromBody]AlertDefinition alertDefinition, CancellationToken token = default)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            if (!_alertDefinitionService.Update(alertDefinition))
+            if (!await _alertDefinitionService.UpdateAsync(alertDefinition, token))
                 return NotFound(null);
 
             return Ok(alertDefinition);
         }
 
         [HttpDelete("{id}")]
-        public StatusCodeResult Delete(Guid id)
+        public async Task<StatusCodeResult> DeleteAsync(Guid id, CancellationToken token = default)
         {
-            if (!_alertDefinitionService.Delete(id))
+            if (!await _alertDefinitionService.DeleteAsync(id, token))
                 return NotFound();
 
             return NoContent();
