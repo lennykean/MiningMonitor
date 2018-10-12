@@ -23,7 +23,7 @@ namespace MiningMonitor.Web.Controllers
         [HttpGet, Authorize(Policy = "Basic")]
         public async Task<IEnumerable<Collector>> GetAsync(CancellationToken token = default)
         {
-            return await _collectorService.GetAllAsync();
+            return await _collectorService.GetAllAsync(token);
         }
 
         [HttpGet("{collector}"), Authorize(Policy = "Collector")]

@@ -22,7 +22,7 @@ namespace MiningMonitor.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<AlertDefinition>> GetAsync(Guid? minerId = null, CancellationToken token = default)
+        public async Task<IEnumerable<AlertDefinition>> GetAsync([FromQuery]Guid? minerId = null, CancellationToken token = default)
         {
             if (minerId != null)
                 return await _alertDefinitionService.GetByMinerAsync((Guid)minerId, token);

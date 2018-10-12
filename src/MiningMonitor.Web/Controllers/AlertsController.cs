@@ -22,13 +22,13 @@ namespace MiningMonitor.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Alert>> GetAsync(bool includeAcknowledged = false, CancellationToken token = default)
+        public async Task<IEnumerable<Alert>> GetAsync([FromQuery]bool includeAcknowledged = false, CancellationToken token = default)
         {
             return await _alertService.GetAsync(includeAcknowledged, token);
         }
 
         [HttpGet("miner/{minerId}")]
-        public async Task<IEnumerable<Alert>> GetByMinerAsync(Guid minerId, bool includeAcknowledged = false, CancellationToken token = default)
+        public async Task<IEnumerable<Alert>> GetByMinerAsync(Guid minerId, [FromQuery]bool includeAcknowledged = false, CancellationToken token = default)
         {
             return await _alertService.GetByMinerAsync(minerId, includeAcknowledged, token);
         }

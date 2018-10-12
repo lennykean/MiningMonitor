@@ -106,20 +106,23 @@ namespace MiningMonitor.Web
                 else 
                     configuration.RootPath = "ClientApp/dist";
             });
+            services.AddSwaggerGen(options => options.SwaggerDoc("v1", null));
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider service)
         {
-            app.UseResponseCompression();
-            app.UseStaticFiles();
+            app.UseResponseCompression()
+                .UseStaticFiles()
+                .UseAuthentication()
+                .UseMvc(routes =>
+                {
+                    routes.MapRoute(
+                        name: "default",
+                        template: "{controller=Home}/{action=Index}/{id?}");
+                })
+                .UseSwagger();
+
             app.UseSpaStaticFiles();
-            app.UseAuthentication();
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
             app.UseSpa(spa =>
             {
                 spa.Options.SourcePath = "ClientApp";
