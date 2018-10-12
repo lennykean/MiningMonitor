@@ -3,9 +3,9 @@
 using Microsoft.Extensions.DependencyInjection;
 
 using MiningMonitor.Data.LiteDb;
+using MiningMonitor.Data.LiteDb.Serialization;
 using MiningMonitor.Model;
 using MiningMonitor.Model.Alerts;
-using MiningMonitor.Model.Serialization;
 using MiningMonitor.Security.Identity;
 
 namespace MiningMonitor.Data.MongoDb

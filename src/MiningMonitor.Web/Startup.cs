@@ -37,18 +37,6 @@ namespace MiningMonitor.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddResponseCompression();
-            services.AddOptions();
-            
-            services
-                .AddMvc()
-                .AddJsonOptions(options =>
-                {
-                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                    options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
-                    options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-                });
-
             // Repository
             if (_configuration.GetValue<bool>("use_mongo"))
                 services.AddMongoRepository(_configuration.GetConnectionString("miningmonitor"));
@@ -64,10 +52,10 @@ namespace MiningMonitor.Web
             // Background workers
             if (!_configuration.GetValue<bool>("disable_background_workers"))
             {
-                services.ScheduleBackgroundWorker<DataCollectorWorker>(_configuration.GetSection("Scheduler:DataCollector"));
-                services.ScheduleBackgroundWorker<DataSynchronizerWorker>(_configuration.GetSection("Scheduler:DataSynchronizer"));
-                services.ScheduleBackgroundWorker<MaintenanceWorker>(_configuration.GetSection("Scheduler:Maintenance"));
-                services.ScheduleBackgroundWorker<AlertScanWorker>(_configuration.GetSection("Scheduler:AlertScan"));
+                services.AddBackgroundWorker<DataCollectorWorker>(_configuration.GetSection("Scheduler:DataCollector"));
+                services.AddBackgroundWorker<DataSynchronizerWorker>(_configuration.GetSection("Scheduler:DataSynchronizer"));
+                services.AddBackgroundWorker<MaintenanceWorker>(_configuration.GetSection("Scheduler:Maintenance"));
+                services.AddBackgroundWorker<AlertScanWorker>(_configuration.GetSection("Scheduler:AlertScan"));
             }
 
             // Security
@@ -99,7 +87,8 @@ namespace MiningMonitor.Web
             services.AddTransient<IAuthorizationHandler, MiningMonitorAuthorizationHandler>();
 
             // MVC
-            services.AddOptions()
+            services
+                .AddResponseCompression()
                 .AddMvc(options =>
                 {
                     options.AddClaimsValueProvider();
@@ -108,6 +97,7 @@ namespace MiningMonitor.Web
                 {
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                     options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+                    options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
                 });
             services.AddSpaStaticFiles(configuration =>
             {

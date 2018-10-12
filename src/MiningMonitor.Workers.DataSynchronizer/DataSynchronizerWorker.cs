@@ -30,7 +30,10 @@ namespace MiningMonitor.Workers.DataSynchronizer
         {
             var (isDataCollector, registered, approved, id) = await RegistrationAsync(cancellationToken);
             if (!isDataCollector)
+            {
+                _logger.LogInformation("Skipping data sync, not configured as a data collector");
                 return;
+            }
                     
             _logger.LogInformation("Starting Data Sync");
             if (registered && approved)

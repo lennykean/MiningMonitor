@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { GpuThresholdParameters } from '../../models/GpuThresholdParameters';
+import { GpuThresholdAlertParameters } from '../../models/GpuThresholdAlertParameters';
 import { Metric } from '../../models/Metric';
 
 @Component({
@@ -9,7 +9,7 @@ import { Metric } from '../../models/Metric';
 })
 export class GpuThresholdParametersComponent {
     @Input()
-    public alertParameters: GpuThresholdParameters = {
+    public alertParameters: GpuThresholdAlertParameters = {
         alertType: null,
         metric: null
     };

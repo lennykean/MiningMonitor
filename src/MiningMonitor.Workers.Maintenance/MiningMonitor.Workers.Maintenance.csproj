@@ -1,11 +1,20 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <UserSecretsId>950cd87c-a9fa-4f21-b277-750bc730fa67</UserSecretsId>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="2.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MiningMonitor.Data.MongoDb\MiningMonitor.Data.MongoDb.csproj" />
     <ProjectReference Include="..\MiningMonitor.Service\MiningMonitor.Service.csproj" />
     <ProjectReference Include="..\MiningMonitor.Workers\MiningMonitor.Workers.csproj" />
   </ItemGroup>

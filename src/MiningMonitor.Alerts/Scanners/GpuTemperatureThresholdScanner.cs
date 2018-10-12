@@ -14,10 +14,10 @@ namespace MiningMonitor.Alerts.Scanners
 
         public override bool ShouldScan(AlertDefinition definition)
         {
-            return definition.Parameters is GpuThresholdParameters parameters && parameters.Metric == Metric.Temperature;
+            return definition.Parameters is GpuThresholdAlertParameters parameters && parameters.Metric == Metric.Temperature;
         }
 
-        protected override Condition MapToCondition(GpuStats stats, GpuThresholdParameters parameters)
+        protected override Condition MapToCondition(GpuStats stats, GpuThresholdAlertParameters parameters)
         {
             if (stats.Temperature < parameters.MinValue)
                 return Condition.Low;
@@ -27,7 +27,7 @@ namespace MiningMonitor.Alerts.Scanners
             return Condition.Ok;
         }
 
-        protected override AlertMetadata CreateMetadata(Alert alert, GpuThresholdParameters parameters, GpuConditionPeriod conditionPeriod)
+        protected override AlertMetadata CreateMetadata(Alert alert, GpuThresholdAlertParameters parameters, GpuConditionPeriod conditionPeriod)
         {
             var temps = conditionPeriod.GpuStats
                 .Select(s => (int?) s.Temperature)
@@ -52,7 +52,7 @@ namespace MiningMonitor.Alerts.Scanners
             };
         }
 
-        protected override IEnumerable<string> CreateDetailMessages(Alert alert, GpuThresholdParameters parameters)
+        protected override IEnumerable<string> CreateDetailMessages(Alert alert, GpuThresholdAlertParameters parameters)
         {
             var durationMessage = parameters.DurationMinutes == null ? null : $" for more than {parameters.DurationMinutes} minute(s)";
 

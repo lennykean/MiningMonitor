@@ -8,7 +8,7 @@ namespace MiningMonitor.BackgroundScheduler
 {
     public static class BackgroundSchedulerExtensions
     {
-        public static IServiceCollection ScheduleBackgroundWorker<TWorker>(this IServiceCollection services, IConfiguration scheduleConfig)
+        public static IServiceCollection AddBackgroundWorker<TWorker>(this IServiceCollection services, IConfiguration scheduleConfig)
             where TWorker : class, IWorker
         {
             var schedule = new Schedule<TWorker>();

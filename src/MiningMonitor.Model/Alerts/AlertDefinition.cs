@@ -44,41 +44,16 @@ namespace MiningMonitor.Model.Alerts
             }
         }
 
-        [JsonIgnore, LiteDB.BsonIgnore, Mongo.BsonIgnore]
-        public DateTime NoScanBefore
+        public ConcretePeriod NextScanPeriod(DateTime scanTime, TimeSpan? preScanOverFetch = null)
         {
-            get
-            {
-                if (Updated > Created)
-                    return (DateTime)Updated;
+            var scanTimeWithBuffer = scanTime - (preScanOverFetch ?? TimeSpan.Zero);
 
-                return Created;
-            }
-        }
+            if ((scanTimeWithBuffer < LastScan || LastScan == null) && scanTimeWithBuffer > (Updated ?? Created))
+                return new ConcretePeriod(scanTimeWithBuffer, scanTime);
+            if (LastScan > (Updated ?? Created))
+                return new ConcretePeriod((DateTime)LastScan, scanTime);
 
-        [JsonIgnore, LiteDB.BsonIgnore, Mongo.BsonIgnore]
-        public DateTime NeedsScanAfter
-        {
-            get
-            {
-                if (LastScan > NoScanBefore)
-                    return (DateTime)LastScan;
-
-                return NoScanBefore;
-            }
-        }
-
-        public ConcretePeriod NextScanPeriod(DateTime scanTime, TimeSpan? requestedDuration = null)
-        {
-            if (scanTime - requestedDuration >= NoScanBefore)
-            {
-                if (scanTime - requestedDuration >= NeedsScanAfter)
-                {
-                    return new ConcretePeriod(NeedsScanAfter, scanTime);
-                }
-                return new ConcretePeriod(scanTime - (TimeSpan)requestedDuration, scanTime);
-            }
-            return new ConcretePeriod(NeedsScanAfter, scanTime);
+            return new ConcretePeriod(Updated ?? Created, scanTime);
         }
     }
 }

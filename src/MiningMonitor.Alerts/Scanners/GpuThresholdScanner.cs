@@ -21,7 +21,7 @@ namespace MiningMonitor.Alerts.Scanners
             if (!snapshotsList.Any())
                 return false;
 
-            var parameters = (GpuThresholdParameters)definition.Parameters;
+            var parameters = (GpuThresholdAlertParameters)definition.Parameters;
 
             var conditionPeriods = (
                 from gpuCondition in snapshotsList.ToGpuConditions(stats => MapToCondition(stats, parameters))
@@ -45,7 +45,7 @@ namespace MiningMonitor.Alerts.Scanners
             if (!miner.CollectData)
                 return ScanResult.Skip;
 
-            var parameters = (GpuThresholdParameters)definition.Parameters;
+            var parameters = (GpuThresholdAlertParameters)definition.Parameters;
             var duration = parameters.DurationMinutes.MinutesToTimeSpan();
 
             var outOfRangePeriods = 
@@ -75,7 +75,7 @@ namespace MiningMonitor.Alerts.Scanners
             return ScanResult.Success;
         }
 
-        private Alert CreateAlert(AlertDefinition definition, GpuThresholdParameters parameters, GpuConditionPeriod conditionPeriod)
+        private Alert CreateAlert(AlertDefinition definition, GpuThresholdAlertParameters parameters, GpuConditionPeriod conditionPeriod)
         {
             var alert = Alert.CreateFromDefinition(definition, definition.Parameters.AlertMessage ?? DefaultAlertMessage);
 
@@ -85,10 +85,10 @@ namespace MiningMonitor.Alerts.Scanners
             return alert;
         }
 
-        protected abstract Condition MapToCondition(GpuStats stats, GpuThresholdParameters parameters);
+        protected abstract Condition MapToCondition(GpuStats stats, GpuThresholdAlertParameters parameters);
 
-        protected abstract AlertMetadata CreateMetadata(Alert alert, GpuThresholdParameters parameters, GpuConditionPeriod conditionPeriod);
+        protected abstract AlertMetadata CreateMetadata(Alert alert, GpuThresholdAlertParameters parameters, GpuConditionPeriod conditionPeriod);
         
-        protected abstract IEnumerable<string> CreateDetailMessages(Alert alert, GpuThresholdParameters parameters);
+        protected abstract IEnumerable<string> CreateDetailMessages(Alert alert, GpuThresholdAlertParameters parameters);
     }
 }

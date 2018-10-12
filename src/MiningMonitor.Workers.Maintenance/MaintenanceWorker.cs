@@ -27,14 +27,17 @@ namespace MiningMonitor.Workers.Maintenance
             var (_, purgeAgeMinutesSetting) = await _settingsService.GetSettingAsync("PurgeAgeMinutes", cancellationToken);
 
             if (!bool.TryParse(enablePurgeSetting, out var enablePurge) || !int.TryParse(purgeAgeMinutesSetting, out var purgeAgeMinutes) || !enablePurge)
+            {
+                _logger.LogInformation("Snapshot purge is disabled, skipping.");
                 return;
+            }
 
             var purgeCutoff = DateTime.UtcNow - TimeSpan.FromMinutes(purgeAgeMinutes);
             _logger.LogInformation($"Purging snapshot data before {purgeCutoff:MM/dd/yy H:mm}");
 
-            var purgedCount = _snapshotService.DeleteOldAsync(purgeCutoff, cancellationToken);
+            var purgedCount = await _snapshotService.DeleteOldAsync(purgeCutoff, cancellationToken);
 
-            _logger.LogInformation($"Purged {purgedCount} snapshots.");
+            _logger.LogInformation($"Purged {purgedCount} snapshot(s).");
         }
     }
 }

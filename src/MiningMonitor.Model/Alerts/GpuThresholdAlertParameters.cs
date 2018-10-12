@@ -1,6 +1,9 @@
-﻿namespace MiningMonitor.Model.Alerts
+﻿using MongoDB.Bson.Serialization.Attributes;
+
+namespace MiningMonitor.Model.Alerts
 {
-    public class GpuThresholdParameters : AlertParameters
+    [BsonDiscriminator("GpuThreshold")]
+    public class GpuThresholdAlertParameters : AlertParameters
     {
         public override AlertType AlertType => AlertType.GpuThreshold;
         public Metric? Metric { get; set; }

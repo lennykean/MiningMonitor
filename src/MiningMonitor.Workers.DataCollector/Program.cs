@@ -20,16 +20,17 @@ namespace MiningMonitor.Workers.DataCollector
                 .AddUserSecrets(Assembly.GetEntryAssembly(), optional: true)
                 .Build();
 
-            var serviceProvider = new ServiceCollection()
+            using (var serviceProvider = new ServiceCollection()
                 .AddLogging(config => config.AddConsole())
                 .AddMongoRepository(configuration.GetConnectionString("miningmonitor"))
                 .AddMiningMonitorServices()
                 .AddSingleton<DataCollectorWorker>()
-                .BuildServiceProvider();
-            
-            var worker = serviceProvider.GetService<DataCollectorWorker>();
+                .BuildServiceProvider())
+            {
+                var worker = serviceProvider.GetService<DataCollectorWorker>();
 
-            await worker.DoWorkAsync(CancellationToken.None);
+                await worker.DoWorkAsync(CancellationToken.None);
+            }
         }
     }
 }

@@ -4,7 +4,7 @@ using LiteDB;
 
 using MiningMonitor.Model.Alerts;
 
-namespace MiningMonitor.Model.Serialization
+namespace MiningMonitor.Data.LiteDb.Serialization
 {
     public class MiningMonitorBsonMapper : BsonMapper
     {
@@ -23,7 +23,7 @@ namespace MiningMonitor.Model.Serialization
                         case AlertType.Hashrate:
                             return ToObject<HashrateAlertParameters>(document);
                         case AlertType.GpuThreshold:
-                            return ToObject<GpuThresholdParameters>(document);
+                            return ToObject<GpuThresholdAlertParameters>(document);
                         case AlertType.Connectivity:
                             return ToObject<ConnectivityAlertParameters>(document);
                         default:
