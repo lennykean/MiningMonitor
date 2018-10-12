@@ -102,7 +102,7 @@ namespace MiningMonitor.Service
         public async Task<bool> MinerSyncAsync(string collector, Miner miner, CancellationToken token = default)
         {
             var existing = await _minerService.GetByIdAsync(miner.Id, token);
-            if (existing?.CollectorId != collector)
+            if (existing != null && existing.CollectorId != collector)
                 return false;
 
             miner.CollectorId = collector;
