@@ -5,6 +5,7 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
     <LangVersion>7.1</LangVersion>
+    <Configurations>Debug;Release;WindowsService</Configurations>
   </PropertyGroup>
   
   <ItemGroup>
