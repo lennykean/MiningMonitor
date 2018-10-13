@@ -4,7 +4,11 @@ using MiningMonitor.Security.Identity;
 
 namespace MiningMonitor.Service.Mapper
 {
-    public class UserMapper : IMapper<MiningMonitorUser, User>, IMapper<User, MiningMonitorUser>, IMapper<MiningMonitorUser, Collector>, IUpdateMapper<Collector, MiningMonitorUser>
+    public class UserMapper : 
+        IMapper<MiningMonitorUser, User>, 
+        IMapper<User, MiningMonitorUser>, 
+        IMapper<MiningMonitorUser, Collector>, 
+        IUpdateMapper<Collector, MiningMonitorUser>
     {
         public User Map(MiningMonitorUser identityUser)
         {

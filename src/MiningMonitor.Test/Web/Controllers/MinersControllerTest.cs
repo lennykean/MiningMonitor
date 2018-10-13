@@ -193,5 +193,45 @@ namespace MiningMonitor.Test.Web.Controllers
             _minerService.Verify();
             Assert.That(result, Has.Property(nameof(result.StatusCode)).EqualTo(statusCode));
         }
+
+        [Test]
+        public async Task PostFromCollector()
+        {
+            // Arrange
+            var collectorId = Guid.NewGuid().ToString();
+            var miner = new Miner();
+            var controller = new MinersController(_minerService.Object, _collectorService.Object);
+
+            _collectorService.Setup(m => m.MinerSyncAsync(collectorId, miner, CancellationToken.None))
+                .ReturnsAsync(() => true)
+                .Verifiable();
+
+            // Act
+            var result = await controller.PostFromCollectorAsync(collectorId, miner);
+
+            // Assert
+            _collectorService.Verify();
+            Assert.That(result, Has.Property(nameof(result.StatusCode)).EqualTo(200));
+        }
+
+        [Test]
+        public async Task PostFromCollectorInvalid()
+        {
+            // Arrange
+            var collectorId = Guid.NewGuid().ToString();
+            var miner = new Miner();
+            var controller = new MinersController(_minerService.Object, _collectorService.Object);
+
+            _collectorService.Setup(m => m.MinerSyncAsync(collectorId, miner, CancellationToken.None))
+                .ReturnsAsync(() => false)
+                .Verifiable();
+
+            // Act
+            var result = await controller.PostFromCollectorAsync(collectorId, miner);
+
+            // Assert
+            _collectorService.Verify();
+            Assert.That(result, Has.Property(nameof(result.StatusCode)).EqualTo(400));
+        }
     }
 }

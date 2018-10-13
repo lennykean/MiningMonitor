@@ -11,16 +11,16 @@ namespace MiningMonitor.Service
 {
     public class LoginService : ILoginService
     {
-        private readonly SignInManager<MiningMonitorUser> _userManager;
+        private readonly SignInManager<MiningMonitorUser> _signinManager;
 
-        public LoginService(SignInManager<MiningMonitorUser> userManager)
+        public LoginService(SignInManager<MiningMonitorUser> signinManager)
         {
-            _userManager = userManager;
+            _signinManager = signinManager;
         }
 
         public async Task<(bool success, string token)> LoginUserAsync(string username, string password)
         {
-            var result = await _userManager.PasswordSignInAsync(username, password, false, false);
+            var result = await _signinManager.PasswordSignInAsync(username, password, false, false);
             
             if (!result.Succeeded)
                 return (success: false, token: null);

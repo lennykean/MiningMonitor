@@ -72,7 +72,7 @@ namespace MiningMonitor.Web.Controllers
         }
 
         [HttpPost("collector/{collector}"), Authorize(Policy = "Collector")]
-        public async Task<StatusCodeResult> PostAsync(string collector, [FromBody]Miner miner, CancellationToken token = default)
+        public async Task<StatusCodeResult> PostFromCollectorAsync(string collector, [FromBody]Miner miner, CancellationToken token = default)
         {
             var success = await _collectorService.MinerSyncAsync(collector, miner, token);
 
