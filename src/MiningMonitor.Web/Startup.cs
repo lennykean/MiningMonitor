@@ -1,7 +1,5 @@
 ﻿using System;
 
-using AspNetCore.ClaimsValueProvider;
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -41,7 +39,7 @@ namespace MiningMonitor.Web
             if (_configuration.GetValue<bool>("use_mongo"))
                 services.AddMongoRepository(_configuration.GetConnectionString("miningmonitor"));
             else
-                services.AddLiteDbRepository(_configuration.GetConnectionString("miningmonitor"));
+                services.AddLiteDbRepository(Environment.ExpandEnvironmentVariables(_configuration.GetConnectionString("miningmonitor")));
 
             // Services
             services.AddMiningMonitorServices();
@@ -89,10 +87,7 @@ namespace MiningMonitor.Web
             // MVC
             services
                 .AddResponseCompression()
-                .AddMvc(options =>
-                {
-                    options.AddClaimsValueProvider();
-                })
+                .AddMvc()
                 .AddJsonOptions(options =>
                 {
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();

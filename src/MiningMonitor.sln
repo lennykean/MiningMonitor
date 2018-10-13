@@ -2,39 +2,41 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiningMonitor.Web", "MiningMonitor.Web\MiningMonitor.Web.csproj", "{819A4F4C-6509-4C54-AF90-FEAD0667E223}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiningMonitor.Web", "MiningMonitor.Web\MiningMonitor.Web.csproj", "{819A4F4C-6509-4C54-AF90-FEAD0667E223}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiningMonitor.Test", "MiningMonitor.Test\MiningMonitor.Test.csproj", "{8FEDDC35-D5FC-4CF7-9CE3-F632482DC021}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiningMonitor.Test", "MiningMonitor.Test\MiningMonitor.Test.csproj", "{8FEDDC35-D5FC-4CF7-9CE3-F632482DC021}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiningMonitor.Service", "MiningMonitor.Service\MiningMonitor.Service.csproj", "{335ABC0B-6BA7-41D1-A4A1-786A870E935C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiningMonitor.Service", "MiningMonitor.Service\MiningMonitor.Service.csproj", "{335ABC0B-6BA7-41D1-A4A1-786A870E935C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiningMonitor.Model", "MiningMonitor.Model\MiningMonitor.Model.csproj", "{75818985-35AB-455F-9013-EB45AD6CAAA0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiningMonitor.Model", "MiningMonitor.Model\MiningMonitor.Model.csproj", "{75818985-35AB-455F-9013-EB45AD6CAAA0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiningMonitor.Alerts", "MiningMonitor.Alerts\MiningMonitor.Alerts.csproj", "{68980EE7-4425-4DFE-BEBF-ADCB375050C3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiningMonitor.Alerts", "MiningMonitor.Alerts\MiningMonitor.Alerts.csproj", "{68980EE7-4425-4DFE-BEBF-ADCB375050C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiningMonitor.BackgroundScheduler", "MiningMonitor.BackgroundScheduler\MiningMonitor.BackgroundScheduler.csproj", "{6E6AF702-A75C-4D9C-9762-7B155B81D2F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiningMonitor.BackgroundScheduler", "MiningMonitor.BackgroundScheduler\MiningMonitor.BackgroundScheduler.csproj", "{6E6AF702-A75C-4D9C-9762-7B155B81D2F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiningMonitor.Workers", "MiningMonitor.Workers\MiningMonitor.Workers.csproj", "{862DFBB3-B3F7-4D9E-9FCF-1B8E5FBAB669}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiningMonitor.Workers", "MiningMonitor.Workers\MiningMonitor.Workers.csproj", "{862DFBB3-B3F7-4D9E-9FCF-1B8E5FBAB669}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiningMonitor.Workers.AlertScan", "MiningMonitor.Workers.AlertScan\MiningMonitor.Workers.AlertScan.csproj", "{335F091D-8AA1-481E-8D99-98D3BB76D228}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiningMonitor.Workers.AlertScan", "MiningMonitor.Workers.AlertScan\MiningMonitor.Workers.AlertScan.csproj", "{335F091D-8AA1-481E-8D99-98D3BB76D228}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiningMonitor.Workers.DataCollector", "MiningMonitor.Workers.DataCollector\MiningMonitor.Workers.DataCollector.csproj", "{72E536A4-9EBC-4BE4-8A3A-C044584E690E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiningMonitor.Workers.DataCollector", "MiningMonitor.Workers.DataCollector\MiningMonitor.Workers.DataCollector.csproj", "{72E536A4-9EBC-4BE4-8A3A-C044584E690E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiningMonitor.Workers.DataSynchronizer", "MiningMonitor.Workers.DataSynchronizer\MiningMonitor.Workers.DataSynchronizer.csproj", "{5C228D5C-8C97-4B54-949D-E99B28A2E159}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiningMonitor.Workers.DataSynchronizer", "MiningMonitor.Workers.DataSynchronizer\MiningMonitor.Workers.DataSynchronizer.csproj", "{5C228D5C-8C97-4B54-949D-E99B28A2E159}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiningMonitor.Workers.Maintenance", "MiningMonitor.Workers.Maintenance\MiningMonitor.Workers.Maintenance.csproj", "{611BDEE9-D59D-434A-915D-DA5159B50964}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiningMonitor.Workers.Maintenance", "MiningMonitor.Workers.Maintenance\MiningMonitor.Workers.Maintenance.csproj", "{611BDEE9-D59D-434A-915D-DA5159B50964}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiningMonitor.Common", "MiningMonitor.Common\MiningMonitor.Common.csproj", "{6AFC7363-57EC-4450-89AC-36606BDCAC34}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiningMonitor.Common", "MiningMonitor.Common\MiningMonitor.Common.csproj", "{6AFC7363-57EC-4450-89AC-36606BDCAC34}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiningMonitor.Data.LiteDb", "MiningMonitor.Data.LiteDb\MiningMonitor.Data.LiteDb.csproj", "{3610FC7A-D26D-4DF4-812A-923C02282936}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiningMonitor.Data.LiteDb", "MiningMonitor.Data.LiteDb\MiningMonitor.Data.LiteDb.csproj", "{3610FC7A-D26D-4DF4-812A-923C02282936}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiningMonitor.Data.MongoDb", "MiningMonitor.Data.MongoDb\MiningMonitor.Data.MongoDb.csproj", "{0196A28B-DE17-4C63-A41A-C7E86F388569}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiningMonitor.Data.MongoDb", "MiningMonitor.Data.MongoDb\MiningMonitor.Data.MongoDb.csproj", "{0196A28B-DE17-4C63-A41A-C7E86F388569}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiningMonitor.Security.Identity", "MiningMonitor.Security.Identity\MiningMonitor.Security.Identity.csproj", "{C91BDB4F-AE8E-4D16-8240-AC60721D0024}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiningMonitor.Security.Identity", "MiningMonitor.Security.Identity\MiningMonitor.Security.Identity.csproj", "{C91BDB4F-AE8E-4D16-8240-AC60721D0024}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiningMonitor.Security.Authorization", "MiningMonitor.Security.Authorization\MiningMonitor.Security.Authorization.csproj", "{16F998C2-4AB3-4ECA-9F92-787E76D30A9F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiningMonitor.Security.Authorization", "MiningMonitor.Security.Authorization\MiningMonitor.Security.Authorization.csproj", "{16F998C2-4AB3-4ECA-9F92-787E76D30A9F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiningMonitor.Data", "MiningMonitor.Data\MiningMonitor.Data.csproj", "{6C55E94B-2BCD-4733-B39E-026DF170183A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiningMonitor.Data", "MiningMonitor.Data\MiningMonitor.Data.csproj", "{6C55E94B-2BCD-4733-B39E-026DF170183A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiningMonitor.WindowsService", "MiningMonitor.WindowsService\MiningMonitor.WindowsService.csproj", "{C62802C3-0686-4980-9DA9-90E565FC4D73}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -250,6 +252,18 @@ Global
 		{6C55E94B-2BCD-4733-B39E-026DF170183A}.Release|x64.Build.0 = Release|Any CPU
 		{6C55E94B-2BCD-4733-B39E-026DF170183A}.Release|x86.ActiveCfg = Release|Any CPU
 		{6C55E94B-2BCD-4733-B39E-026DF170183A}.Release|x86.Build.0 = Release|Any CPU
+		{C62802C3-0686-4980-9DA9-90E565FC4D73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C62802C3-0686-4980-9DA9-90E565FC4D73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C62802C3-0686-4980-9DA9-90E565FC4D73}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C62802C3-0686-4980-9DA9-90E565FC4D73}.Debug|x64.Build.0 = Debug|Any CPU
+		{C62802C3-0686-4980-9DA9-90E565FC4D73}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C62802C3-0686-4980-9DA9-90E565FC4D73}.Debug|x86.Build.0 = Debug|Any CPU
+		{C62802C3-0686-4980-9DA9-90E565FC4D73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C62802C3-0686-4980-9DA9-90E565FC4D73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C62802C3-0686-4980-9DA9-90E565FC4D73}.Release|x64.ActiveCfg = Release|Any CPU
+		{C62802C3-0686-4980-9DA9-90E565FC4D73}.Release|x64.Build.0 = Release|Any CPU
+		{C62802C3-0686-4980-9DA9-90E565FC4D73}.Release|x86.ActiveCfg = Release|Any CPU
+		{C62802C3-0686-4980-9DA9-90E565FC4D73}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
