@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" InitialTargets="EnsureWixToolsetInstalled" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>3.10</ProductVersion>
+    <ProjectGuid>2466f391-af36-453f-8f9f-7eee60030915</ProjectGuid>
+    <SchemaVersion>2.0</SchemaVersion>
+    <OutputName>MiningMonitor.WindowsService.Installer</OutputName>
+    <OutputType>Package</OutputType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+    <DefineConstants>Debug</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="MiningMonitor.wxs" />
+    <Compile Include="MiningMonitorComponents.wxs" Visible="false" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Filter.xsl" />
+  </ItemGroup>
+  <Import Project="$(WixTargetsPath)" Condition=" '$(WixTargetsPath)' != '' " />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets" Condition=" '$(WixTargetsPath)' == '' AND Exists('$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets') " />
+  <Target Name="EnsureWixToolsetInstalled" Condition=" '$(WixTargetsImported)' != 'true' ">
+    <Error Text="The WiX Toolset v3.11 (or newer) build tools must be installed to build this project. To download the WiX Toolset, see http://wixtoolset.org/releases/" />
+  </Target>
+  <Target Name="BeforeBuild">
+    <Exec Command="rd /s /q ..\MiningMonitor.WindowsService\bin\$(Configuration)\netcoreapp2.1\win7-x64\publish" />
+    <Exec Command="dotnet publish ..\MiningMonitor.WindowsService -c $(Configuration)" />
+    <PropertyGroup>
+      <DefineConstants>BasePath=..\MiningMonitor.WindowsService\bin\$(Configuration)\netcoreapp2.1\win7-x64\publish</DefineConstants>
+    </PropertyGroup>
+    <HeatDirectory OutputFile="MiningMonitorComponents.wxs" DirectoryRefId="INSTALLFOLDER" ComponentGroupName="MiningMonitorComponents" Transforms="Filter.xsl" Directory="..\MiningMonitor.WindowsService\bin\$(Configuration)\netcoreapp2.1\win7-x64\publish" SuppressFragments="true" SuppressRegistry="true" SuppressRootDirectory="true" AutoGenerateGuids="false" GenerateGuidsNow="true" ToolPath="$(WixToolPath)" PreprocessorVariable="var.BasePath" />
+  </Target>
+</Project>

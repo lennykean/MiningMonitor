@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="*" 
+           Name="MiningMonitor" 
+           Language="1033" 
+           Version="1.0.0.0" 
+           Manufacturer="MiningMonitor" 
+           UpgradeCode="FA42B5EF-EAAC-4905-9790-C3D8DCB3DDAE">
+
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Feature Id="MiningMonitorFeature" Title="MiningMonitor" Level="1">
+      <ComponentGroupRef Id="MiningMonitorComponents" />
+      <ComponentGroupRef Id="MiningMonitorService" />
+    </Feature>
+
+    <CustomAction Id='LaunchUI' Directory='INSTALLFOLDER' ExeCommand='cmd.exe /c &quot;start http://localhost:8506&quot;' Return='asyncNoWait' />
+    
+    <InstallExecuteSequence>
+      <Custom Action='LaunchUI' After='InstallFinalize'></Custom>
+    </InstallExecuteSequence>
+  </Product>
+
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="MiningMonitor" />
+      </Directory>
+    </Directory>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="MiningMonitorService" Directory="INSTALLFOLDER">
+      <Component Id="MiningMonitorServiceEXE">
+        <File Id="MiningMonitorServiceEXE" Source="$(var.BasePath)\MiningMonitor.WindowsService.exe" DiskId="1" Vital="yes" KeyPath="yes" />
+        <ServiceInstall Id="ServiceInstaller"
+                        Type="ownProcess"
+                        Vital="yes"
+                        Name="MiningMonitor"
+                        DisplayName="MiningMonitor"
+                        Description="MiningMonitor"
+                        Start="auto"
+                        Account="LocalSystem"
+                        ErrorControl="normal"
+                        Interactive="no"
+                        Arguments="--urls http://0.0.0.0:8506" />
+        <ServiceControl Id="StartService" Start="install" Stop="both" Remove="uninstall" Name="MiningMonitor" Wait="yes" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>
+

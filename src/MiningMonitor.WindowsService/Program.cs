@@ -12,10 +12,15 @@ namespace MiningMonitor.Web
     {
         public static void Main(string[] args)
         {
-            var dataDir = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "MiningMonitor"));
+            var dataDir = new DirectoryInfo(Environment.ExpandEnvironmentVariables("%ProgramData%\\MiningMonitor"));
             dataDir.Create();
 
-            BuildWebHost(args).RunAsService();
+            var host = BuildWebHost(args);
+
+            if (Debugger.IsAttached)
+                host.Run();
+            else
+                host.RunAsService();
         }
 
         public static IWebHost BuildWebHost(string[] args)
