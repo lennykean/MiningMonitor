@@ -6,8 +6,8 @@ branches:
 skip_tags: true
 
 image: 
-- Ubuntu
 - Visual Studio 2017
+- Ubuntu
 
 dotnet_csproj:
   patch: true
@@ -42,10 +42,10 @@ for:
   before_build:
   - cmd: nuget restore "%APPVEYOR_BUILD_FOLDER%\src\MiningMonitor.sln"
   build_script:
-  - cmd: msbuild "%APPVEYOR_BUILD_FOLDER%\src\MiningMonitor.sln" /p:Configuration=WindowsService /verbosity:minimal /logger:"C:\\Program Files\\AppVeyor\\BuildAgent\\Appveyor.MSBuildLogger.dll"
+  - cmd: msbuild "%APPVEYOR_BUILD_FOLDER%\src\MiningMonitor.sln" /p:Configuration=WindowsService /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 
   artifacts:
-  - path: /.*\.msi/
+  - path: '**\*.msi'
 
   deploy:
     release: MiningMonitor-v$(appveyor_build_version)
