@@ -29,9 +29,6 @@ install:
     nvm install 8.11.2
     nvm use 8.11.2
 
-
-configuration: Release
-
 build:
   project: src/MiningMonitor.sln
   verbosity: minimal
@@ -42,10 +39,8 @@ for:
     only: 
     - image: Visual Studio 2017
 
-  configuration: WindowsService
-
-  before_build:
-  - nuget restore src
+  build_script:
+  - cmd: "%APPVEYOR_BUILD_FOLDER%\MiningMonitor.sln" /p:Configuration=WindowsService /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 
   artifacts:
   - path: /.*\.msi/
