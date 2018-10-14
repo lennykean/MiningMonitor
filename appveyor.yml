@@ -32,22 +32,34 @@ build:
   verbosity: minimal
 
 for:
-  -
-    matrix:
-      only: 
-      - image: Visual Studio 2017      
-    before_build:
-      - nuget restore src
-    configuration: WindowsService
-  -
-    matrix:
-      only: 
-      - image: Ubuntu
-    configuration: Release
-    deploy_script:
-    - sh: >-
-        docker build -f src/MiningMonitor.Web/Dockerfile -t "lennykean/miningmonitor:latest" -t "lennykean/miningmonitor:$APPVEYOR_BUILD_VERSION" src
-        
-        docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-        
-        docker push lennykean/miningmonitor
+-
+  matrix:
+    only: 
+    - image: Visual Studio 2017      
+  before_build:
+  - nuget restore src
+  configuration: WindowsService
+  artifacts:
+  - path: /.*\.msi/
+  deploy:
+    release: MiningMonitor-v$(appveyor_build_version)
+    provider: GitHub
+    auth_token:
+      secure: k/etfEesYPpZOMWmeHY+ZOdMzN45G9VS5dMvkxlzfvUBD1j+HrsJ/WeWAw9PoyBB
+    artifact: /.*\.msi/
+    draft: false
+    prerelease: false
+    on:
+      branch: master
+-
+  matrix:
+    only: 
+    - image: Ubuntu
+  configuration: Release
+  deploy_script:
+  - sh: >-
+      docker build -f src/MiningMonitor.Web/Dockerfile -t "lennykean/miningmonitor:latest" -t "lennykean/miningmonitor:$APPVEYOR_BUILD_VERSION" src
+      
+      docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+      
+      docker push lennykean/miningmonitor
