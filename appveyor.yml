@@ -1,0 +1,55 @@
+version: 0.5.{build}
+branches:
+  only:
+  - master
+
+image: 
+- Ubuntu
+- Visual Studio 2017
+
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj'
+  version: '{version}'
+  package_version: '{version}'
+  assembly_version: '{version}'
+  file_version: '{version}'
+  informational_version: '{version}'
+
+environment:
+  DOCKER_USERNAME:
+    secure: 9W6f/+WW8NxmRbI1PQVsEQ==
+  DOCKER_PASSWORD:
+    secure: NxR5W82bWZsgr9cNAWaH+A==
+
+
+install:
+- sh: >-
+    nvm install 8.11.2
+    nvm use 8.11.2
+
+build:
+  project: src/MiningMonitor.sln
+  configuration: Release
+  verbosity: minimal
+
+for:
+  -
+    matrix:
+      only: Visual Studio 2017
+      
+    build:
+      project: src/MiningMonitor.sln
+      configuration: WindowsService
+      verbosity: minimal
+
+for:
+-
+  matrix:
+    only: Ubuntu
+
+  deploy_script:
+  - sh: >-
+      docker build -f src/MiningMonitor.Web/Dockerfile -t "lennykean/miningmonitor:latest" -t "lennykean/miningmonitor:$APPVEYOR_BUILD_VERSION" src
+      docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+      docker push lennykean/miningmonitor
