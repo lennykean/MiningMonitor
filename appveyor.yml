@@ -29,6 +29,9 @@ install:
     nvm install 8.11.2
     nvm use 8.11.2
 
+
+configuration: Release
+
 build:
   project: src/MiningMonitor.sln
   verbosity: minimal
@@ -39,10 +42,10 @@ for:
     only: 
     - image: Visual Studio 2017
 
+  configuration: WindowsService
+
   before_build:
   - nuget restore src
-
-  configuration: WindowsService
 
   artifacts:
   - path: /.*\.msi/
@@ -61,8 +64,6 @@ for:
   matrix:
     only: 
     - image: Ubuntu
-
-  configuration: Release
 
   deploy_script:
   - sh: >-
