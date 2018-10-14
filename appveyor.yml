@@ -22,13 +22,10 @@ environment:
   DOCKER_PASSWORD:
     secure: NxR5W82bWZsgr9cNAWaH+A==
 
-
 install:
 - sh: >-
     nvm install 8.11.2
     nvm use 8.11.2
-
-configuration: Release
 
 build:
   project: src/MiningMonitor.sln
@@ -39,12 +36,14 @@ for:
     matrix:
       only: 
       - image: Visual Studio 2017      
+    before_build:
+      - nuget restore
     configuration: WindowsService
-
   -
     matrix:
       only: 
       - image: Ubuntu
+    configuration: Release
     deploy_script:
     - sh: >-
         docker build -f src/MiningMonitor.Web/Dockerfile -t "lennykean/miningmonitor:latest" -t "lennykean/miningmonitor:$APPVEYOR_BUILD_VERSION" src
