@@ -32,7 +32,7 @@
   </Target>
   <Target Name="BeforeBuild">
     <Exec Command="rd /s /q ..\MiningMonitor.WindowsService\bin\$(Configuration)\netcoreapp2.1\win7-x64\publish" />
-    <Exec Command="dotnet publish ..\MiningMonitor.WindowsService -c $(Configuration)" />
+    <Exec Command="dotnet publish ..\MiningMonitor.WindowsService -c $(Configuration) --no-build" />
     <PropertyGroup>
       <DefineConstants>BasePath=..\MiningMonitor.WindowsService\bin\$(Configuration)\netcoreapp2.1\win7-x64\publish</DefineConstants>
     </PropertyGroup>

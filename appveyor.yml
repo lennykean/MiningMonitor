@@ -38,7 +38,9 @@ for:
   matrix:
     only: 
     - image: Visual Studio 2017
-
+  
+  before_build:
+  - cmd: nuget restore "%APPVEYOR_BUILD_FOLDER%\src\MiningMonitor.sln"
   build_script:
   - cmd: msbuild "%APPVEYOR_BUILD_FOLDER%\src\MiningMonitor.sln" /p:Configuration=WindowsService /verbosity:minimal /logger:"C:\\Program Files\\AppVeyor\\BuildAgent\\Appveyor.MSBuildLogger.dll"
 
