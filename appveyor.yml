@@ -28,19 +28,17 @@ install:
     nvm install 8.11.2
     nvm use 8.11.2
 
+configuration: Release
+
 build:
   project: src/MiningMonitor.sln
-  configuration: Release
   verbosity: minimal
 
 for:
   -
     matrix:
       only: Visual Studio 2017      
-    build:
-      project: src/MiningMonitor.sln
-      configuration: WindowsService
-      verbosity: minimal
+    configuration: WindowsService
 
   -
     matrix:
