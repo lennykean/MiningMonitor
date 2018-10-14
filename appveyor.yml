@@ -36,20 +36,17 @@ build:
 for:
   -
     matrix:
-      only: Visual Studio 2017
-      
+      only: Visual Studio 2017      
     build:
       project: src/MiningMonitor.sln
       configuration: WindowsService
       verbosity: minimal
 
-for:
--
-  matrix:
-    only: Ubuntu
-
-  deploy_script:
-  - sh: >-
-      docker build -f src/MiningMonitor.Web/Dockerfile -t "lennykean/miningmonitor:latest" -t "lennykean/miningmonitor:$APPVEYOR_BUILD_VERSION" src
-      docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-      docker push lennykean/miningmonitor
+  -
+    matrix:
+      only: Ubuntu
+    deploy_script:
+    - sh: >-
+        docker build -f src/MiningMonitor.Web/Dockerfile -t "lennykean/miningmonitor:latest" -t "lennykean/miningmonitor:$APPVEYOR_BUILD_VERSION" src
+        docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+        docker push lennykean/miningmonitor
