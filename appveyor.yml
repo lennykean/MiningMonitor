@@ -37,12 +37,14 @@ build:
 for:
   -
     matrix:
-      only: Visual Studio 2017      
+      only: 
+      - image: Visual Studio 2017      
     configuration: WindowsService
 
   -
     matrix:
-      only: Ubuntu
+      only: 
+      - image: Ubuntu
     deploy_script:
     - sh: >-
         docker build -f src/MiningMonitor.Web/Dockerfile -t "lennykean/miningmonitor:latest" -t "lennykean/miningmonitor:$APPVEYOR_BUILD_VERSION" src
