@@ -40,7 +40,7 @@ for:
     - image: Visual Studio 2017
 
   build_script:
-  - cmd: msbuild "%APPVEYOR_BUILD_FOLDER%\\MiningMonitor.sln" /p:Configuration=WindowsService /verbosity:minimal /logger:"C:\\Program Files\\AppVeyor\\BuildAgent\\Appveyor.MSBuildLogger.dll"
+  - cmd: msbuild "%APPVEYOR_BUILD_FOLDER%\src\MiningMonitor.sln" /p:Configuration=WindowsService /verbosity:minimal /logger:"C:\\Program Files\\AppVeyor\\BuildAgent\\Appveyor.MSBuildLogger.dll"
 
   artifacts:
   - path: /.*\.msi/
