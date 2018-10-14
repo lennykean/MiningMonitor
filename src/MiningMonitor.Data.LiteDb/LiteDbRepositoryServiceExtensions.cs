@@ -10,7 +10,7 @@ using MiningMonitor.Security.Identity;
 
 namespace MiningMonitor.Data.MongoDb
 {
-    public static class LiteDbRepositoryExtensions
+    public static class LiteDbRepositoryServiceExtensions
     {
         public static IServiceCollection AddLiteDbRepository(this IServiceCollection services, string connectionString)
         {

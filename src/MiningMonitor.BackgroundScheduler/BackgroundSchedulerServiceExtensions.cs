@@ -6,7 +6,7 @@ using MiningMonitor.Workers;
 
 namespace MiningMonitor.BackgroundScheduler
 {
-    public static class BackgroundSchedulerExtensions
+    public static class BackgroundSchedulerServiceExtensions
     {
         public static IServiceCollection AddBackgroundWorker<TWorker>(this IServiceCollection services, IConfiguration scheduleConfig)
             where TWorker : class, IWorker

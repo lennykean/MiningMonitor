@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 
@@ -25,6 +26,8 @@ namespace MiningMonitor.Model.Alerts
         [JsonConverter(typeof(AlertParametersConverter))]
         [Required(ErrorMessage = "Alert parameters are required")]
         public AlertParameters Parameters { get; set; }
+        [JsonProperty(ItemConverterType = typeof(AlertTriggerDefinitionConverter))]
+        public List<AlertTriggerDefinition> Triggers { get; set; }
         public DateTime Created { get; set; }
         public DateTime? Updated { get; set; }
         public DateTime? LastEnabled { get; set; }
@@ -46,10 +49,10 @@ namespace MiningMonitor.Model.Alerts
 
         public ConcretePeriod NextScanPeriod(DateTime scanTime, TimeSpan? preScanOverFetch = null)
         {
-            var scanTimeWithBuffer = scanTime - (preScanOverFetch ?? TimeSpan.Zero);
+            var scanTimeWithBuffer = scanTime - preScanOverFetch;
 
             if ((scanTimeWithBuffer < LastScan || LastScan == null) && scanTimeWithBuffer > (Updated ?? Created))
-                return new ConcretePeriod(scanTimeWithBuffer, scanTime);
+                return new ConcretePeriod((DateTime)scanTimeWithBuffer, scanTime);
             if (LastScan > (Updated ?? Created))
                 return new ConcretePeriod((DateTime)LastScan, scanTime);
 

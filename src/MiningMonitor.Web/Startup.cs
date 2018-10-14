@@ -22,6 +22,8 @@ using MiningMonitor.Workers.Maintenance;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
+using Swashbuckle.AspNetCore.Swagger;
+
 namespace MiningMonitor.Web
 {
     public class Startup
@@ -44,8 +46,8 @@ namespace MiningMonitor.Web
             // Services
             services.AddMiningMonitorServices();
 
-            // Alert Scanners
-            services.AddAlertScanners();
+            // Alerts
+            services.AddAlerts();
 
             // Background workers
             if (!_configuration.GetValue<bool>("disable_background_workers"))
@@ -101,7 +103,7 @@ namespace MiningMonitor.Web
                 else 
                     configuration.RootPath = "ClientApp/dist";
             });
-            services.AddSwaggerGen(options => options.SwaggerDoc("v1", null));
+            services.AddSwaggerGen(options => options.SwaggerDoc("v1", new Info { Title = "Mining Monitor API - V1", Version = "v1" }));
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider service)

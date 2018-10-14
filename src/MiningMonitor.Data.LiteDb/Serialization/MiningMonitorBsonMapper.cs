@@ -30,6 +30,26 @@ namespace MiningMonitor.Data.LiteDb.Serialization
                             throw new ArgumentOutOfRangeException();
                     }
                 });
+            RegisterType<AlertTriggerDefinition>(
+                parameters => ToDocument(parameters.GetType(), parameters),
+                bson =>
+                {
+                    var document = bson.AsDocument;
+                    if (!Enum.TryParse<TriggerType>(document[nameof(AlertTriggerDefinition.Type)].AsString, out var trigger))
+                        return null;
+
+                    switch (trigger)
+                    {
+                        case TriggerType.DisableGpu:
+                            return ToObject<DisableGpuAlertTriggerDefinition>(document);
+                        case TriggerType.RestartMiner:
+                            return ToObject<RestartMinerAlertTriggerDefinition>(document);
+                        case TriggerType.WebHook:
+                            return ToObject<WebHookAlertTriggerDefinition>(document);
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                });
         }
     }
 }

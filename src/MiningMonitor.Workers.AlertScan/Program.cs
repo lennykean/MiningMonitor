@@ -24,7 +24,7 @@ namespace MiningMonitor.Workers.AlertScan
                 .AddLogging(config => config.AddConsole())
                 .AddMongoRepository(configuration.GetConnectionString("miningmonitor"))
                 .AddMiningMonitorServices()
-                .AddAlertScanners()
+                .AddAlerts()
                 .AddSingleton<AlertScanWorker>()
                 .BuildServiceProvider())
             {

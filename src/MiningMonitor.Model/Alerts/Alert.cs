@@ -18,6 +18,7 @@ namespace MiningMonitor.Model.Alerts
         [JsonIgnore]
         public AlertMetadata Metadata { get; set; }
         public IEnumerable<string> DetailMessages { get; set; }
+        public IEnumerable<TriggerResult> TriggerResults { get; set; }
         public DateTime Start { get; set; }
         public DateTime LastActive { get; set; }
         public DateTime? End { get; set; }

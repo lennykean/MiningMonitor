@@ -27,7 +27,7 @@ namespace MiningMonitor.Workers.AlertScan
             IAlertService alertService, 
             ISnapshotService snapshotService, 
             IMinerService minerService,
-            IScanFactory scanFactory, 
+            IScanFactory scanFactory,
             ILogger<AlertScanWorker> logger)
         {
             _alertDefinitionService = alertDefinitionService;
@@ -94,7 +94,7 @@ namespace MiningMonitor.Workers.AlertScan
         {
             var activeAlerts = (await _alertService.GetActiveByDefinitionAsync(scan.Definition.Id, since: scan.Definition.LastEnabled, token: token)).ToList();
 
-            var result = scan.PerformScan(activeAlerts, snapshots);
+            var result = await scan.PerformScanAsync(activeAlerts, snapshots, token);
 
             if (result.Skipped)
             {

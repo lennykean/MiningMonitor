@@ -72,7 +72,9 @@ namespace MiningMonitor.Alerts
                 where snapshot.MinerStatistics.Gpus.Count > gpuIndex
                 select new {snapshot, gpuStats = snapshot.MinerStatistics.Gpus[gpuIndex]})
             {
-                var condition = conditionSelector(gpuSnapshot.gpuStats);
+                var condition = gpuSnapshot.gpuStats.Mode == GpuMode.Disabled 
+                    ? Condition.Ok 
+                    : conditionSelector(gpuSnapshot.gpuStats);
 
                 if (condition == currentPeriod?.Condition)
                 {

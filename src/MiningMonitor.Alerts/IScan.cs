@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 using MiningMonitor.Common;
 using MiningMonitor.Model;
@@ -12,6 +14,6 @@ namespace MiningMonitor.Alerts
         Period ScanPeriod { get; }
 
         bool EndAlert(Alert alert, IEnumerable<Snapshot> snapshots);
-        ScanResult PerformScan(IEnumerable<Alert> activeAlerts, IEnumerable<Snapshot> snapshots);
+        Task<ScanResult> PerformScanAsync(IEnumerable<Alert> activeAlerts, IEnumerable<Snapshot> snapshots, CancellationToken token);
     }
 }

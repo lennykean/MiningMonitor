@@ -9,7 +9,7 @@ using MongoDB.Driver;
 
 namespace MiningMonitor.Data.MongoDb
 {
-    public static class MongoRepositoryExtensions
+    public static class MongoRepositoryServiceExtensions
     {
         public static IServiceCollection AddMongoRepository(this IServiceCollection services, string connectionString)
         {
