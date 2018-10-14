@@ -3,6 +3,8 @@ branches:
   only:
   - master
 
+skip_tags: true
+
 image: 
 - Ubuntu
 - Visual Studio 2017
@@ -27,20 +29,22 @@ install:
     nvm install 8.11.2
     nvm use 8.11.2
 
-build:
-  project: src/MiningMonitor.sln
-  verbosity: minimal
-
 for:
 -
   matrix:
     only: 
-    - image: Visual Studio 2017      
+    - image: Visual Studio 2017
   before_build:
   - nuget restore src
-  configuration: WindowsService
+
+  build:
+    project: src/MiningMonitor.sln
+    verbosity: minimal
+    configuration: WindowsService
+
   artifacts:
   - path: /.*\.msi/
+
   deploy:
     release: MiningMonitor-v$(appveyor_build_version)
     provider: GitHub
@@ -55,7 +59,12 @@ for:
   matrix:
     only: 
     - image: Ubuntu
-  configuration: Release
+
+  build:
+    project: src/MiningMonitor.sln
+    verbosity: minimal
+    configuration: Release
+
   deploy_script:
   - sh: >-
       docker build -f src/MiningMonitor.Web/Dockerfile -t "lennykean/miningmonitor:latest" -t "lennykean/miningmonitor:$APPVEYOR_BUILD_VERSION" src
