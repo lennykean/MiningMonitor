@@ -19,7 +19,8 @@ export class AlertDefinitionFormComponent implements OnInit {
         enabled: true,
         parameters: {
             alertType: null
-        }
+        },
+        actions: []
     };
     @Input()
     public validationErrors: { [key: string]: string[] } = {};

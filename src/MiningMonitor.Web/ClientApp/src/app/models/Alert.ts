@@ -1,3 +1,4 @@
+import { AlertActionResult } from './AlertActionResult';
 import { AlertSeverity } from './AlertSeverity';
 
 export interface Alert {
@@ -13,4 +14,5 @@ export interface Alert {
     acknowledged: boolean;
     active: boolean;
     detailMessages: string[];
+    actionResults: AlertActionResult[];
 }
