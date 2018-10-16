@@ -1,13 +1,14 @@
 ﻿using System;
 
 using MiningMonitor.Model.Alerts;
+using MiningMonitor.Model.Alerts.Actions;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace MiningMonitor.Model.Serialization
 {
-    public class AlertTriggerDefinitionConverter : JsonConverter
+    public class AlertActionDefinitionConverter : JsonConverter
     {
         public override bool CanRead => true;
         public override bool CanWrite => false;
@@ -20,34 +21,34 @@ namespace MiningMonitor.Model.Serialization
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             var jsonObject = JObject.Load(reader);
-            var value = jsonObject.GetValue(nameof(AlertTriggerDefinition.Type), StringComparison.OrdinalIgnoreCase);
+            var value = jsonObject.GetValue(nameof(AlertActionDefinition.Type), StringComparison.OrdinalIgnoreCase);
 
             if (value.Type == JTokenType.Null)
                 return null;
 
-            AlertTriggerDefinition trigger;
-            switch ((TriggerType)value.Value<int>())
+            AlertActionDefinition action;
+            switch ((AlertActionType)value.Value<int>())
             {
-                case TriggerType.DisableGpu:
-                    trigger = new DisableGpuAlertTriggerDefinition();
+                case AlertActionType.DisableGpu:
+                    action = new DisableGpuAlertActionDefinition();
                     break;
-                case TriggerType.RestartMiner:
-                    trigger = new RestartMinerAlertTriggerDefinition();
+                case AlertActionType.RestartMiner:
+                    action = new RestartMinerAlertActionDefinition();
                     break;
-                case TriggerType.WebHook:
-                    trigger = new WebHookAlertTriggerDefinition();
+                case AlertActionType.WebHook:
+                    action = new WebHookAlertActionDefinition();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            serializer.Populate(jsonObject.CreateReader(), trigger);
+            serializer.Populate(jsonObject.CreateReader(), action);
 
-            return trigger;
+            return action;
         }
 
         public override bool CanConvert(Type objectType)
         {
-            return objectType == typeof(AlertTriggerDefinition);
+            return objectType == typeof(AlertActionDefinition);
         }
     }
 }

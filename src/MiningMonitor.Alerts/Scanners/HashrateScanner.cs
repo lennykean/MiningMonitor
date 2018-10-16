@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 using MiningMonitor.Common;
 using MiningMonitor.Model;
@@ -10,6 +12,13 @@ namespace MiningMonitor.Alerts.Scanners
 {
     public class HashrateScanner : AlertScanner
     {
+        private readonly IAlertFactory _alertFactory;
+
+        public HashrateScanner(IAlertFactory alertFactory)
+        {
+            _alertFactory = alertFactory;
+        }
+
         public override bool ShouldScan(AlertDefinition definition)
         {
             return definition.Parameters.AlertType == AlertType.Hashrate;
@@ -28,15 +37,15 @@ namespace MiningMonitor.Alerts.Scanners
             var lastLowCondition = conditionPeriods.LastOrDefault(s => s.Condition == Condition.Low);
             if (lastLowCondition != null)
             {
-                alert.Metadata = CreateMetadata(alert, parameters, snapshotsList);
-                alert.DetailMessages = CreateDetailMessages(alert, parameters);
+                alert.Metadata = CreateMetadata(alert.Metadata, parameters, snapshotsList);
+                alert.DetailMessages = CreateDetailMessages(alert.Metadata, parameters);
 
                 return lastLowCondition.Period.HasEnd;
             }
             return conditionPeriods.Any();
         }
 
-        public override ScanResult PerformScan(IEnumerable<Alert> activeAlerts, AlertDefinition definition, Miner miner, IEnumerable<Snapshot> snapshots, DateTime scanTime)
+        public override async Task<ScanResult> PerformScanAsync(IEnumerable<Alert> activeAlerts, AlertDefinition definition, Miner miner, IEnumerable<Snapshot> snapshots, DateTime scanTime, CancellationToken token)
         {
             if (activeAlerts.Any() || !miner.CollectData)
                 return ScanResult.Skip;
@@ -58,10 +67,10 @@ namespace MiningMonitor.Alerts.Scanners
 
             var alerts = (
                 from conditionPeriod in inEffectOutOfRangePeriods
-                select CreateAlert(definition, parameters, snapshotsList)).ToArray();
+                select CreateAlertAsync(definition, miner, parameters, snapshotsList, token)).ToArray();
 
             if (alerts.Any())
-                return ScanResult.Fail(alerts);
+                return ScanResult.Fail(await Task.WhenAll(alerts));
 
             return ScanResult.Success;
         }
@@ -82,11 +91,11 @@ namespace MiningMonitor.Alerts.Scanners
                 select conditionPeriod;
         }
 
-        private static AlertMetadata CreateMetadata(Alert alert, HashrateAlertParameters parameters, IEnumerable<Snapshot> snapshots)
+        private static AlertMetadata CreateMetadata(AlertMetadata existingMetadata, HashrateAlertParameters parameters, IEnumerable<Snapshot> snapshots)
         {
             var hashRates = snapshots
                 .Select(s => (int?)s.MinerStatistics.Ethereum.Hashrate)
-                .Union(new[] { alert.Metadata?.Value?.Min, alert.Metadata?.Value?.Max })
+                .Union(new[] { existingMetadata?.Value?.Min, existingMetadata?.Value?.Max })
                 .ToList();
 
             var metadata = new AlertMetadata
@@ -105,23 +114,21 @@ namespace MiningMonitor.Alerts.Scanners
             return metadata;
         }
 
-        private static IEnumerable<string> CreateDetailMessages(Alert alert, HashrateAlertParameters parameters)
+        private static IEnumerable<string> CreateDetailMessages(AlertMetadata metadata, HashrateAlertParameters parameters)
         {
             var durationMessage = parameters.DurationMinutes == null ? null : $" for more than {parameters.DurationMinutes} minute(s)";
 
             yield return $"Hashrate below threshold of {parameters.MinValue} MH/s{durationMessage}";
-            yield return $"Min hashrate speed during alert: {alert.Metadata.Value.Min / 1000m} MH/s";
-            yield return $"Max hashrate speed during alert: {alert.Metadata.Value.Max / 1000m} MH/s";
+            yield return $"Min hashrate speed during alert: {metadata.Value.Min / 1000m} MH/s";
+            yield return $"Max hashrate speed during alert: {metadata.Value.Max / 1000m} MH/s";
         }
 
-        private static Alert CreateAlert(AlertDefinition definition, HashrateAlertParameters parameters, IEnumerable<Snapshot> snapshots)
+        private async Task<Alert> CreateAlertAsync(AlertDefinition definition, Miner miner, HashrateAlertParameters parameters, IEnumerable<Snapshot> snapshots, CancellationToken token)
         {
-            var alert = Alert.CreateFromDefinition(definition, definition.Parameters.AlertMessage ?? "Hashrate too low");
+            var metadata = CreateMetadata(null, parameters, snapshots);
+            var detailMessages = CreateDetailMessages(metadata, parameters);
 
-            alert.Metadata = CreateMetadata(alert, parameters, snapshots);
-            alert.DetailMessages = CreateDetailMessages(alert, parameters);
-
-            return alert;
+            return await _alertFactory.CreateAlertAsync(definition, miner, metadata, "Hashrate too low", detailMessages, token);
         }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
 using MiningMonitor.Alerts;
+using MiningMonitor.Alerts.Action;
 using MiningMonitor.Alerts.Scanners;
-using MiningMonitor.Alerts.Triggers;
 
 namespace MiningMonitor.Data.MongoDb
 {
@@ -10,6 +10,8 @@ namespace MiningMonitor.Data.MongoDb
     {
         public static IServiceCollection AddAlerts(this IServiceCollection services)
         {
+            services.AddTransient<IAlertFactory, AlertFactory>();
+
             // Scanners
             services.AddTransient<IScanFactory, ScanFactory>();
             services.AddTransient<IAlertScanner, HashrateScanner>();
@@ -18,11 +20,10 @@ namespace MiningMonitor.Data.MongoDb
             services.AddTransient<IAlertScanner, GpuFanSpeedThresholdScanner>();
             services.AddTransient<IAlertScanner, ConnectivityScanner>();
 
-            // Triggers
-            services.AddTransient<ITriggerProcessor, TriggerProcessor>();
-            services.AddTransient<IAlertTrigger, DisableGpuAlertTrigger>();
-            services.AddTransient<IAlertTrigger, RestartMinerAlertTrigger>();
-            services.AddTransient<IAlertTrigger, WebHookAlertTrigger>();
+            // Actions
+            services.AddTransient<IAlertActionExecutor, DisableGpuAlertActionExecutor>();
+            services.AddTransient<IAlertActionExecutor, RestartMinerAlertActionExecutor>();
+            services.AddTransient<IAlertActionExecutor, WebHookAlertActionExecutor>();
 
             return services;
         }

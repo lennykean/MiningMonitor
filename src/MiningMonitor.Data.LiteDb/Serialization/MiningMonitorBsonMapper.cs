@@ -3,6 +3,7 @@
 using LiteDB;
 
 using MiningMonitor.Model.Alerts;
+using MiningMonitor.Model.Alerts.Actions;
 
 namespace MiningMonitor.Data.LiteDb.Serialization
 {
@@ -30,22 +31,22 @@ namespace MiningMonitor.Data.LiteDb.Serialization
                             throw new ArgumentOutOfRangeException();
                     }
                 });
-            RegisterType<AlertTriggerDefinition>(
+            RegisterType<AlertActionDefinition>(
                 parameters => ToDocument(parameters.GetType(), parameters),
                 bson =>
                 {
                     var document = bson.AsDocument;
-                    if (!Enum.TryParse<TriggerType>(document[nameof(AlertTriggerDefinition.Type)].AsString, out var trigger))
+                    if (!Enum.TryParse<AlertActionType>(document[nameof(AlertActionDefinition.Type)].AsString, out var action))
                         return null;
 
-                    switch (trigger)
+                    switch (action)
                     {
-                        case TriggerType.DisableGpu:
-                            return ToObject<DisableGpuAlertTriggerDefinition>(document);
-                        case TriggerType.RestartMiner:
-                            return ToObject<RestartMinerAlertTriggerDefinition>(document);
-                        case TriggerType.WebHook:
-                            return ToObject<WebHookAlertTriggerDefinition>(document);
+                        case AlertActionType.DisableGpu:
+                            return ToObject<DisableGpuAlertActionDefinition>(document);
+                        case AlertActionType.RestartMiner:
+                            return ToObject<RestartMinerAlertActionDefinition>(document);
+                        case AlertActionType.WebHook:
+                            return ToObject<WebHookAlertActionDefinition>(document);
                         default:
                             throw new ArgumentOutOfRangeException();
                     }

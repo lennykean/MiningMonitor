@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 using MiningMonitor.Common;
 using MiningMonitor.Model;
@@ -12,6 +14,6 @@ namespace MiningMonitor.Alerts.Scanners
         bool ShouldScan(AlertDefinition definition);
         Period CalculateScanPeriod(AlertDefinition definition, DateTime scanTime);
         bool EndAlert(AlertDefinition definition, Miner miner, Alert alert, IEnumerable<Snapshot> snapshots, DateTime scanTime);
-        ScanResult PerformScan(IEnumerable<Alert> activeAlerts, AlertDefinition definition, Miner miner, IEnumerable<Snapshot> snapshots, DateTime scanTime);
+        Task<ScanResult> PerformScanAsync(IEnumerable<Alert> activeAlerts, AlertDefinition definition, Miner miner, IEnumerable<Snapshot> snapshots, DateTime scanTime, CancellationToken token);
     }
 }

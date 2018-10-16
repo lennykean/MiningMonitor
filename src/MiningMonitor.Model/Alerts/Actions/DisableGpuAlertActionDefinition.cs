@@ -1,11 +1,11 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 
-namespace MiningMonitor.Model.Alerts
+namespace MiningMonitor.Model.Alerts.Actions
 {
     [BsonDiscriminator("DisableGpu")]
-    public class DisableGpuAlertTriggerDefinition : AlertTriggerDefinition
+    public class DisableGpuAlertActionDefinition : AlertActionDefinition
     {
-        public override TriggerType Type => TriggerType.DisableGpu;
+        public override AlertActionType Type => AlertActionType.DisableGpu;
         public override bool AllowRemote => false;
         public bool DisableAll { get; set; }
         public bool DisableAffected { get; set; }

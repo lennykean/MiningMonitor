@@ -10,6 +10,10 @@ namespace MiningMonitor.Alerts.Scanners
 {
     public class GpuTemperatureThresholdScanner : GpuThresholdScanner
     {
+        public GpuTemperatureThresholdScanner(IAlertFactory alertFactory) : base(alertFactory)
+        {
+        }
+
         public override string DefaultAlertMessage => "GPU temperature out of range";
 
         public override bool ShouldScan(AlertDefinition definition)
@@ -27,11 +31,11 @@ namespace MiningMonitor.Alerts.Scanners
             return Condition.Ok;
         }
 
-        protected override AlertMetadata CreateMetadata(Alert alert, GpuThresholdAlertParameters parameters, GpuConditionPeriod conditionPeriod)
+        protected override AlertMetadata CreateMetadata(AlertMetadata existingMetadata, GpuThresholdAlertParameters parameters, GpuConditionPeriod conditionPeriod)
         {
             var temps = conditionPeriod.GpuStats
-                .Select(s => (int?) s.Temperature)
-                .Concat(new[] {alert?.Metadata?.Value?.Min, alert?.Metadata?.Value?.Max})
+                .Select(s => (int?)s.Temperature)
+                .Concat(new[] { existingMetadata?.Value?.Min, existingMetadata?.Value?.Max })
                 .ToList();
 
             return new AlertMetadata
@@ -52,17 +56,17 @@ namespace MiningMonitor.Alerts.Scanners
             };
         }
 
-        protected override IEnumerable<string> CreateDetailMessages(Alert alert, GpuThresholdAlertParameters parameters)
+        protected override IEnumerable<string> CreateDetailMessages(AlertMetadata metadata, GpuThresholdAlertParameters parameters)
         {
             var durationMessage = parameters.DurationMinutes == null ? null : $" for more than {parameters.DurationMinutes} minute(s)";
 
-            if (alert.Metadata.Value.Condition == Condition.High)
-                yield return $"GPU {alert.Metadata.GpuIndex + 1} temperature above threshold of {parameters.MaxValue}°{durationMessage}";
-            if (alert.Metadata.Value.Condition == Condition.Low)
-                yield return $"GPU {alert.Metadata.GpuIndex + 1} temperature below threshold of {parameters.MinValue}°{durationMessage}";
+            if (metadata.Value.Condition == Condition.High)
+                yield return $"GPU {metadata.GpuIndex + 1} temperature above threshold of {parameters.MaxValue}°{durationMessage}";
+            if (metadata.Value.Condition == Condition.Low)
+                yield return $"GPU {metadata.GpuIndex + 1} temperature below threshold of {parameters.MinValue}°{durationMessage}";
 
-            yield return $"GPU {alert.Metadata.GpuIndex + 1} min temperature during alert: {alert.Metadata.Value.Min}°";
-            yield return $"GPU {alert.Metadata.GpuIndex + 1} max temperature during alert: {alert.Metadata.Value.Max}°";
+            yield return $"GPU {metadata.GpuIndex + 1} min temperature during alert: {metadata.Value.Min}°";
+            yield return $"GPU {metadata.GpuIndex + 1} max temperature during alert: {metadata.Value.Max}°";
         }
     }
 }

@@ -1,11 +1,11 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 
-namespace MiningMonitor.Model.Alerts
+namespace MiningMonitor.Model.Alerts.Actions
 {
     [BsonDiscriminator("WebHook")]
-    public class WebHookAlertTriggerDefinition : AlertTriggerDefinition
+    public class WebHookAlertActionDefinition : AlertActionDefinition
     {
-        public override TriggerType Type => TriggerType.WebHook;
+        public override AlertActionType Type => AlertActionType.WebHook;
         public override bool AllowRemote => true;
         public override string FriendlyName => "Web Hook";
         public string Url { get; set; }

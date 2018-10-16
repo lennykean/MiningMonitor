@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 
 using MiningMonitor.Common;
+using MiningMonitor.Model.Alerts.Actions;
 using MiningMonitor.Model.Serialization;
 using MiningMonitor.Model.Validation;
 
@@ -26,8 +27,8 @@ namespace MiningMonitor.Model.Alerts
         [JsonConverter(typeof(AlertParametersConverter))]
         [Required(ErrorMessage = "Alert parameters are required")]
         public AlertParameters Parameters { get; set; }
-        [JsonProperty(ItemConverterType = typeof(AlertTriggerDefinitionConverter))]
-        public List<AlertTriggerDefinition> Triggers { get; set; }
+        [JsonProperty(ItemConverterType = typeof(AlertActionDefinitionConverter))]
+        public List<AlertActionDefinition> Actions { get; set; }
         public DateTime Created { get; set; }
         public DateTime? Updated { get; set; }
         public DateTime? LastEnabled { get; set; }

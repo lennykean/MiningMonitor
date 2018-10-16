@@ -10,6 +10,10 @@ namespace MiningMonitor.Alerts.Scanners
 {
     public class GpuHashrateThresholdScanner : GpuThresholdScanner
     {
+        public GpuHashrateThresholdScanner(IAlertFactory alertFactory) : base(alertFactory)
+        {
+        }
+
         public override string DefaultAlertMessage => "GPU hashrate out of range";
 
         public override bool ShouldScan(AlertDefinition definition)
@@ -27,11 +31,11 @@ namespace MiningMonitor.Alerts.Scanners
             return Condition.Ok;
         }
 
-        protected override AlertMetadata CreateMetadata(Alert alert, GpuThresholdAlertParameters parameters, GpuConditionPeriod conditionPeriod)
+        protected override AlertMetadata CreateMetadata(AlertMetadata metadata, GpuThresholdAlertParameters parameters, GpuConditionPeriod conditionPeriod)
         {
             var hashrates = conditionPeriod.GpuStats
-                .Select(s => (int?)s.EthereumHashrate)
-                .Concat(new[] {alert?.Metadata?.Value?.Min, alert?.Metadata?.Value?.Max})
+                .Select(s => (int?) s.EthereumHashrate)
+                .Concat(new[] {metadata?.Value?.Min, metadata?.Value?.Max})
                 .ToList();
 
             return new AlertMetadata
@@ -52,17 +56,17 @@ namespace MiningMonitor.Alerts.Scanners
             };
         }
 
-        protected override IEnumerable<string> CreateDetailMessages(Alert alert, GpuThresholdAlertParameters parameters)
+        protected override IEnumerable<string> CreateDetailMessages(AlertMetadata metadata, GpuThresholdAlertParameters parameters)
         {
             var durationMessage = parameters.DurationMinutes == null ? null : $" for more than {parameters.DurationMinutes} minute(s)";
 
-            if (alert.Metadata.Value.Condition == Condition.High)
-                yield return $"GPU {alert.Metadata.GpuIndex + 1} hashrate above threshold of {parameters.MaxValue} MH/s{durationMessage}";
-            if (alert.Metadata.Value.Condition == Condition.Low)
-                yield return $"GPU {alert.Metadata.GpuIndex + 1} hashrate below threshold of {parameters.MinValue} MH/s{durationMessage}";
+            if (metadata.Value.Condition == Condition.High)
+                yield return $"GPU {metadata.GpuIndex + 1} hashrate above threshold of {parameters.MaxValue} MH/s{durationMessage}";
+            if (metadata.Value.Condition == Condition.Low)
+                yield return $"GPU {metadata.GpuIndex + 1} hashrate below threshold of {parameters.MinValue} MH/s{durationMessage}";
 
-            yield return $"GPU {alert.Metadata.GpuIndex + 1} min hashrate speed during alert: {alert.Metadata.Value.Min / 1000m} MH/s";
-            yield return $"GPU {alert.Metadata.GpuIndex + 1} max hashrate speed during alert: {alert.Metadata.Value.Max / 1000m} MH/s";
+            yield return $"GPU {metadata.GpuIndex + 1} min hashrate speed during alert: {metadata.Value.Min / 1000m} MH/s";
+            yield return $"GPU {metadata.GpuIndex + 1} max hashrate speed during alert: {metadata.Value.Max / 1000m} MH/s";
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿namespace MiningMonitor.Model.Alerts
+﻿namespace MiningMonitor.Model.Alerts.Actions
 {
-    public enum TriggerType
+    public enum AlertActionType
     {
         DisableGpu = 0,
         RestartMiner = 1,

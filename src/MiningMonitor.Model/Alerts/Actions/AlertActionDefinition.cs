@@ -2,16 +2,16 @@
 
 using Mongo = MongoDB.Bson.Serialization.Attributes;
 
-namespace MiningMonitor.Model.Alerts
+namespace MiningMonitor.Model.Alerts.Actions
 {
     [Mongo.BsonKnownTypes(
-        typeof(DisableGpuAlertTriggerDefinition),
-        typeof(RestartMinerAlertTriggerDefinition),
-        typeof(WebHookAlertTriggerDefinition))]
-    public abstract class AlertTriggerDefinition
+        typeof(DisableGpuAlertActionDefinition),
+        typeof(RestartMinerAlertActionDefinition),
+        typeof(WebHookAlertActionDefinition))]
+    public abstract class AlertActionDefinition
     {
         public string DisplayName { get; set; }
-        public abstract TriggerType Type { get; }
+        public abstract AlertActionType Type { get; }
         public abstract bool AllowRemote { get; }
         [JsonIgnore]
         [LiteDB.BsonIgnore, Mongo.BsonIgnore]

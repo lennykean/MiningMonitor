@@ -45,8 +45,6 @@ namespace MiningMonitor.Service
         public async Task AddAsync(Alert alert, CancellationToken token = default)
         {
             alert.Id = Guid.NewGuid();
-            alert.Start =
-            alert.LastActive = DateTime.UtcNow;
 
             await _alertCollection.InsertAsync(alert, token);
         }

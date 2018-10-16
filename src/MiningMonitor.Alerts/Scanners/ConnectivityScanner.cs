@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 using MiningMonitor.Common;
 using MiningMonitor.Model;
@@ -10,6 +12,13 @@ namespace MiningMonitor.Alerts.Scanners
 {
     public class ConnectivityScanner : AlertScanner
     {
+        private readonly IAlertFactory _alertFactory;
+
+        public ConnectivityScanner(IAlertFactory alertFactory)
+        {
+            _alertFactory = alertFactory;
+        }
+
         public override bool ShouldScan(AlertDefinition definition)
         {
             return definition.Parameters.AlertType == AlertType.Connectivity;
@@ -25,14 +34,14 @@ namespace MiningMonitor.Alerts.Scanners
             return !ShouldAlert(definition, snapshotsList, scanTime);
         }
 
-        public override ScanResult PerformScan(IEnumerable<Alert> activeAlerts, AlertDefinition definition, Miner miner, IEnumerable<Snapshot> snapshots, DateTime scanTime)
+        public override async Task<ScanResult> PerformScanAsync(IEnumerable<Alert> activeAlerts, AlertDefinition definition, Miner miner, IEnumerable<Snapshot> snapshots, DateTime scanTime, CancellationToken token)
         {
             if (!miner.CollectData)
                 return ScanResult.Skip;
             if (activeAlerts.Any())
                 return ScanResult.Success;
             if (ShouldAlert(definition, snapshots, scanTime))
-                return ScanResult.Fail(CreateAlert(definition));
+                return ScanResult.Fail(await _alertFactory.CreateAlertAsync(definition, miner, null, "No Connectivity", new[] { $"No connection with miner for more than {definition.Parameters.DurationMinutes} minute(s)" }, token));
 
             return ScanResult.Success;
         }
@@ -57,15 +66,6 @@ namespace MiningMonitor.Alerts.Scanners
             var lastGap = snapshotGaps.Last();
 
             return lastGap.Duration >= duration;
-        }
-
-        private static Alert CreateAlert(AlertDefinition definition)
-        {
-            var alert = Alert.CreateFromDefinition(definition, definition.Parameters.AlertMessage ?? "No Connectivity");
-
-            alert.DetailMessages = new[] {$"No connection with miner for more than {definition.Parameters.DurationMinutes} minute(s)"};
-                
-            return alert;
         }
     }
 }

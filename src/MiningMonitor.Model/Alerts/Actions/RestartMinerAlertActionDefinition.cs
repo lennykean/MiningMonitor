@@ -1,11 +1,11 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 
-namespace MiningMonitor.Model.Alerts
+namespace MiningMonitor.Model.Alerts.Actions
 {
     [BsonDiscriminator("RestartMiner")]
-    public class RestartMinerAlertTriggerDefinition : AlertTriggerDefinition
+    public class RestartMinerAlertActionDefinition : AlertActionDefinition
     {
-        public override TriggerType Type => TriggerType.RestartMiner;
+        public override AlertActionType Type => AlertActionType.RestartMiner;
         public override bool AllowRemote => false;
         public override string FriendlyName => "Restart Miner";
     }
