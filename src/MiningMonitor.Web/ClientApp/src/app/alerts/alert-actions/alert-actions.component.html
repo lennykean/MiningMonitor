@@ -1,0 +1,28 @@
+<fieldset class="mb-2">
+    <button type="button" class="btn btn-sm btn-outline-info float-right" (click)="add()">Add Alert Action</button>
+    <h4>Alert Actions</h4>
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Name</th>
+                <th>Type</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let action of actions; let i = index" [ngClass]="{'table-active': i === editIndex}">
+                <td>
+                    <button type="button" class="btn btn-sm btn-link" title="Edit Alert Action" (click)="edit(i)">
+                        <fa-icon icon="edit"></fa-icon>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-link text-danger" title="Remove Alert Action" (click)="remove(i)">
+                        <fa-icon icon="times"></fa-icon>
+                    </button>
+                </td>
+                <td>{{action.name || action.displayName}}</td>
+                <td>{{actionTypes[action.type] | humanize}}</td>
+            </tr>
+        </tbody>
+    </table>
+    <mm-alert-action-detail [action]="actions[editIndex]" (done)="done()"></mm-alert-action-detail>
+</fieldset>

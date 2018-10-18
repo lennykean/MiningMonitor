@@ -1,7 +1,7 @@
 import { AlertActionType } from './AlertActionType';
 
 export interface AlertActionDefinition {
-    displayName: string;
+    displayName?: string;
     type: AlertActionType;
     name: string;
 }

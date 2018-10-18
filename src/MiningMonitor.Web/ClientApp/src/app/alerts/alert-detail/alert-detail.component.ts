@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Alert } from '../../models/Alert';
+import { AlertActionState } from '../../models/AlertActionState';
 import { AlertSeverity } from '../../models/AlertSeverity';
 import { AlertService } from '../alert.service';
 
@@ -10,7 +11,7 @@ import { AlertService } from '../alert.service';
 })
 export class AlertDetailComponent implements OnInit {
     public alert: Alert;
-
+    public actionState = AlertActionState;
     public alertSeverity = AlertSeverity;
 
     constructor(

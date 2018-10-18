@@ -4,7 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faCheck, faCog, faExclamationTriangle, faHeartbeat, faSignInAlt, faSignOutAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
+import {
+    faCheck, faCog, faEdit, faExclamationTriangle, faHeartbeat, faSignInAlt, faSignOutAlt, faTimes
+} from '@fortawesome/free-solid-svg-icons';
 import { ChartsModule } from 'ng2-charts';
 
 import { AdminComponent } from './admin/admin.component';
@@ -12,6 +14,8 @@ import { CollectorsComponent } from './admin/collectors/collectors.component';
 import { SettingsComponent } from './admin/settings/settings.component';
 import { UserCreateComponent } from './admin/user-create/user-create.component';
 import { UsersComponent } from './admin/users/users.component';
+import { AlertActionDetailComponent } from './alerts/alert-action-detail/alert-action-detail.component';
+import { AlertActionsComponent } from './alerts/alert-actions/alert-actions.component';
 import { AlertBadgeComponent } from './alerts/alert-badge/alert-badge.component';
 import { AlertDefinitionCreateComponent } from './alerts/alert-definition-create/alert-definition-create.component';
 import { AlertDefinitionEditComponent } from './alerts/alert-definition-edit/alert-definition-edit.component';
@@ -42,11 +46,12 @@ import { MiningMonitorRoutingModule } from './miningmonitor-routing.module';
 import { MiningMonitorComponent } from './miningmonitor.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 
-library.add(faCheck, faTimes, faExclamationTriangle, faCog, faSignOutAlt, faSignInAlt, faHeartbeat);
+library.add(faCheck, faCog, faEdit, faHeartbeat, faExclamationTriangle, faSignInAlt, faSignOutAlt, faTimes);
 
 @NgModule({
     declarations: [
         AdminComponent,
+        AlertActionsComponent,
         AlertBadgeComponent,
         AlertDefinitionCreateComponent,
         AlertDefinitionEditComponent,
@@ -78,6 +83,7 @@ library.add(faCheck, faTimes, faExclamationTriangle, faCog, faSignOutAlt, faSign
         SettingsComponent,
         UsersComponent,
         UserCreateComponent,
+        AlertActionDetailComponent,
     ],
     imports: [
         BrowserModule,

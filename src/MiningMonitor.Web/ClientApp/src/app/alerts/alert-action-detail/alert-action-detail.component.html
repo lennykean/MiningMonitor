@@ -1,0 +1,61 @@
+<div *ngIf="action">
+    <button type="button" class="btn btn-sm btn-outline-info mb-2" (click)="close()">Done</button>
+    <div class="form-group row">
+        <label for="type" class="col-sm-2">
+            <small>Type</small>
+        </label>
+        <div class="col col-sm-10">
+            <select name="type" class="form-control form-control-sm" [(ngModel)]="action.type">
+                <option *ngFor="let type of actionTypes | enum" [ngValue]="type.value">
+                    {{ type.key | humanize }}
+                </option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="displayName" class="col-sm-2">
+            <small>Name <span class="text-muted">(optional)</span></small>
+        </label>
+        <div class="col col-sm-10">
+            <input name="displayName" class="form-control form-control-sm" [(ngModel)]="action.displayName">
+        </div>
+    </div>
+    <div [ngSwitch]="action.type">
+        <div *ngSwitchCase="actionTypes.DisableGpu">
+            <div class="form-group row" title="Disable GPU(s) affecting the alert">
+                <label for="disableAffected" class="col-sm-2">
+                    <small>Disable Affected</small>
+                </label>
+                <div class="col col-sm-10">
+                    <input type="checkbox" name="disableAffected" [(ngModel)]="action.disableAffected">
+                </div>
+            </div>
+            <div class="form-group row" title="Disable all GPUs">
+                <label for="disableAll" class="col-sm-2">
+                    <small>Disable All</small>
+                </label>
+                <div class="col col-sm-10">
+                    <input type="checkbox" name="disableAll" [(ngModel)]="action.disableAll">
+                </div>
+            </div>
+        </div>
+        <div *ngSwitchCase="actionTypes.WebHook">
+            <div class="form-group row">
+                <label for="url" class="col-sm-2">
+                    <small>URL</small>
+                </label>
+                <div class="col col-sm-10">
+                    <input name="url" class="form-control form-control-sm" [(ngModel)]="action.url">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="body" class="col-sm-2">
+                    <small>Body</small>
+                </label>
+                <div class="col col-sm-10">
+                    <textarea name="body" class="form-control form-control-sm" [(ngModel)]="action.body"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

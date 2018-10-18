@@ -32,14 +32,14 @@ namespace MiningMonitor.Alerts.Action
             if (action.DisableAll)
             {
                 await client.SetGpuModeAsync(GpuMode.Disabled);
-                return AlertActionResult.Complete($"Sent control message to disabled GPUs on miner {miner.Name}", action.Name);
+                return AlertActionResult.Complete(action.Name, $"Sent control message to disabled GPUs on miner {miner.Name}");
             }
             if (action.DisableAffected && metadata?.GpuIndex != null)
             {
                 await client.SetGpuModeAsync((int)metadata.GpuIndex, GpuMode.Disabled);
-                return AlertActionResult.Complete($"Sent control message to disable GPU {metadata.GpuIndex + 1} on miner {miner.Name}", action.Name);
+                return AlertActionResult.Complete(action.Name, $"Sent control message to disable GPU {metadata.GpuIndex + 1} on miner {miner.Name}");
             }
-            return AlertActionResult.Skip("Unable to determine which GPU to disable", action.Name);
+            return AlertActionResult.Skip(action.Name, "Unable to determine which GPU to disable");
         }
     }
 }

@@ -28,7 +28,7 @@ namespace MiningMonitor.Alerts.Action
             
             await client.RestartMinerAsync();
 
-            return AlertActionResult.Complete($"Restarting miner {miner.Name}", actionDefinition.Name);
+            return AlertActionResult.Complete(actionDefinition.Name, $"Restarting miner {miner.Name}");
         }
     }
 }

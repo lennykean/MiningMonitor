@@ -51,5 +51,6 @@
     <mm-alert-definition-parameters [alertParameters]="alertDefinition.parameters" [validationErrors]="validationErrors"
         [isNew]="!alertDefinition.id">
     </mm-alert-definition-parameters>
+    <mm-alert-actions [actions]="alertDefinition.actions"></mm-alert-actions>
     <button type="submit" class="btn btn-outline-info">Save Changes</button>
 </form>

@@ -29,9 +29,12 @@ namespace MiningMonitor.Alerts.Action
             var action = (WebHookAlertActionDefinition)actionDefinition;
             var client = _clientFactory();
 
-            await client.PostAsync(action.Url, new StringContent(action.Body, Encoding.UTF8, "application/json"), token);
+            if (action.Body == null)
+                await client.PostAsync(action.Url, null, token);
+            else
+                await client.PostAsync(action.Url, new StringContent(action.Body, Encoding.UTF8, "application/json"), token);
 
-            return AlertActionResult.Complete("Sent Web Hook", actionDefinition.Name);
+            return AlertActionResult.Complete(actionDefinition.Name, "Sent Web Hook");
         }
     }
 }

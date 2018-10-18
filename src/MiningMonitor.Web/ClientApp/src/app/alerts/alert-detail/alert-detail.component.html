@@ -43,6 +43,13 @@
             <li class="list-group-item" *ngFor="let message of alert.detailMessages">
                 <span>{{ message }}</span>
             </li>
+            <li class="list-group-item" *ngIf="alert.actionResults">
+                <strong>Actions</strong>
+            </li>
+            <li class="list-group-item d-flex justify-content-between" *ngFor="let actionResult of alert.actionResults">
+                <span>{{ actionResult.actionName }}</span>
+                <span [ngClass]="{'text-danger': actionResult.state === actionState.Error}">{{ actionResult.message }}</span>
+            </li>
         </ul>
     </div>
     <a class="btn btn-outline-info mt-2" routerLink="/alertdefinition/{{ alert.alertDefinitionId }}">Alert Definition</a>
