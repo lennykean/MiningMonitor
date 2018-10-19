@@ -6,6 +6,10 @@
     <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
     <LangVersion>7.1</LangVersion>
     <Configurations>Debug;Release;WindowsService</Configurations>
+    <Version></Version>
+    <PackageVersion></PackageVersion>
+    <AssemblyVersion></AssemblyVersion>
+    <FileVersion></FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='WindowsService|AnyCPU'">

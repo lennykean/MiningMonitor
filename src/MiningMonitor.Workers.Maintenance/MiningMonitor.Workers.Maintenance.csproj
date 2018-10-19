@@ -5,6 +5,10 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <UserSecretsId>950cd87c-a9fa-4f21-b277-750bc730fa67</UserSecretsId>
     <LangVersion>7.1</LangVersion>
+    <Version></Version>
+    <PackageVersion></PackageVersion>
+    <AssemblyVersion></AssemblyVersion>
+    <FileVersion></FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
