@@ -7,4 +7,12 @@
             </a>
         </li>
     </ul>
+    <ul class="navbar-nav version">
+        <li>
+            <small class="text-muted">
+                Mining Monitor
+                <span *ngIf="version">{{version.major}}.{{version.minor}}.{{version.build}}</span>
+            </small>
+        </li>
+    </ul>
 </nav>

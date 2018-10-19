@@ -3,6 +3,8 @@ import { Observable } from 'rxjs';
 
 import { MinerService } from '../miner/miner.service';
 import { Miner } from '../models/Miner';
+import { Version } from '../models/Version';
+import { VersionService } from '../version.service';
 
 @Component({
     selector: 'mm-sidebar',
@@ -11,12 +13,15 @@ import { Miner } from '../models/Miner';
 })
 export class SidebarComponent implements OnInit {
     public miners: Observable<Miner[]>;
+    public version: Version;
 
     constructor(
-        private minerService: MinerService) {
+        private minerService: MinerService,
+        private versionService: VersionService) {
     }
 
-    public ngOnInit() {
+    public async ngOnInit() {
         this.miners = this.minerService.miners;
+        this.version = await this.versionService.GetVersion();
     }
 }
