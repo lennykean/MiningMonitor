@@ -3,8 +3,11 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { EnumPipe } from '../../enum.pipe';
 import { HumanizePipe } from '../../humanize.pipe';
+import { AlertActionDetailComponent } from '../alert-action-detail/alert-action-detail.component';
+import { AlertActionsComponent } from '../alert-actions/alert-actions.component';
 import { AlertDefinitionFormComponent } from '../alert-definition-form/alert-definition-form.component';
 import { AlertDefinitionParametersComponent } from '../alert-definition-parameters/alert-definition-parameters.component';
 import { ConnectivityParametersComponent } from '../connectivity-parameters/connectivity-parameters.component';
@@ -19,6 +22,8 @@ describe('AlertDefinitionEditComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [
+                AlertActionDetailComponent,
+                AlertActionsComponent,
                 AlertDefinitionEditComponent,
                 AlertDefinitionFormComponent,
                 AlertDefinitionParametersComponent,
@@ -29,6 +34,7 @@ describe('AlertDefinitionEditComponent', () => {
                 HumanizePipe
             ],
             imports: [
+                FontAwesomeModule,
                 FormsModule,
                 HttpClientTestingModule,
                 RouterTestingModule

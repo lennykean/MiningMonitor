@@ -9,7 +9,7 @@ import { AlertActionType } from '../../models/AlertActionType';
 })
 export class AlertActionsComponent {
     @Input()
-    public actions: AlertActionDefinition[];
+    public actions: AlertActionDefinition[] = [];
     public actionTypes = AlertActionType;
     public editIndex: number;
 

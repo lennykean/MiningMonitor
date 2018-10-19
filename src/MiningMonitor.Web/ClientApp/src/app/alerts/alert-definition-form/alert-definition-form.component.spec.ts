@@ -2,8 +2,11 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { EnumPipe } from '../../enum.pipe';
 import { HumanizePipe } from '../../humanize.pipe';
+import { AlertActionDetailComponent } from '../alert-action-detail/alert-action-detail.component';
+import { AlertActionsComponent } from '../alert-actions/alert-actions.component';
 import { AlertDefinitionParametersComponent } from '../alert-definition-parameters/alert-definition-parameters.component';
 import { ConnectivityParametersComponent } from '../connectivity-parameters/connectivity-parameters.component';
 import { GpuThresholdParametersComponent } from '../gpu-threshold-parameters/gpu-threshold-parameters.component';
@@ -17,6 +20,8 @@ describe('AlertDefinitionFormComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [
+                AlertActionDetailComponent,
+                AlertActionsComponent,
                 AlertDefinitionFormComponent,
                 AlertDefinitionParametersComponent,
                 ConnectivityParametersComponent,
@@ -26,6 +31,7 @@ describe('AlertDefinitionFormComponent', () => {
                 HumanizePipe
             ],
             imports: [
+                FontAwesomeModule,
                 FormsModule,
                 HttpClientTestingModule
             ]
