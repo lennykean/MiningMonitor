@@ -62,6 +62,10 @@ for:
     only: 
     - image: Ubuntu
 
+  build: off
+
+  test: off
+
   deploy_script:
   - sh: >-
       docker build -f src/MiningMonitor.Web/Dockerfile -t "lennykean/miningmonitor:latest" -t "lennykean/miningmonitor:$APPVEYOR_BUILD_VERSION" src
