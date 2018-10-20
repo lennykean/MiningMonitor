@@ -1,5 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 
+import { GpuMode } from 'src/app/models/GpuMode';
 import { GpuDataIndex } from '../../models/GpuDataIndex';
 
 @Component({
@@ -12,10 +13,14 @@ export class GpuChartComponent implements OnChanges {
     public data: { label: string; data: { x: Date; y: number; }[]; }[];
     @Input()
     public name: string;
+    @Input()
+    public mode: GpuMode;
 
     public hashrate: number;
     public temp: number;
     public fanSpeed: number;
+    public gpuMode = GpuMode;
+
     public options = {
         animation: false,
         responsive: true,
@@ -78,6 +83,7 @@ export class GpuChartComponent implements OnChanges {
         this.hashrate = hashrateData[hashrateData.length - 1].y;
         this.temp = tempDate[tempDate.length - 1].y;
         this.fanSpeed = fanSpeedData[fanSpeedData.length - 1].y;
+        this.mode = changes.mode.currentValue;
     }
 
     private FormatLabel(tooltipItems, data) {
