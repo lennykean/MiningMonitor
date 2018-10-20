@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription, timer } from 'rxjs';
 
 import { GpuDataIndex } from '../../models/GpuDataIndex';
@@ -14,13 +14,16 @@ import { SnapshotService } from '../snapshot.service';
 })
 export class MonitorComponent implements OnInit, OnDestroy {
     public timer: Observable<number>;
-    public subscription: Subscription;
+    public timerSubscription: Subscription;
     public snapshot: Snapshot;
     public miner: Miner;
     public dataSet: { label: string, data: { x: Date, y: number }[]; }[][];
+    public live: boolean;
+    public timeTravelTo: Date;
 
     constructor(
         private route: ActivatedRoute,
+        private router: Router,
         private snapshotService: SnapshotService,
         private minerService: MinerService) {
     }
@@ -28,25 +31,44 @@ export class MonitorComponent implements OnInit, OnDestroy {
     public ngOnInit() {
         this.timer = timer(0, 15000);
         this.route.paramMap.subscribe(async paramMap => {
-            if (this.subscription) {
-                this.subscription.unsubscribe();
-            }
             const id = paramMap.get('id');
-
-            this.miner = await this.minerService.Get(id);
-
-            this.subscription = this.timer.subscribe(async () => {
-                const snapshots = await this.snapshotService.GetByMiner(id);
-                this.snapshot = snapshots[snapshots.length - 1];
-                this.dataSet = this.TransformSnapshots(snapshots);
+            this.route.queryParamMap.subscribe(async queryParamMap => {
+                if (this.timerSubscription) {
+                    this.timerSubscription.unsubscribe();
+                }
+                const timeTravel = queryParamMap.get('timeTravel');
+                if (timeTravel) {
+                    this.timeTravelTo = new Date(timeTravel);
+                    this.live = false;
+                    const snapshots = await this.snapshotService.GetByMiner(id, null, this.timeTravelTo);
+                    this.snapshot = snapshots[snapshots.length - 1];
+                    this.dataSet = this.TransformSnapshots(snapshots);
+                } else {
+                    this.live = true;
+                    this.timeTravelTo = new Date();
+                    this.timerSubscription = this.timer.subscribe(async () => {
+                        const snapshots = await this.snapshotService.GetByMiner(id);
+                        this.snapshot = snapshots[snapshots.length - 1];
+                        this.dataSet = this.TransformSnapshots(snapshots);
+                    });
+                }
             });
+            this.miner = await this.minerService.Get(id);
         });
     }
 
     public ngOnDestroy() {
-        if (this.subscription) {
-            this.subscription.unsubscribe();
+        if (this.timerSubscription) {
+            this.timerSubscription.unsubscribe();
         }
+    }
+
+    public TimeTravel(to: string) {
+        this.router.navigate([], { queryParams: { timeTravel: new Date(to).toISOString() } });
+    }
+
+    public GoLive() {
+        this.router.navigate([], { queryParams: {} });
     }
 
     private TransformSnapshots(stats: Snapshot[]) {

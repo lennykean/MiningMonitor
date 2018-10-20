@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { Snapshot } from '../models/Snapshot';
@@ -13,8 +13,15 @@ export class SnapshotService {
         private http: HttpClient) {
     }
 
-    public async GetByMiner(id: string) {
-        return await this.http.get<Snapshot[]>(`${SnapshotService.baseUrl}/${id}`).toPromise();
+    public async GetByMiner(id: string, from?: Date, to?: Date) {
+        let params = new HttpParams();
+        if (from) {
+            params = params.append('from', from.toISOString());
+        }
+        if (to) {
+            params = params.append('to', to.toISOString());
+        }
+        return await this.http.get<Snapshot[]>(`${SnapshotService.baseUrl}/${id}`, { params }).toPromise();
     }
 
 }
