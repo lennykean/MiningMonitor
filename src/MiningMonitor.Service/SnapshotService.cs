@@ -37,13 +37,23 @@ namespace MiningMonitor.Service
         public async Task AddAsync(Snapshot snapshot, CancellationToken token = default)
         {
             snapshot.Id = Guid.NewGuid();
+            snapshot.IsSynced = false;
 
             await _collection.InsertAsync(snapshot, token);
         }
 
         public async Task UpsertAsync(Snapshot snapshot, CancellationToken token = default)
         {
+            snapshot.IsSynced = false;
+
             await _collection.UpsertAsync(snapshot, token);
+        }
+
+        public async Task<bool> SetSyncedAsync(Snapshot snapshot, CancellationToken token = default)
+        {
+            snapshot.IsSynced = true;
+
+            return await _collection.UpdateAsync(snapshot, token);
         }
 
         public async Task DeleteAsync(Guid snapshotId, CancellationToken token = default)

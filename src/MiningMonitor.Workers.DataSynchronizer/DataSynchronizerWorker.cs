@@ -55,13 +55,19 @@ namespace MiningMonitor.Workers.DataSynchronizer
 
                 var snapshots = await _snapshotService.GetAllAsync(token);
 
-                foreach (var snapshot in snapshots.ToList())
+                foreach (var snapshot in snapshots.Where(s => s.IsSynced != true).ToList())
                 {
-                    _logger.LogInformation($"Syncing snapshot {snapshot.Id}");
-                    await _serverService.SyncSnapshotAsync(id, snapshot, token);
+                    try
+                    {
+                        _logger.LogInformation($"Syncing snapshot {snapshot.Id}");
 
-                    _logger.LogInformation($"Removing snapshot {snapshot.Id}");
-                    await _snapshotService.DeleteAsync(snapshot.Id, token);
+                        await _serverService.SyncSnapshotAsync(id, snapshot, token);
+                        await _snapshotService.SetSyncedAsync(snapshot, token);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, $"Error syncing snapshot {snapshot.Id}");
+                    }
                 }
                 _logger.LogInformation("Finished snapshot sync");
             }
@@ -82,9 +88,17 @@ namespace MiningMonitor.Workers.DataSynchronizer
 
                 foreach (var miner in miners.Where(m => m.IsSynced != true).ToList())
                 {
-                    _logger.LogInformation($"Syncing miner {miner.Id}");
-                    await _serverService.SyncMinerAsync(id, miner, token);
-                    await _minerService.SetSyncedAsync(miner, token);
+                    try
+                    {
+                        _logger.LogInformation($"Syncing miner {miner.Id}");
+
+                        await _serverService.SyncMinerAsync(id, miner, token);
+                        await _minerService.SetSyncedAsync(miner, token);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, $"Error syncing miner {miner.Id}");
+                    }
                 }
                 _logger.LogInformation("Finished miner sync");
             }

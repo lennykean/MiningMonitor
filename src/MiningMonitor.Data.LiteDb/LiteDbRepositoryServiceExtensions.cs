@@ -15,23 +15,22 @@ namespace MiningMonitor.Data.MongoDb
         public static IServiceCollection AddLiteDbRepository(this IServiceCollection services, string connectionString)
         {
             services.AddSingleton(service => new LiteDatabase(connectionString, new MiningMonitorBsonMapper()));
-            services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<Snapshot>());
-            services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<Miner>());
-            services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<Setting>());
-            services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<AlertDefinition>());
-            services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<Alert>());
-            services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<MiningMonitorUser>());
-            services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<MiningMonitorRole>());
 
-            services.AddTransient<IRepository<Snapshot>, LiteDbSnapshotRepository>();
-            services.AddTransient<IRepository<Miner>, LiteDbRepository<Miner>>();
-            services.AddTransient<IRepository<Setting>, LiteDbRepository<Setting>>();
-            services.AddTransient<IRepository<AlertDefinition>, LiteDbAlertDefinitionRepository>();
-            services.AddTransient<IRepository<Alert>, LiteDbAlertRepository>();
-            services.AddTransient<IRepository<MiningMonitorUser>, LiteDbRepository<MiningMonitorUser>>();
-            services.AddTransient<IRepository<MiningMonitorRole>, LiteDbRepository<MiningMonitorRole>>();
+            services.AddRepository<Snapshot, LiteDbSnapshotRepository>();
+            services.AddRepository<Miner, LiteDbRepository<Miner>>();
+            services.AddRepository<Setting, LiteDbRepository<Setting>>();
+            services.AddRepository<AlertDefinition, LiteDbAlertDefinitionRepository>();
+            services.AddRepository<Alert, LiteDbAlertRepository>();
+            services.AddRepository<MiningMonitorUser, LiteDbRepository<MiningMonitorUser>>();
+            services.AddRepository<MiningMonitorRole, LiteDbRepository<MiningMonitorRole>>();
 
             return services;
+        }
+
+        private static void AddRepository<TDocument, TRepository>(this IServiceCollection services) where TRepository : LiteDbRepository<TDocument>
+        {
+            services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<TDocument>());
+            services.AddTransient<IRepository<TDocument>, TRepository>();
         }
     }
 }

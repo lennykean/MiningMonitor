@@ -15,23 +15,22 @@ namespace MiningMonitor.Data.MongoDb
         {
             services.AddSingleton(service => new MongoClient(connectionString));
             services.AddTransient(service => service.GetService<MongoClient>().GetDatabase("miningmonitor"));
-            services.AddTransient(service => service.GetService<IMongoDatabase>().GetCollection<Snapshot>("snapshots"));
-            services.AddTransient(service => service.GetService<IMongoDatabase>().GetCollection<Miner>("miners"));
-            services.AddTransient(service => service.GetService<IMongoDatabase>().GetCollection<Setting>("settings"));
-            services.AddTransient(service => service.GetService<IMongoDatabase>().GetCollection<AlertDefinition>("alertdefinitions"));
-            services.AddTransient(service => service.GetService<IMongoDatabase>().GetCollection<Alert>("alerts"));
-            services.AddTransient(service => service.GetService<IMongoDatabase>().GetCollection<MiningMonitorUser>("users"));
-            services.AddTransient(service => service.GetService<IMongoDatabase>().GetCollection<MiningMonitorRole>("roles"));
 
-            services.AddTransient<IRepository<Snapshot>, MongoDbRepository<Snapshot>>();
-            services.AddTransient<IRepository<Miner>, MongoDbRepository<Miner>>();
-            services.AddTransient<IRepository<Setting>, MongoDbRepository<Setting>>();
-            services.AddTransient<IRepository<AlertDefinition>, MongoDbRepository<AlertDefinition>>();
-            services.AddTransient<IRepository<Alert>, MongoDbRepository<Alert>>();
-            services.AddTransient<IRepository<MiningMonitorUser>, MongoDbRepository<MiningMonitorUser>>();
-            services.AddTransient<IRepository<MiningMonitorRole>, MongoDbRepository<MiningMonitorRole>>();
+            services.AddRepository<Snapshot, MongoDbRepository<Snapshot>>("snapshots");
+            services.AddRepository<Miner, MongoDbRepository<Miner>>("miners");
+            services.AddRepository<Setting, MongoDbRepository<Setting>>("settings");
+            services.AddRepository<AlertDefinition, MongoDbRepository<AlertDefinition>>("alertdefinitions");
+            services.AddRepository<Alert, MongoDbRepository<Alert>>("alerts");
+            services.AddRepository<MiningMonitorUser, MongoDbRepository<MiningMonitorUser>>("users");
+            services.AddRepository<MiningMonitorRole, MongoDbRepository<MiningMonitorRole>>("roles");
 
             return services;
+        }
+
+        private static void AddRepository<TDocument, TRepository>(this IServiceCollection services, string name) where TRepository : MongoDbRepository<TDocument>
+        {
+            services.AddTransient(service => service.GetService<IMongoDatabase>().GetCollection<TDocument>(name));
+            services.AddTransient<IRepository<TDocument>, TRepository>();
         }
     }
 }
