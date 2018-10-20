@@ -73,7 +73,7 @@
 
     <div class="row">
         <div class="col-md-6" *ngFor="let data of dataSet; index as i">
-            <mm-gpu-chart name="GPU {{ i + 1 }}" [data]="data" [mode]="snapshot.minerStatistics.gpus[i].mode">
+            <mm-gpu-chart name="GPU {{ i + 1 }}" [data]="data" [mode]="snapshot.minerStatistics && snapshot.minerStatistics.gpus && snapshot.minerStatistics.gpus && snapshot.minerStatistics.gpus[i].mode">
             </mm-gpu-chart>
         </div>
     </div>
