@@ -33,10 +33,11 @@ namespace MiningMonitor.Web.Controllers
             [FromQuery]DateTime? to = null,
             CancellationToken token = default)
         {
-            to = to?.ToUniversalTime() ?? DateTime.UtcNow;
-            from = from ?? ((DateTime)to).AddHours(-1);
+            var end = to?.ToUniversalTime() ?? DateTime.UtcNow;
+            var start = from?.ToUniversalTime() ?? end.AddHours(-1);
+            var period = new ConcretePeriod(start, end);
 
-            return _snapshotService.GetByMinerFillGapsAsync(minerId, new ConcretePeriod((DateTime)from, (DateTime)to), TimeSpan.FromSeconds(30), token);
+            return _snapshotService.GetByMinerFillGapsAsync(minerId, period, TimeSpan.FromSeconds(30), token);
         }
 
         [HttpPost("collector/{collector}/{minerId}"), Authorize(Policy = "Collector")]
