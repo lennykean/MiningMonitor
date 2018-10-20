@@ -16,7 +16,7 @@
                 </div>
             </div>
             <div class="form-group">
-                <input #to type="datetime-local" class="form-control form-control-sm mr-3" [disabled]="live" [value]="timeTravelTo | date:'yyyy-MM-ddThh:mm'">
+                <input #to type="datetime-local" class="form-control form-control-sm mr-3" [disabled]="live" [value]="timeTravelTo | date:'yyyy-MM-ddTHH:mm'">
                 <button type="button" class="btn btn-sm btn-primary" [disabled]="live" (click)="TimeTravel(to.value)">Go</button>
             </div>
         </div>

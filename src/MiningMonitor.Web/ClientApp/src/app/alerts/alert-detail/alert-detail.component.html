@@ -52,7 +52,12 @@
             </li>
         </ul>
     </div>
-    <a class="btn btn-outline-info mt-2" routerLink="/alertdefinition/{{ alert.alertDefinitionId }}">Alert Definition</a>
+    <a class="btn btn-outline-info mt-2 mr-4" routerLink="/alertdefinition/{{ alert.alertDefinitionId }}">
+        Alert Definition
+    </a>
+    <a class="btn btn-outline-info mt-2" routerLink="/monitor/{{ alert.minerId }}" [queryParams]="{timeTravel: TimeTravelTo()}">
+        Monitoring Data
+    </a>
 </div>
 <ng-template #loading>
     Loading Alert...

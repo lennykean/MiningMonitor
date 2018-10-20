@@ -32,4 +32,16 @@ export class AlertDetailComponent implements OnInit {
         await this.alertService.Acknowledge(id);
         this.router.navigateByUrl('/alerts');
     }
+
+    public TimeTravelTo() {
+        let timeTravel: Date;
+        if (this.alert.end) {
+            timeTravel = new Date(this.alert.end);
+        } else {
+            timeTravel = new Date(this.alert.lastActive);
+        }
+        timeTravel.setTime(timeTravel.getTime() + (60 * 1000));
+
+        return timeTravel.toISOString();
+    }
 }
