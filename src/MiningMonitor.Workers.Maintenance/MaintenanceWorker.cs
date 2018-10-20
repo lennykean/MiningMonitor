@@ -12,12 +12,18 @@ namespace MiningMonitor.Workers.Maintenance
     {
         private readonly ISettingsService _settingsService;
         private readonly ISnapshotService _snapshotService;
+        private readonly IAlertService _alertService;
         private readonly ILogger<MaintenanceWorker> _logger;
 
-        public MaintenanceWorker(ISettingsService settingsService, ISnapshotService snapshotService, ILogger<MaintenanceWorker> logger)
+        public MaintenanceWorker(
+            ISettingsService settingsService, 
+            ISnapshotService snapshotService, 
+            IAlertService alertService,
+            ILogger<MaintenanceWorker> logger)
         {
             _settingsService = settingsService;
             _snapshotService = snapshotService;
+            _alertService = alertService;
             _logger = logger;
         }
 
@@ -28,16 +34,18 @@ namespace MiningMonitor.Workers.Maintenance
 
             if (!bool.TryParse(enablePurgeSetting, out var enablePurge) || !int.TryParse(purgeAgeMinutesSetting, out var purgeAgeMinutes) || !enablePurge)
             {
-                _logger.LogInformation("Snapshot purge is disabled, skipping.");
+                _logger.LogInformation("Data purge is disabled, skipping.");
                 return;
             }
 
             var purgeCutoff = DateTime.UtcNow - TimeSpan.FromMinutes(purgeAgeMinutes);
-            _logger.LogInformation($"Purging snapshot data before {purgeCutoff:MM/dd/yy H:mm}");
+            _logger.LogInformation($"Purging snapshot and alert data before {purgeCutoff:MM/dd/yy H:mm}");
 
-            var purgedCount = await _snapshotService.DeleteOldAsync(purgeCutoff, cancellationToken);
+            var snapshotPurgedCount = await _snapshotService.DeleteOldAsync(purgeCutoff, cancellationToken);
+            _logger.LogInformation($"Purged {snapshotPurgedCount} snapshot(s).");
 
-            _logger.LogInformation($"Purged {purgedCount} snapshot(s).");
+            var alertPurgedCount = await _alertService.DeleteOldAsync(purgeCutoff, cancellationToken);
+            _logger.LogInformation($"Purged {alertPurgedCount} alert(s).");
         }
     }
 }

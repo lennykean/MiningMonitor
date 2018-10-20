@@ -17,5 +17,6 @@ namespace MiningMonitor.Service
         Task<bool> UpdateAsync(Alert alert, CancellationToken token = default);
         Task<bool> DeleteAsync(Guid id, CancellationToken token = default);
         Task<bool> AcknowledgeAsync(Guid alertId, CancellationToken token = default);
+        Task<int> DeleteOldAsync(DateTime purgeCutoff, CancellationToken cancellationToken);
     }
 }

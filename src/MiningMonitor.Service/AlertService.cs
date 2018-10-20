@@ -69,5 +69,10 @@ namespace MiningMonitor.Service
 
             return await _alertCollection.UpdateAsync(alert, token);
         }
+
+        public async Task<int> DeleteOldAsync(DateTime cutoff, CancellationToken token)
+        {
+            return await _alertCollection.DeleteAsync(s => s.Acknowledged && s.Start < cutoff, token);
+        }
     }
 }
