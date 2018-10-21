@@ -1,5 +1,6 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ChartsModule } from 'ng2-charts';
 
@@ -17,6 +18,7 @@ describe('MonitorComponent', () => {
                 MonitorComponent
             ],
             imports: [
+                FormsModule,
                 HttpClientTestingModule,
                 RouterTestingModule,
                 ChartsModule
