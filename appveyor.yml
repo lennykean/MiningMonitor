@@ -41,9 +41,9 @@ for:
   
   before_build:
   - ps: >-
-      ((Get-Content -path src\MiningMonitor.WindowsService.Installer\MiningMonitor.wxs -Raw) -replace '\s+Version=\"[0-9]\.[0-9]\.[0-9]\.[0-9]\"',' Version="$(VERSION)"') | Set-Content -Path src\MiningMonitor.WindowsService.Installer\MiningMonitor.wxs
-
       nuget restore src\MiningMonitor.sln
+
+      ((Get-Content -path src\MiningMonitor.WindowsService.Installer\MiningMonitor.wxs -Raw) -replace '\s+Version=\"[0-9]\.[0-9]\.[0-9]\.[0-9]\"',' Version="$($Env:VERSION)"') | Set-Content -Path src\MiningMonitor.WindowsService.Installer\MiningMonitor.wxs
 
   build_script:
   - cmd: msbuild "%APPVEYOR_BUILD_FOLDER%\src\MiningMonitor.sln" /p:Configuration=WindowsService /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
