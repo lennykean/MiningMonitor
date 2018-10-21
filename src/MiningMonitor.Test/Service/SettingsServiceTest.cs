@@ -1,13 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 using LiteDB;
 
+using MiningMonitor.Data;
 using MiningMonitor.Data.LiteDb;
 using MiningMonitor.Model;
+using MiningMonitor.Security.Identity;
 using MiningMonitor.Service;
+
+using Moq;
 
 using NUnit.Framework;
 
@@ -19,6 +25,7 @@ namespace MiningMonitor.Test.Service
         private MemoryStream _ms;
         private LiteDatabase _memoryDb;
         private LiteCollection<Setting> _collection;
+        private Mock<IRepository<MiningMonitorUser, Guid>> _userRepo;
         private SettingsService _subject;
 
         [SetUp]
@@ -27,7 +34,8 @@ namespace MiningMonitor.Test.Service
             _ms = new MemoryStream();
             _memoryDb = new LiteDatabase(_ms);
             _collection = _memoryDb.GetCollection<Setting>();
-            _subject = new SettingsService(new LiteDbRepository<Setting>(_collection));
+            _userRepo = new Mock<IRepository<MiningMonitorUser, Guid>>();
+            _subject = new SettingsService(new LiteDbRepository<Setting, string>(_collection), _userRepo.Object);
         }
 
         [TearDown]
@@ -104,11 +112,11 @@ namespace MiningMonitor.Test.Service
             _collection.Insert(new Setting { Key = "EnableSecurity", Value = firstValue });
 
             // Act
-            var (success, _) = await _subject.UpdateSettingsAsync(new Dictionary<string, string> { ["EnableSecurity"] = newValue });
+            var (modelState, _) = await _subject.UpdateSettingsAsync(new Dictionary<string, string> { ["EnableSecurity"] = newValue });
 
             // Assert
             Assert.That(_collection.FindById("EnableSecurity"), Has.Property(nameof(Setting.Value)).EqualTo(newValue));
-            Assert.That(success, Is.True);
+            Assert.That(modelState.IsValid, Is.True);
         }
 
         [Test]
@@ -118,21 +126,36 @@ namespace MiningMonitor.Test.Service
             const string value = "true";
 
             // Act
-            var (success, _) = await _subject.UpdateSettingsAsync(new Dictionary<string, string> { ["EnableSecurity"] = value });
+            var (modelState, _) = await _subject.UpdateSettingsAsync(new Dictionary<string, string> { ["IsDataCollector"] = value });
 
             // Assert
-            Assert.That(_collection.FindById("EnableSecurity"), Has.Property(nameof(Setting.Value)).EqualTo(value));
-            Assert.That(success, Is.True);
+            Assert.That(_collection.FindById("IsDataCollector"), Has.Property(nameof(Setting.Value)).EqualTo(value));
+            Assert.That(modelState.IsValid, Is.True);
+        }
+
+        [Test]
+        public async Task CannotEnableSecurityWithNoUsers()
+        {
+            // Arrange
+            _userRepo.Setup(m => m.FindAllAsync(CancellationToken.None))
+                .ReturnsAsync(Enumerable.Empty<MiningMonitorUser>);
+
+            // Act
+            var modelState = await _subject.UpdateSettingAsync("EnableSecurity", "true");
+
+            // Assert
+            Assert.That(modelState.IsValid, Is.False);
+            Assert.That(_collection.FindById("EnableSecurity"), Is.Null);
         }
 
         [Test]
         public async Task UpdateSettingNotFound()
         {
             // Act
-            var (success, _) = await _subject.UpdateSettingsAsync(new Dictionary<string, string> { ["fake"] = "notreal" });
+            var (modelState, _) = await _subject.UpdateSettingsAsync(new Dictionary<string, string> { ["fake"] = "notreal" });
 
             // Assert
-            Assert.That(success, Is.False);
+            Assert.That(modelState.IsValid, Is.False);
         }
     }
 }

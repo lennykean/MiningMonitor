@@ -11,10 +11,10 @@ namespace Microsoft.AspNetCore.Identity.MongoDB
 {
     public class MiningMonitorRoleStore : IRoleStore<MiningMonitorRole>
     {
-        private readonly IRepository<MiningMonitorRole> _repository;
+        private readonly IRepository<MiningMonitorRole, Guid> _repository;
         private readonly ILogger<MiningMonitorRoleStore> _logger;
 
-        public MiningMonitorRoleStore(IRepository<MiningMonitorRole> repository, ILogger<MiningMonitorRoleStore> logger)
+        public MiningMonitorRoleStore(IRepository<MiningMonitorRole, Guid> repository, ILogger<MiningMonitorRoleStore> logger)
         {
             _repository = repository;
             _logger = logger;

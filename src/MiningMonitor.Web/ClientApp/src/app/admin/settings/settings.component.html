@@ -11,6 +11,9 @@
                         (change)="settings.enableSecurity = $event.target.checked.toString()">
                     Enabled
                 </label>
+                <small class="text-danger" *ngFor="let message of validationErrors.enableSecurity">
+                    {{ message }}
+                </small>
             </div>
         </div>
         <div class="form-group row" title="Automatically purge old monitoring data">

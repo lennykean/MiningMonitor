@@ -1,4 +1,6 @@
-﻿using LiteDB;
+﻿using System;
+
+using LiteDB;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,21 +18,21 @@ namespace MiningMonitor.Data.MongoDb
         {
             services.AddSingleton(service => new LiteDatabase(connectionString, new MiningMonitorBsonMapper()));
 
-            services.AddRepository<Snapshot, LiteDbSnapshotRepository>();
-            services.AddRepository<Miner, LiteDbRepository<Miner>>();
-            services.AddRepository<Setting, LiteDbRepository<Setting>>();
-            services.AddRepository<AlertDefinition, LiteDbAlertDefinitionRepository>();
-            services.AddRepository<Alert, LiteDbAlertRepository>();
-            services.AddRepository<MiningMonitorUser, LiteDbRepository<MiningMonitorUser>>();
-            services.AddRepository<MiningMonitorRole, LiteDbRepository<MiningMonitorRole>>();
+            services.AddRepository<Snapshot, Guid, LiteDbSnapshotRepository>();
+            services.AddRepository<Miner, Guid, LiteDbRepository<Miner, Guid>>();
+            services.AddRepository<Setting, string, LiteDbRepository<Setting, string>>();
+            services.AddRepository<AlertDefinition, Guid, LiteDbAlertDefinitionRepository>();
+            services.AddRepository<Alert, Guid, LiteDbAlertRepository>();
+            services.AddRepository<MiningMonitorUser, Guid, LiteDbRepository<MiningMonitorUser, Guid>>();
+            services.AddRepository<MiningMonitorRole, Guid, LiteDbRepository<MiningMonitorRole, Guid>>();
 
             return services;
         }
 
-        private static void AddRepository<TDocument, TRepository>(this IServiceCollection services) where TRepository : LiteDbRepository<TDocument>
+        private static void AddRepository<TDocument, TKey, TRepository>(this IServiceCollection services) where TRepository : LiteDbRepository<TDocument, TKey>
         {
             services.AddTransient(service => service.GetService<LiteDatabase>().GetCollection<TDocument>());
-            services.AddTransient<IRepository<TDocument>, TRepository>();
+            services.AddTransient<IRepository<TDocument, TKey>, TRepository>();
         }
     }
 }

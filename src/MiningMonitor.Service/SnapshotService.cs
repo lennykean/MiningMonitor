@@ -12,9 +12,9 @@ namespace MiningMonitor.Service
 {
     public class SnapshotService : ISnapshotService
     {
-        private readonly IRepository<Snapshot> _collection;
+        private readonly IRepository<Snapshot, Guid> _collection;
 
-        public SnapshotService(IRepository<Snapshot> collection)
+        public SnapshotService(IRepository<Snapshot, Guid> collection)
         {
             _collection = collection;
         }

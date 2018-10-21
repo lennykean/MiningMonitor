@@ -11,10 +11,10 @@ namespace MiningMonitor.Service
 {
     public class MinerService : IMinerService
     {
-        private readonly IRepository<Miner> _minerCollection;
+        private readonly IRepository<Miner, Guid> _minerCollection;
         private readonly ISnapshotService _snapshotService;
 
-        public MinerService(IRepository<Miner> minerCollection, ISnapshotService snapshotService)
+        public MinerService(IRepository<Miner, Guid> minerCollection, ISnapshotService snapshotService)
         {
             _minerCollection = minerCollection;
             _snapshotService = snapshotService;

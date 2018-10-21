@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 
 import { LoginService } from '../../login.service';
@@ -9,6 +10,7 @@ import { SettingsService } from '../settings.service';
 })
 export class SettingsComponent implements OnInit {
     public settings: { [key: string]: string };
+    public validationErrors: { [key: string]: string[] } = {};
 
     constructor(
         private settingsService: SettingsService,
@@ -20,7 +22,14 @@ export class SettingsComponent implements OnInit {
     }
 
     public async SaveSettings() {
-        this.loginService.ClearCachedSettings();
-        await this.settingsService.Update(this.settings);
+        try {
+            this.loginService.ClearCachedSettings();
+            this.settings = await this.settingsService.Update(this.settings);
+            this.validationErrors = {};
+        } catch (error) {
+            if (error instanceof HttpErrorResponse && error.status === 400) {
+                this.validationErrors = error.error;
+            }
+        }
     }
 }

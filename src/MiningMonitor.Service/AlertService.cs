@@ -11,9 +11,9 @@ namespace MiningMonitor.Service
 {
     public class AlertService : IAlertService
     {
-        private readonly IRepository<Alert> _alertCollection;
+        private readonly IRepository<Alert, Guid> _alertCollection;
 
-        public AlertService(IRepository<Alert> alertCollection)
+        public AlertService(IRepository<Alert, Guid> alertCollection)
         {
             _alertCollection = alertCollection;
         }

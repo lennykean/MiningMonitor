@@ -5,8 +5,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+
 using MiningMonitor.Data;
 using MiningMonitor.Model;
+using MiningMonitor.Security.Identity;
 
 namespace MiningMonitor.Service
 {
@@ -24,16 +27,18 @@ namespace MiningMonitor.Service
             ["PurgeAgeMinutes"] = "1440",
         }.ToImmutableDictionary(StringComparer.OrdinalIgnoreCase);
 
-        private readonly IRepository<Setting> _collection;
+        private readonly IRepository<Setting, string> _settingsRepo;
+        private readonly IRepository<MiningMonitorUser, Guid> _userRepo;
 
-        public SettingsService(IRepository<Setting> collection)
+        public SettingsService(IRepository<Setting, string> settingsRepo, IRepository<MiningMonitorUser, Guid> userRepo)
         {
-            _collection = collection;
+            _settingsRepo = settingsRepo;
+            _userRepo = userRepo;
         }
 
         public async Task<IDictionary<string, string>> GetAllAsync(CancellationToken token = default)
         {
-            var settings = await _collection.FindAllAsync(token);
+            var settings = (await _settingsRepo.FindAllAsync(token)).ToList();
 
             var mergedSettings = DefaultSettings.ToDictionary(
                 defaultSetting => defaultSetting.Key,
@@ -52,50 +57,58 @@ namespace MiningMonitor.Service
 
             DefaultSettings.TryGetKey(key, out var normalizedKey);
 
-            var setting = await _collection.FindOneAsync(s => s.Key.ToLower() == normalizedKey.ToLower(), token);
+            var setting = await _settingsRepo.FindOneAsync(s => s.Key.ToLower() == normalizedKey.ToLower(), token);
             var value = setting?.Value ?? DefaultSettings[normalizedKey];
 
             return (true, value);
         }
 
-        public async Task<(bool success, IDictionary<string, string> settings)> UpdateSettingsAsync(IDictionary<string, string> settings, CancellationToken token = default)
+        public async Task<(ModelStateDictionary modelState, IDictionary<string, string> settings)> UpdateSettingsAsync(IDictionary<string, string> settings, CancellationToken token = default)
         {
-            if (settings.Any(s => !DefaultSettings.ContainsKey(s.Key)))
-                return (false, null);
-
+            var modelState = new ModelStateDictionary();
+            
             foreach (var setting in settings)
             {
-                DefaultSettings.TryGetKey(setting.Key, out var normalizedKey);
-                var originalSetting = await _collection.FindOneAsync(s => s.Key.ToLower() == normalizedKey.ToLower(), token);
-                if (originalSetting == null)
+                if (!DefaultSettings.TryGetKey(setting.Key, out var normalizedKey))
                 {
-                    await _collection.InsertAsync(new Setting { Key = setting.Key, Value = setting.Value }, token);
+                    modelState.AddModelError(setting.Key, "Setting does not exist");
+                    continue;
                 }
-                else
+                if (normalizedKey == "ServerToken" || normalizedKey == "CollectorId")
                 {
-                    originalSetting.Value = setting.Value;
-                    await _collection.UpdateAsync(originalSetting, token);
+                    continue;
                 }
+                modelState.Merge(await UpdateSettingAsync(setting.Key, setting.Value, token));
             }
-            return (true, await GetAllAsync(token));
+            return (modelState, await GetAllAsync(token));
         }
 
-        public async Task<bool> UpdateSettingAsync(string setting, string value, CancellationToken token = default)
+        public async Task<ModelStateDictionary> UpdateSettingAsync(string setting, string value, CancellationToken token = default)
         {
-            if (!DefaultSettings.TryGetKey(setting, out var normalizedKey))
-                return false;
+            var modelState = new ModelStateDictionary();
 
-            var originalSetting = await _collection.FindOneAsync(s => s.Key.ToLower() == normalizedKey.ToLower(), token);
-            if (originalSetting == null)
+            if (!DefaultSettings.TryGetKey(setting, out var normalizedKey))
             {
-                await _collection.InsertAsync(new Setting { Key = setting, Value = value }, token);
+                modelState.AddModelError(setting, "Setting does not exist");
+                return modelState;
             }
-            else
+            if (normalizedKey == "EnableSecurity" && value == "true" && !(await _userRepo.FindAllAsync(token)).Any())
             {
-                originalSetting.Value = value;
-                await _collection.UpdateAsync(originalSetting, token);
+                modelState.AddModelError(setting, "Cannot enable security, no users exist");
+                return modelState;
             }
-            return true;
+            if (normalizedKey == "IsDataCollector" && value == "false")
+            {
+                modelState.Merge(await UpdateSettingAsync("ServerToken", null, token));
+                modelState.Merge(await UpdateSettingAsync("CollectorId", null, token));
+                if (!modelState.IsValid)
+                {
+                    return modelState;
+                }
+            }
+            await _settingsRepo.UpsertAsync(new Setting { Key = normalizedKey, Value = value }, token);
+            
+            return modelState;
         }
     }
 }

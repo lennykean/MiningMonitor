@@ -2,6 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+
 using MiningMonitor.Service;
 using MiningMonitor.Web.Controllers;
 
@@ -50,7 +52,7 @@ namespace MiningMonitor.Test.Web.Controllers
             var controller = new ServerSettingsController(_service.Object);
 
             _service.Setup(m => m.UpdateSettingsAsync(setting, CancellationToken.None))
-                .ReturnsAsync(() => (true, setting))
+                .ReturnsAsync(() => (new ModelStateDictionary(), setting))
                 .Verifiable();
 
             // Act
@@ -68,9 +70,11 @@ namespace MiningMonitor.Test.Web.Controllers
             // Arrange
             var setting = new Dictionary<string, string>();
             var controller = new ServerSettingsController(_service.Object);
+            var modelState = new ModelStateDictionary();
 
+            modelState.AddModelError("", "");
             _service.Setup(m => m.UpdateSettingsAsync(setting, CancellationToken.None))
-                .ReturnsAsync(() => (false, null))
+                .ReturnsAsync(() => (modelState, null))
                 .Verifiable();
 
             // Act
@@ -78,7 +82,7 @@ namespace MiningMonitor.Test.Web.Controllers
 
             // Assert
             _service.Verify();
-            Assert.That(result, Has.Property(nameof(result.StatusCode)).EqualTo(404));
+            Assert.That(result, Has.Property(nameof(result.StatusCode)).EqualTo(400));
         }
     }
 }

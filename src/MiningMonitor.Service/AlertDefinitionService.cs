@@ -10,9 +10,9 @@ namespace MiningMonitor.Service
 {
     public class AlertDefinitionService : IAlertDefinitionService
     {
-        private readonly IRepository<AlertDefinition> _alertDefinitionCollection;
+        private readonly IRepository<AlertDefinition, Guid> _alertDefinitionCollection;
 
-        public AlertDefinitionService(IRepository<AlertDefinition> alertDefinitionCollection)
+        public AlertDefinitionService(IRepository<AlertDefinition, Guid> alertDefinitionCollection)
         {
             _alertDefinitionCollection = alertDefinitionCollection;
         }

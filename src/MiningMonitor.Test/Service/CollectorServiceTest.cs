@@ -64,7 +64,7 @@ namespace MiningMonitor.Test.Service
             _memoryDb = new LiteDatabase(_ms);
             _userCollection = _memoryDb.GetCollection<MiningMonitorUser>();
             _userStoreLogger = new Mock<ILogger<MiningMonitorUserStore>>();
-            _userStore = new MiningMonitorUserStore(new LiteDbRepository<MiningMonitorUser>(_userCollection), _userStoreLogger.Object);
+            _userStore = new MiningMonitorUserStore(new LiteDbRepository<MiningMonitorUser, Guid>(_userCollection), _userStoreLogger.Object);
             _optionsAccessor = new Mock<IOptions<IdentityOptions>>();
             _passwordHasher = new Mock<IPasswordHasher<MiningMonitorUser>>();
             _normalizer = new Mock<ILookupNormalizer>();
@@ -91,9 +91,9 @@ namespace MiningMonitor.Test.Service
                 _authSchemeProvider.Object);
             _loginService = new LoginService(_signinManager);
             _snapshotCollection = _memoryDb.GetCollection<Snapshot>();
-            _snapshotService = new SnapshotService(new LiteDbRepository<Snapshot>(_snapshotCollection));
+            _snapshotService = new SnapshotService(new LiteDbRepository<Snapshot, Guid>(_snapshotCollection));
             _minerCollection = _memoryDb.GetCollection<Miner>();
-            _minerService = new MinerService(new LiteDbRepository<Miner>(_minerCollection), _snapshotService);
+            _minerService = new MinerService(new LiteDbRepository<Miner, Guid>(_minerCollection), _snapshotService);
             _userMapper = new UserMapper();
             _resultMapper = new IdentityResultMapper();
             _subject = new CollectorService(_userManager, 

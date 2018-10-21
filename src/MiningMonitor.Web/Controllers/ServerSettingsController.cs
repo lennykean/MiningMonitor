@@ -39,12 +39,12 @@ namespace MiningMonitor.Web.Controllers
         [HttpPut]
         public async Task<ObjectResult> Put([FromBody]IDictionary<string, string> settings, CancellationToken token = default)
         {
-            var result = await _settingsService.UpdateSettingsAsync(settings, token);
+            var (modelState, updatedSettings) = await _settingsService.UpdateSettingsAsync(settings, token);
 
-            if (!result.success)
-                return NotFound(null);
+            if (!modelState.IsValid)
+                return BadRequest(modelState);
 
-            return Ok(result.settings);
+            return Ok(updatedSettings);
         }
     }
 }

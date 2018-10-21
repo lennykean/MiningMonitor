@@ -8,7 +8,7 @@ using LiteDB;
 
 namespace MiningMonitor.Data.LiteDb
 {
-    public class LiteDbRepository<T> : IRepository<T>
+    public class LiteDbRepository<T, TKey> : IRepository<T, TKey>
     {
         private readonly LiteCollection<T> _collection;
 
@@ -32,9 +32,9 @@ namespace MiningMonitor.Data.LiteDb
             return Task.Run(() => _collection.FindOne(predicate), token);
         }
 
-        public virtual Task<T> FindByIdAsync(Guid id, CancellationToken token = default)
+        public virtual Task<T> FindByIdAsync(TKey id, CancellationToken token = default)
         {
-            return Task.Run(() => _collection.FindById(id), token);
+            return Task.Run(() => _collection.FindById(new BsonValue(id)), token);
         }
 
         public virtual Task InsertAsync(T document, CancellationToken token = default)
@@ -52,9 +52,9 @@ namespace MiningMonitor.Data.LiteDb
             return Task.Run(() => _collection.Upsert(document), token);
         }
 
-        public virtual Task<bool> DeleteAsync(Guid id, CancellationToken token = default)
+        public virtual Task<bool> DeleteAsync(TKey id, CancellationToken token = default)
         {
-            return Task.Run(() => _collection.Delete(id), token);
+            return Task.Run(() => _collection.Delete(new BsonValue(id)), token);
         }
 
         public virtual Task<int> DeleteAsync(Expression<Func<T, bool>> predicate, CancellationToken token = default)

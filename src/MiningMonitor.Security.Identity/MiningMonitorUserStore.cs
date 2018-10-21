@@ -23,10 +23,10 @@ namespace Microsoft.AspNetCore.Identity.MongoDB
         IUserLockoutStore<MiningMonitorUser>,
         IQueryableUserStore<MiningMonitorUser>
     {
-        private readonly IRepository<MiningMonitorUser> _repository;
+        private readonly IRepository<MiningMonitorUser, Guid> _repository;
         private readonly ILogger<MiningMonitorUserStore> _logger;
 
-        public MiningMonitorUserStore(IRepository<MiningMonitorUser> repository, ILogger<MiningMonitorUserStore> logger)
+        public MiningMonitorUserStore(IRepository<MiningMonitorUser, Guid> repository, ILogger<MiningMonitorUserStore> logger)
         {
             _repository = repository;
             _logger = logger;

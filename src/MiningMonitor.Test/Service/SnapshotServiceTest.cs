@@ -28,7 +28,7 @@ namespace MiningMonitor.Test.Service
             _ms = new MemoryStream();
             _memoryDb = new LiteDatabase(_ms);
             _collection = _memoryDb.GetCollection<Snapshot>();
-            _subject = new SnapshotService(new LiteDbRepository<Snapshot>(_collection));
+            _subject = new SnapshotService(new LiteDbRepository<Snapshot, Guid>(_collection));
         }
 
         [TearDown]

@@ -10,7 +10,7 @@ using MongoDB.Driver;
 
 namespace MiningMonitor.Data.LiteDb
 {
-    public class MongoDbRepository<T> : IRepository<T>
+    public class MongoDbRepository<T, TKey> : IRepository<T, TKey>
     {
         private readonly IMongoCollection<T> _collection;
 
@@ -34,7 +34,7 @@ namespace MiningMonitor.Data.LiteDb
             return await _collection.Find(predicate).SingleOrDefaultAsync(token);
         }
 
-        public virtual async Task<T> FindByIdAsync(Guid id, CancellationToken token = default)
+        public virtual async Task<T> FindByIdAsync(TKey id, CancellationToken token = default)
         {
             return await _collection.Find(Builders<T>.Filter.Eq("_id", id)).SingleOrDefaultAsync(token);
         }
@@ -54,7 +54,7 @@ namespace MiningMonitor.Data.LiteDb
             return (await _collection.ReplaceOneAsync(Builders<T>.Filter.Eq("_id", GetId(document)), document, cancellationToken: token)).IsAcknowledged;
         }
 
-        public virtual async Task<bool> DeleteAsync(Guid id, CancellationToken token = default)
+        public virtual async Task<bool> DeleteAsync(TKey id, CancellationToken token = default)
         {
             return (await _collection.DeleteOneAsync(Builders<T>.Filter.Eq("_id", id), token)).IsAcknowledged;
         }
