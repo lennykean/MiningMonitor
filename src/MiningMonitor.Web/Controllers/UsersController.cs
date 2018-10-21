@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+
+using AspNetCore.ClaimsValueProvider;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,9 +24,9 @@ namespace MiningMonitor.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<User>> GetAsync(CancellationToken token = default)
+        public async Task<IEnumerable<UserListItem>> GetAsync([FromClaim(ClaimTypes.Name)]string currentUser, CancellationToken token = default)
         {
-            return await _userService.GetUsersAsync(token);
+            return await _userService.GetUsersAsync(currentUser, token);
         }
 
         [HttpPost]
@@ -35,6 +38,18 @@ namespace MiningMonitor.Web.Controllers
                 return BadRequest(result);
 
             return NoContent();
+        }
+
+        [HttpDelete("{username}")]
+        public async Task<StatusCodeResult> DeleteAsync([FromClaim(ClaimTypes.Name)]string currentUser, string username, CancellationToken token = default)
+        {
+            if (username == currentUser)
+                return BadRequest();
+
+            if (!await _userService.DeleteAsync(username))
+                return NotFound();
+
+            return Ok();
         }
     }
 }

@@ -3,3 +3,7 @@ export interface User {
     email: string;
     password?: string;
 }
+
+export interface UserListItem extends User {
+    isCurrentUser: boolean;
+}

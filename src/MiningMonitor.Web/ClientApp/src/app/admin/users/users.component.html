@@ -6,12 +6,19 @@
             <tr>
                 <th>Username</th>
                 <th>E-Mail</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
             <tr *ngFor="let user of users">
                 <td>{{ user.username }}</td>
                 <td>{{ user.email }}</td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-danger pt-0 pb-0 float-right" *ngIf="!user.isCurrentUser"
+                        (click)="Delete(user)">
+                        Delete
+                    </button>
+                </td>
             </tr>
         </tbody>
     </table>

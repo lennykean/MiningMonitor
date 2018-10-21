@@ -30,16 +30,16 @@ namespace MiningMonitor.Test.Web.Controllers
         public async Task Get()
         {
             // Arrange
-            var users = Enumerable.Range(0, 3).Select(i => new User()).ToList();
+            var users = Enumerable.Range(0, 3).Select(i => new UserListItem()).ToList();
 
-            _userService.Setup(m => m.GetUsersAsync(CancellationToken.None))
+            _userService.Setup(m => m.GetUsersAsync(null, CancellationToken.None))
                 .ReturnsAsync(() => users)
                 .Verifiable();
 
             var controller = new UsersController(_userService.Object);
 
             // Act
-            var result = await controller.GetAsync();
+            var result = await controller.GetAsync(null);
 
             // Assert
             _userService.Verify();

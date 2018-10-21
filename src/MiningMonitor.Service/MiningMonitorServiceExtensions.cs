@@ -29,7 +29,7 @@ namespace MiningMonitor.Service
             services.AddTransient<IAlertService, AlertService>();
 
             // Mappers
-            services.AddTransient<IMapper<MiningMonitorUser, User>, UserMapper>();
+            services.AddTransient<IMapper<(string currentUser, MiningMonitorUser user), UserListItem>, UserMapper>();
             services.AddTransient<IMapper<User, MiningMonitorUser>, UserMapper>();
             services.AddTransient<IMapper<MiningMonitorUser, Collector>, UserMapper>();
             services.AddTransient<IUpdateMapper<Collector, MiningMonitorUser>, UserMapper>();

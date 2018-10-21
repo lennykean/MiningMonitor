@@ -1,21 +1,24 @@
-﻿using MiningMonitor.Common.Mapper;
+﻿using System;
+
+using MiningMonitor.Common.Mapper;
 using MiningMonitor.Model;
 using MiningMonitor.Security.Identity;
 
 namespace MiningMonitor.Service.Mapper
 {
     public class UserMapper : 
-        IMapper<MiningMonitorUser, User>, 
+        IMapper<(string currentUser, MiningMonitorUser user), UserListItem>, 
         IMapper<User, MiningMonitorUser>, 
         IMapper<MiningMonitorUser, Collector>, 
         IUpdateMapper<Collector, MiningMonitorUser>
     {
-        public User Map(MiningMonitorUser identityUser)
+        public UserListItem Map((string currentUser, MiningMonitorUser user) source)
         {
-            return new User
+            return new UserListItem
             {
-                Username = identityUser.UserName,
-                Email = identityUser.Email
+                Username = source.user.UserName,
+                Email = source.user.Email,
+                IsCurrentUser = string.Equals(source.user.UserName, source.currentUser, StringComparison.OrdinalIgnoreCase)
             };
         }
 

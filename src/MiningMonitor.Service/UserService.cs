@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,13 +16,13 @@ namespace MiningMonitor.Service
     public class UserService : IUserService
     {
         private readonly UserManager<MiningMonitorUser> _userManager;
-        private readonly IMapper<MiningMonitorUser, User> _userMapper;
+        private readonly IMapper<(string currentUser, MiningMonitorUser user), UserListItem> _userMapper;
         private readonly IMapper<User, MiningMonitorUser> _identityUserMapper;
         private readonly IMapper<IdentityResult, ModelStateDictionary> _resultMapper;
 
         public UserService(
             UserManager<MiningMonitorUser> userManager,
-            IMapper<MiningMonitorUser, User> userMapper,
+            IMapper<(string currentUser, MiningMonitorUser user), UserListItem> userMapper,
             IMapper<User, MiningMonitorUser> identityUserMapper,
             IMapper<IdentityResult, ModelStateDictionary> resultMapper)
         {
@@ -31,9 +32,12 @@ namespace MiningMonitor.Service
             _resultMapper = resultMapper;
         }
 
-        public Task<IEnumerable<User>> GetUsersAsync(CancellationToken token = default)
+        public Task<IEnumerable<UserListItem>> GetUsersAsync(string currentUser, CancellationToken token = default)
         {
-            return Task.Run(() => _userManager.Users.AsEnumerable().Where(t => !t.Roles.Contains("Collector")).Select(_userMapper.Map), token);
+            return Task.Run(() => 
+                from user in _userManager.Users.AsEnumerable()
+                where !user.Roles.Contains("Collector")
+                select _userMapper.Map((currentUser, user)), token);
         }
 
         public async Task<ModelStateDictionary> CreateUserAsync(User user, CancellationToken token = default)
@@ -41,6 +45,17 @@ namespace MiningMonitor.Service
             var identityUser = _identityUserMapper.Map(user);
             
             return _resultMapper.Map(await _userManager.CreateAsync(identityUser, user.Password));
+        }
+
+        public async Task<bool> DeleteAsync(string username)
+        {
+            var user = await _userManager.FindByNameAsync(username);
+            if (user == null)
+                return false;
+
+            await _userManager.DeleteAsync(user);
+
+            return true;
         }
     }
 }

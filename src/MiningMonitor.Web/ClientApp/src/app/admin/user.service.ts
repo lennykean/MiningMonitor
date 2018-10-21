@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { User } from '../models/User';
+import { User, UserListItem } from '../models/User';
 
 @Injectable({
     providedIn: 'root'
@@ -14,7 +14,7 @@ export class UserService {
     }
 
     public async GetAll() {
-        return await this.http.get<User[]>(UserService.baseUrl).toPromise();
+        return await this.http.get<UserListItem[]>(UserService.baseUrl).toPromise();
     }
 
     public async Create(user: User) {

@@ -1,5 +1,7 @@
 ﻿using System;
 
+using AspNetCore.ClaimsValueProvider;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -89,7 +91,7 @@ namespace MiningMonitor.Web
             // MVC
             services
                 .AddResponseCompression()
-                .AddMvc()
+                .AddMvc(options => options.AddClaimsValueProvider())
                 .AddJsonOptions(options =>
                 {
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();

@@ -49,7 +49,7 @@ namespace MiningMonitor.Test.Service
             var userService = new UserService(_userManager, _mapper, _mapper, _resultMapper);
 
             // Act
-            var users = await userService.GetUsersAsync();
+            var users = await userService.GetUsersAsync(null);
 
             // Assert
             Assert.That(users.Count(), Is.EqualTo(3));
