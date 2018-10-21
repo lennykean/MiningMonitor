@@ -2,8 +2,7 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Product Id="*" 
            Name="MiningMonitor" 
-           Language="1033" 
-           Version="1.0.0.0" 
+           Language="1033" Version="1.2.3.4" 
            Manufacturer="MiningMonitor" 
            UpgradeCode="FA42B5EF-EAAC-4905-9790-C3D8DCB3DDAE">
 
@@ -52,4 +51,6 @@
     </ComponentGroup>
   </Fragment>
 </Wix>
+
+
 
