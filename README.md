@@ -2,6 +2,9 @@
 
 Mining Monitor is monitoring tool for ethereum mining rigs.
 
+![Monitoring Page](./images/MonitoringScreen-1.png "Monitoring Page")
+
+
 ### Features
 
 * Real time monitoring
