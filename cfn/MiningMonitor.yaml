@@ -1,4 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
 
 Parameters:
   MongoConnectionString:
@@ -25,129 +26,85 @@ Resources:
       RoleName: MiningMonitorWorkerRole
 
   AlertScan:
-    Type: AWS::Lambda::Function
+    Type: AWS::Serverless::Function
     Properties:
-      Code:
-        S3Bucket: !Ref CodeS3Bucket
-        S3Key: alertscan.zip
+      Handler: MiningMonitor.Workers.AlertScan::MiningMonitor.Workers.AlertScan.Program::Main
+      Runtime: dotnetcore2.1
+      CodeUri: 
+        Bucket: !Ref CodeS3Bucket
+        Key: alertscan.zip
+      FunctionName: MiningMonitorAlertScan
+      Timeout: 60
+      Role: !GetAtt WorkerRole.Arn
       Environment:
         Variables:
           ConnectionStrings__miningmonitor: !Ref MongoConnectionString
-      FunctionName: MiningMonitorAlertScan
-      Handler: MiningMonitor.Workers.AlertScan::MiningMonitor.Workers.AlertScan.Program::Main
-      Role: !GetAtt WorkerRole.Arn
-      Runtime: dotnetcore2.1
-      Timeout: 60
-  AlertScanSchedule:
-    Type: AWS::Events::Rule
-    Properties:
-      Name: AlertScanSchedule
-      ScheduleExpression: rate(1 minute)
-      Targets:
-      -
-        Arn: !GetAtt AlertScan.Arn
-        Id: AlertScanTarget
-        Input: "null"
-  AlertScanSchedulePermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      Action: lambda:InvokeFunction
-      FunctionName: !Ref AlertScan
-      Principal: events.amazonaws.com
-      SourceArn: !GetAtt AlertScanSchedule.Arn
+      Events:
+        Schedule:
+          Type: Schedule
+          Properties:
+            Schedule: rate(1 minute)
+            Input: "null"
 
   DataCollector:
-    Type: AWS::Lambda::Function
+    Type: AWS::Serverless::Function
     Properties:
-      Code:
-        S3Bucket: !Ref CodeS3Bucket
-        S3Key: datacollector.zip
+      Handler: MiningMonitor.Workers.DataCollector::MiningMonitor.Workers.DataCollector.Program::Main
+      Runtime: dotnetcore2.1
+      CodeUri: 
+        Bucket: !Ref CodeS3Bucket
+        Key: datacollector.zip
+      FunctionName: MiningMonitorDataCollector
+      Timeout: 60
+      Role: !GetAtt WorkerRole.Arn
       Environment:
         Variables:
           ConnectionStrings__miningmonitor: !Ref MongoConnectionString
-      FunctionName: MiningMonitorDataCollector
-      Handler: MiningMonitor.Workers.DataCollector::MiningMonitor.Workers.DataCollector.Program::Main
-      Role: !GetAtt WorkerRole.Arn
-      Runtime: dotnetcore2.1
-      Timeout: 60
-  DataCollectorSchedule:
-    Type: AWS::Events::Rule
-    Properties:
-      Name: DataCollectorSchedule
-      ScheduleExpression: rate(1 minute)
-      Targets:
-      -
-        Arn: !GetAtt DataCollector.Arn
-        Id: DataCollectorTarget
-        Input: "null"
-  DataCollectorSchedulePermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      Action: lambda:InvokeFunction
-      FunctionName: !Ref DataCollector
-      Principal: events.amazonaws.com
-      SourceArn: !GetAtt DataCollectorSchedule.Arn
+      Events:
+        Schedule:
+          Type: Schedule
+          Properties:
+            Schedule: rate(1 minute)
+            Input: "null"
 
   DataSynchronizer:
-    Type: AWS::Lambda::Function
+    Type: AWS::Serverless::Function
     Properties:
-      Code:
-        S3Bucket: !Ref CodeS3Bucket
-        S3Key: datasynchronizer.zip
+      Handler: MiningMonitor.Workers.DataSynchronizer::MiningMonitor.Workers.DataSynchronizer.Program::Main
+      Runtime: dotnetcore2.1
+      CodeUri: 
+        Bucket: !Ref CodeS3Bucket
+        Key: datasynchronizer.zip
+      FunctionName: MiningMonitorDataSynchronizer
+      Timeout: 60
+      Role: !GetAtt WorkerRole.Arn
       Environment:
         Variables:
           ConnectionStrings__miningmonitor: !Ref MongoConnectionString
-      FunctionName: MiningMonitorDataSynchronizer
-      Handler: MiningMonitor.Workers.DataSynchronizer::MiningMonitor.Workers.DataSynchronizer.Program::Main
-      Role: !GetAtt WorkerRole.Arn
-      Runtime: dotnetcore2.1
-      Timeout: 60
-  DataSynchronizerSchedule:
-    Type: AWS::Events::Rule
-    Properties:
-      Name: DataSynchronizerSchedule
-      ScheduleExpression: rate(1 minute)
-      Targets:
-      -
-        Arn: !GetAtt DataSynchronizer.Arn
-        Id: DataSynchronizerTarget
-        Input: "null"
-  DataSynchronizerSchedulePermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      Action: lambda:InvokeFunction
-      FunctionName: !Ref DataSynchronizer
-      Principal: events.amazonaws.com
-      SourceArn: !GetAtt DataSynchronizerSchedule.Arn
+      Events:
+        Schedule:
+          Type: Schedule
+          Properties:
+            Schedule: rate(1 minute)
+            Input: "null"
 
   Maintenance:
-    Type: AWS::Lambda::Function
+    Type: AWS::Serverless::Function
     Properties:
-      Code:
-        S3Bucket: !Ref CodeS3Bucket
-        S3Key: maintenance.zip
+      Handler: MiningMonitor.Workers.Maintenance::MiningMonitor.Workers.Maintenance.Program::Main
+      Runtime: dotnetcore2.1
+      CodeUri: 
+        Bucket: !Ref CodeS3Bucket
+        Key: maintenance.zip
+      FunctionName: MiningMonitorMaintenance
+      Timeout: 60
+      Role: !GetAtt WorkerRole.Arn
       Environment:
         Variables:
           ConnectionStrings__miningmonitor: !Ref MongoConnectionString
-      FunctionName: MiningMonitorMaintenance
-      Handler: MiningMonitor.Workers.Maintenance::MiningMonitor.Workers.Maintenance.Program::Main
-      Role: !GetAtt WorkerRole.Arn
-      Runtime: dotnetcore2.1
-      Timeout: 60
-  MaintenanceSchedule:
-    Type: AWS::Events::Rule
-    Properties:
-      Name: MaintenanceSchedule
-      ScheduleExpression: rate(1 hour)
-      Targets:
-      -
-        Arn: !GetAtt Maintenance.Arn
-        Id: MaintenanceTarget
-        Input: "null"
-  MaintenanceSchedulePermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      Action: lambda:InvokeFunction
-      FunctionName: !Ref Maintenance
-      Principal: events.amazonaws.com
-      SourceArn: !GetAtt MaintenanceSchedule.Arn
+      Events:
+        Schedule:
+          Type: Schedule
+          Properties:
+            Schedule: rate(1 hour)
+            Input: "null"
