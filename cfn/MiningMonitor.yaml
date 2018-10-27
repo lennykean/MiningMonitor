@@ -1,0 +1,153 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  MongoConnectionString:
+    Type: String
+  CodeS3Bucket: 
+    Type: String
+
+Resources:
+  WorkerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - 
+          Effect: Allow
+          Principal:
+            Service: 
+            - lambda.amazonaws.com
+          Action: 
+          - sts:AssumeRole
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      RoleName: MiningMonitorWorkerRole
+
+  AlertScan:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Ref CodeS3Bucket
+        S3Key: alertscan.zip
+      Environment:
+        Variables:
+          ConnectionStrings__miningmonitor: !Ref MongoConnectionString
+      FunctionName: MiningMonitorAlertScan
+      Handler: MiningMonitor.Workers.AlertScan::MiningMonitor.Workers.AlertScan.Program::Main
+      Role: !GetAtt WorkerRole.Arn
+      Runtime: dotnetcore2.1
+      Timeout: 60
+  AlertScanSchedule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: AlertScanSchedule
+      ScheduleExpression: rate(1 minute)
+      Targets:
+      -
+        Arn: !GetAtt AlertScan.Arn
+        Id: AlertScanTarget
+        Input: "null"
+  AlertScanSchedulePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref AlertScan
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt AlertScanSchedule.Arn
+
+  DataCollector:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Ref CodeS3Bucket
+        S3Key: datacollector.zip
+      Environment:
+        Variables:
+          ConnectionStrings__miningmonitor: !Ref MongoConnectionString
+      FunctionName: MiningMonitorDataCollector
+      Handler: MiningMonitor.Workers.DataCollector::MiningMonitor.Workers.DataCollector.Program::Main
+      Role: !GetAtt WorkerRole.Arn
+      Runtime: dotnetcore2.1
+      Timeout: 60
+  DataCollectorSchedule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: DataCollectorSchedule
+      ScheduleExpression: rate(1 minute)
+      Targets:
+      -
+        Arn: !GetAtt DataCollector.Arn
+        Id: DataCollectorTarget
+        Input: "null"
+  DataCollectorSchedulePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref DataCollector
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt DataCollectorSchedule.Arn
+
+  DataSynchronizer:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Ref CodeS3Bucket
+        S3Key: datasynchronizer.zip
+      Environment:
+        Variables:
+          ConnectionStrings__miningmonitor: !Ref MongoConnectionString
+      FunctionName: MiningMonitorDataSynchronizer
+      Handler: MiningMonitor.Workers.DataSynchronizer::MiningMonitor.Workers.DataSynchronizer.Program::Main
+      Role: !GetAtt WorkerRole.Arn
+      Runtime: dotnetcore2.1
+      Timeout: 60
+  DataSynchronizerSchedule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: DataSynchronizerSchedule
+      ScheduleExpression: rate(1 minute)
+      Targets:
+      -
+        Arn: !GetAtt DataSynchronizer.Arn
+        Id: DataSynchronizerTarget
+        Input: "null"
+  DataSynchronizerSchedulePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref DataSynchronizer
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt DataSynchronizerSchedule.Arn
+
+  Maintenance:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Ref CodeS3Bucket
+        S3Key: maintenance.zip
+      Environment:
+        Variables:
+          ConnectionStrings__miningmonitor: !Ref MongoConnectionString
+      FunctionName: MiningMonitorMaintenance
+      Handler: MiningMonitor.Workers.Maintenance::MiningMonitor.Workers.Maintenance.Program::Main
+      Role: !GetAtt WorkerRole.Arn
+      Runtime: dotnetcore2.1
+      Timeout: 60
+  MaintenanceSchedule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: MaintenanceSchedule
+      ScheduleExpression: rate(1 hour)
+      Targets:
+      -
+        Arn: !GetAtt Maintenance.Arn
+        Id: MaintenanceTarget
+        Input: "null"
+  MaintenanceSchedulePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref Maintenance
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt MaintenanceSchedule.Arn

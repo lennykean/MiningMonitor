@@ -27,7 +27,6 @@ namespace MiningMonitor.Workers.Maintenance
                 .AddSingleton<MaintenanceWorker>()
                 .BuildServiceProvider())
             {
-
                 var worker = serviceProvider.GetService<MaintenanceWorker>();
 
                 await worker.DoWorkAsync(CancellationToken.None);
