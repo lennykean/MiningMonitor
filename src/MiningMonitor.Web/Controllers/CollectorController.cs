@@ -59,10 +59,10 @@ namespace MiningMonitor.Web.Controllers
             return Ok(response);
         }
 
-        [HttpDelete("{collectorId}"), Authorize(Policy = "Basic")]
-        public async Task<StatusCodeResult> DeleteAsync(string collectorId, CancellationToken token = default)
+        [HttpDelete("{collector}"), Authorize(Policy = "Basic")]
+        public async Task<StatusCodeResult> DeleteAsync(string collector, CancellationToken token = default)
         {
-            if (!await _collectorService.DeleteAsync(collectorId, token))
+            if (!await _collectorService.DeleteAsync(collector, token))
                 return NotFound();
 
             return NoContent();
