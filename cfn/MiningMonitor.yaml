@@ -7,6 +7,14 @@ Parameters:
   CodeS3Bucket: 
     Type: String
 
+Globals:
+  Function:
+    Runtime: dotnetcore2.1
+    Timeout: 60
+    Environment:
+      Variables:
+        ConnectionStrings__miningmonitor: !Ref MongoConnectionString
+
 Resources:
   WorkerRole:
     Type: AWS::IAM::Role
@@ -29,16 +37,11 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: MiningMonitor.Workers.AlertScan::MiningMonitor.Workers.AlertScan.Program::Main
-      Runtime: dotnetcore2.1
       CodeUri: 
         Bucket: !Ref CodeS3Bucket
         Key: alertscan.zip
       FunctionName: MiningMonitorAlertScan
-      Timeout: 60
       Role: !GetAtt WorkerRole.Arn
-      Environment:
-        Variables:
-          ConnectionStrings__miningmonitor: !Ref MongoConnectionString
       Events:
         Schedule:
           Type: Schedule
@@ -50,16 +53,11 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: MiningMonitor.Workers.DataCollector::MiningMonitor.Workers.DataCollector.Program::Main
-      Runtime: dotnetcore2.1
       CodeUri: 
         Bucket: !Ref CodeS3Bucket
         Key: datacollector.zip
       FunctionName: MiningMonitorDataCollector
-      Timeout: 60
       Role: !GetAtt WorkerRole.Arn
-      Environment:
-        Variables:
-          ConnectionStrings__miningmonitor: !Ref MongoConnectionString
       Events:
         Schedule:
           Type: Schedule
@@ -71,16 +69,11 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: MiningMonitor.Workers.DataSynchronizer::MiningMonitor.Workers.DataSynchronizer.Program::Main
-      Runtime: dotnetcore2.1
       CodeUri: 
         Bucket: !Ref CodeS3Bucket
         Key: datasynchronizer.zip
       FunctionName: MiningMonitorDataSynchronizer
-      Timeout: 60
       Role: !GetAtt WorkerRole.Arn
-      Environment:
-        Variables:
-          ConnectionStrings__miningmonitor: !Ref MongoConnectionString
       Events:
         Schedule:
           Type: Schedule
@@ -92,16 +85,11 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: MiningMonitor.Workers.Maintenance::MiningMonitor.Workers.Maintenance.Program::Main
-      Runtime: dotnetcore2.1
       CodeUri: 
         Bucket: !Ref CodeS3Bucket
         Key: maintenance.zip
       FunctionName: MiningMonitorMaintenance
-      Timeout: 60
       Role: !GetAtt WorkerRole.Arn
-      Environment:
-        Variables:
-          ConnectionStrings__miningmonitor: !Ref MongoConnectionString
       Events:
         Schedule:
           Type: Schedule
