@@ -113,5 +113,5 @@ Resources:
         AlertDefinitionsGet:
           Type: Api
           Properties:
-            Path: /api/AlertDefinitions
-            Method: Get
+            Path: /api/{proxy+}
+            Method: any
