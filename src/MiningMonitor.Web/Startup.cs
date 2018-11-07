@@ -16,6 +16,7 @@ using MiningMonitor.Data.MongoDb;
 using MiningMonitor.Security.Authorization;
 using MiningMonitor.Security.Identity;
 using MiningMonitor.Service;
+using MiningMonitor.Web.Swagger;
 using MiningMonitor.Workers.AlertScan;
 using MiningMonitor.Workers.DataCollector;
 using MiningMonitor.Workers.DataSynchronizer;
@@ -105,7 +106,13 @@ namespace MiningMonitor.Web
                 else 
                     configuration.RootPath = "ClientApp/dist";
             });
-            services.AddSwaggerGen(options => options.SwaggerDoc("v1", new Info { Title = "Mining Monitor API - V1", Version = "v1" }));
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new Info {Title = "Mining Monitor API - V1", Version = "v1"});
+                options.OperationFilter<ApiGatewayIntegrationFilter>();
+                options.OperationFilter<FromClaimParameterFilter>();
+                options.SchemaFilter<ReadonlyFilter>();
+            });
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider service)
