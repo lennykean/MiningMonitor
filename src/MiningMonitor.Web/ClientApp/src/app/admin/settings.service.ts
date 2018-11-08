@@ -1,19 +1,24 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
+import { BasePathService } from '../base-path.service';
+
 @Injectable({ providedIn: 'root' })
 export class SettingsService {
-    private static readonly baseUrl = '/api/serversettings';
+    private static readonly baseUrl = 'serversettings';
 
     constructor(
-        private http: HttpClient) {
+        private http: HttpClient,
+        private basePathService: BasePathService) {
     }
 
     public async GetAll() {
-        return await this.http.get<{ [key: string]: string }>(SettingsService.baseUrl).toPromise();
+        const url = `${this.basePathService.apiBasePath}${SettingsService.baseUrl}`;
+        return await this.http.get<{ [key: string]: string }>(url).toPromise();
     }
 
     public async Update(settings: { [key: string]: string }) {
-        return await this.http.put<{ [key: string]: string }>(SettingsService.baseUrl, settings).toPromise();
+        const url = `${this.basePathService.apiBasePath}${SettingsService.baseUrl}`;
+        return await this.http.put<{ [key: string]: string }>(url, settings).toPromise();
     }
 }

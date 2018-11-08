@@ -1,0 +1,1 @@
+window.apiBasePath = '/api/';

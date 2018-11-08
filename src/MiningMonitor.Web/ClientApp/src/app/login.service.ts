@@ -2,14 +2,16 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { TokenService } from './token.service';
+import { BasePathService } from './base-path.service';
 
 @Injectable({ providedIn: 'root' })
 export class LoginService {
-    private static readonly baseUrl = '/api/login';
+    private static readonly baseUrl = 'login';
     private loginRequired: boolean;
 
     constructor(
         private http: HttpClient,
+        private basePathService: BasePathService,
         private tokenService: TokenService) {
     }
 
@@ -19,7 +21,9 @@ export class LoginService {
 
     public async Login(username: string, password: string) {
         try {
-            this.tokenService.token = await this.http.post<string>(LoginService.baseUrl, { username, password }).toPromise();
+            const url = `${this.basePathService.apiBasePath}${LoginService.baseUrl}`;
+            this.tokenService.token = await this.http.post<string>(url, { username, password }).toPromise();
+
             this.loginRequired = false;
             return true;
         } catch (error) {
@@ -37,7 +41,8 @@ export class LoginService {
 
     public async LoginRequired() {
         if (this.loginRequired == null) {
-            this.loginRequired = await this.http.get<boolean>(`${LoginService.baseUrl}/required`).toPromise();
+            const url = `${this.basePathService.apiBasePath}${LoginService.baseUrl}/required`;
+            this.loginRequired = await this.http.get<boolean>(url).toPromise();
         }
         return this.loginRequired;
     }

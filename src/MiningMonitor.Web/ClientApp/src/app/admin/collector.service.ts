@@ -1,31 +1,37 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
+import { BasePathService } from '../base-path.service';
 import { Collector } from '../models/Collector';
 
 @Injectable({
     providedIn: 'root'
 })
 export class CollectorService {
-    private static readonly baseUrl = '/api/collector';
+    private static readonly baseUrl = 'collector';
 
     constructor(
-        private http: HttpClient) {
+        private http: HttpClient,
+        private basePathService: BasePathService) {
     }
 
     public async GetAll() {
-        return await this.http.get<Collector[]>(CollectorService.baseUrl).toPromise();
+        const url = `${this.basePathService.apiBasePath}${CollectorService.baseUrl}`;
+        return await this.http.get<Collector[]>(url).toPromise();
     }
 
     public async Create(collector: Collector) {
-        return await this.http.post<Collector>(CollectorService.baseUrl, collector).toPromise();
+        const url = `${this.basePathService.apiBasePath}${CollectorService.baseUrl}`;
+        return await this.http.post<Collector>(url, collector).toPromise();
     }
 
     public async Update(collector: Collector) {
-        return await this.http.put<Collector>(CollectorService.baseUrl, collector).toPromise();
+        const url = `${this.basePathService.apiBasePath}${CollectorService.baseUrl}`;
+        return await this.http.put<Collector>(url, collector).toPromise();
     }
 
     public async Delete(id: string) {
-        await this.http.delete(`${CollectorService.baseUrl}/${id}`).toPromise();
+        const url = `${this.basePathService.apiBasePath}${CollectorService.baseUrl}/${id}`;
+        await this.http.delete(url).toPromise();
     }
 }
