@@ -29,7 +29,7 @@ Globals:
   Api:
     Cors:
       AllowMethods: "'*'"
-      AllowHeaders: "'*'"
+      AllowHeaders: "'content-type, origin, authorization'"
       AllowOrigin: "'*'"
 
 Resources:

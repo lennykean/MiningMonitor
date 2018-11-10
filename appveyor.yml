@@ -53,7 +53,7 @@ for:
 
       Compress-Archive -Path src\MiningMonitor.Web\bin\Release\netcoreapp2.1\publish\* -DestinationPath .\miningmonitor.zip
       
-      Compress-Archive -Path src\MiningMonitor.Web\bin\Release\netcoreapp2.1\publish\ClientApp\* -DestinationPath .\clientapp.zip
+      Compress-Archive -Path src\MiningMonitor.Web\bin\Release\netcoreapp2.1\publish\ClientApp\dist\* -DestinationPath .\clientapp.zip
       
       dotnet publish -c Release src\MiningMonitor.Workers.AlertScan
       
