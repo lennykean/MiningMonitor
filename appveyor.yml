@@ -67,7 +67,7 @@ for:
       
       Compress-Archive -Path src\MiningMonitor.Workers.DataSynchronizer\bin\Release\netcoreapp2.1\publish\* -DestinationPath .\datasynchronizer.zip
       
-      dotnet publish -c Release src\MiningMonitor.Workers.Maintenance"
+      dotnet publish -c Release src\MiningMonitor.Workers.Maintenance
       
       Compress-Archive -Path src\MiningMonitor.Workers.Maintenance\bin\Release\netcoreapp2.1\publish\* -DestinationPath .\maintenance.zip
       
