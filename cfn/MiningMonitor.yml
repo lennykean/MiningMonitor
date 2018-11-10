@@ -4,13 +4,17 @@ Transform: AWS::Serverless-2016-10-31
 Parameters:
   MongoConnectionString:
     Type: String
-  CodeS3Bucket: 
+  LambdaS3Bucket:
+    Type: String
+  AppCertificateArn:
     Type: String
   ApiCertificateArn:
     Type: String
   AppBucketName:
     Type: String
   HostedZoneId:
+    Type: String
+  AppDomainName:
     Type: String
   ApiDomainName:
     Type: String  
@@ -22,9 +26,58 @@ Globals:
     Environment:
       Variables:
         ConnectionStrings__miningmonitor: !Ref MongoConnectionString
+  Api:
+    Cors:
+      AllowMethods: "'*'"
+      AllowHeaders: "'*'"
+      AllowOrigin: "'*'"
 
 Resources:
-  WorkerRole:
+  AppBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: PublicRead
+      BucketName: !Ref AppBucketName
+
+  AppCdn:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Aliases:
+        - !Ref AppDomainName
+        DefaultRootObject: index.html
+        CustomErrorResponses:
+        - ErrorCode: 404
+          ResponseCode: 200
+          ResponsePagePath: /index.html
+        DefaultCacheBehavior:
+          ForwardedValues:
+            QueryString: false
+          TargetOriginId: !Ref AppBucket
+          ViewerProtocolPolicy: redirect-to-https
+        Enabled: true
+        Origins:
+        - DomainName: !GetAtt AppBucket.DomainName
+          Id: !Ref AppBucket
+          S3OriginConfig: 
+            OriginAccessIdentity: !Ref AWS::NoValue
+        PriceClass: PriceClass_100
+        ViewerCertificate:
+          AcmCertificateArn: !Ref AppCertificateArn
+          MinimumProtocolVersion: TLSv1.1_2016
+          SslSupportMethod: sni-only
+
+  AppDnsRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      AliasTarget: 
+        DNSName: !GetAtt AppCdn.DomainName
+        HostedZoneId: Z2FDTNDATAQYW2
+      HostedZoneId: !Ref HostedZoneId
+      Name: !Ref AppDomainName
+      Type: A
+
+  LambdaWorkerRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -40,15 +93,15 @@ Resources:
       - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       RoleName: MiningMonitorWorkerRole
 
-  AlertScan:
+  AlertScanLambda:
     Type: AWS::Serverless::Function
     Properties:
       Handler: MiningMonitor.Workers.AlertScan::MiningMonitor.Workers.AlertScan.Program::Main
       CodeUri: 
-        Bucket: !Ref CodeS3Bucket
+        Bucket: !Ref LambdaS3Bucket
         Key: alertscan.zip
       FunctionName: MiningMonitorAlertScan
-      Role: !GetAtt WorkerRole.Arn
+      Role: !GetAtt LambdaWorkerRole.Arn
       Events:
         Schedule:
           Type: Schedule
@@ -56,15 +109,15 @@ Resources:
             Schedule: rate(1 minute)
             Input: "null"
 
-  DataCollector:
+  DataCollectorLambda:
     Type: AWS::Serverless::Function
     Properties:
       Handler: MiningMonitor.Workers.DataCollector::MiningMonitor.Workers.DataCollector.Program::Main
       CodeUri: 
-        Bucket: !Ref CodeS3Bucket
+        Bucket: !Ref LambdaS3Bucket
         Key: datacollector.zip
       FunctionName: MiningMonitorDataCollector
-      Role: !GetAtt WorkerRole.Arn
+      Role: !GetAtt LambdaWorkerRole.Arn
       Events:
         Schedule:
           Type: Schedule
@@ -72,15 +125,15 @@ Resources:
             Schedule: rate(1 minute)
             Input: "null"
 
-  DataSynchronizer:
+  DataSynchronizerLambda:
     Type: AWS::Serverless::Function
     Properties:
       Handler: MiningMonitor.Workers.DataSynchronizer::MiningMonitor.Workers.DataSynchronizer.Program::Main
       CodeUri: 
-        Bucket: !Ref CodeS3Bucket
+        Bucket: !Ref LambdaS3Bucket
         Key: datasynchronizer.zip
       FunctionName: MiningMonitorDataSynchronizer
-      Role: !GetAtt WorkerRole.Arn
+      Role: !GetAtt LambdaWorkerRole.Arn
       Events:
         Schedule:
           Type: Schedule
@@ -88,15 +141,15 @@ Resources:
             Schedule: rate(1 minute)
             Input: "null"
 
-  Maintenance:
+  MaintenanceLambda:
     Type: AWS::Serverless::Function
     Properties:
       Handler: MiningMonitor.Workers.Maintenance::MiningMonitor.Workers.Maintenance.Program::Main
       CodeUri:
-        Bucket: !Ref CodeS3Bucket
+        Bucket: !Ref LambdaS3Bucket
         Key: maintenance.zip
       FunctionName: MiningMonitorMaintenance
-      Role: !GetAtt WorkerRole.Arn
+      Role: !GetAtt LambdaWorkerRole.Arn
       Events:
         Schedule:
           Type: Schedule
@@ -104,19 +157,19 @@ Resources:
             Schedule: rate(1 hour)
             Input: "null"
 
-  MiningMonitor:
+  MiningMonitorLambda:
     Type: AWS::Serverless::Function
     Properties:
       Handler: MiningMonitor.Web::MiningMonitor.Web.LambdaEntryPoint::FunctionHandlerAsync
       CodeUri:
-        Bucket: !Ref CodeS3Bucket
+        Bucket: !Ref LambdaS3Bucket
         Key: miningmonitor.zip
       Environment:
         Variables:
           use_mongo: "true"
           disable_background_workers: "true"
       FunctionName: MiningMonitorApi
-      Role: !GetAtt WorkerRole.Arn
+      Role: !GetAtt LambdaWorkerRole.Arn
       Events:
         Api:
           Type: Api
@@ -125,44 +178,20 @@ Resources:
             Method: any
             RestApiId: !Ref Api
 
-  AppBucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      AccessControl: PublicRead
-      BucketName: !Ref AppBucketName
-
-  AppCdn:
-    Type: AWS::CloudFront::Distribution
-    Properties:
-      DistributionConfig:
-        DefaultRootObject: index.html
-        DefaultCacheBehavior:
-          ForwardedValues:
-            QueryString: false
-          TargetOriginId: !Ref AppBucket
-          ViewerProtocolPolicy: redirect-to-https
-        Enabled: true
-        Origins:
-        - DomainName: !GetAtt AppBucket.DomainName
-          Id: !Ref AppBucket
-          S3OriginConfig: 
-            OriginAccessIdentity: !Ref AWS::NoValue
-        PriceClass: PriceClass_100
-
   ApiGatewayDomainName:
     Type: AWS::ApiGateway::DomainName
     Properties:
       CertificateArn: !Ref ApiCertificateArn
       DomainName: !Ref ApiDomainName
 
-  ApiBasePath:
+  ApiBasePathMapping:
     Type: AWS::ApiGateway::BasePathMapping
     Properties:
       DomainName: !Ref ApiGatewayDomainName
       RestApiId: !Ref Api
       Stage: prod
 
-  ApiDNSRecord:
+  ApiDnsRecord:
     Type: AWS::Route53::RecordSet
     Properties:
       AliasTarget: 
@@ -210,7 +239,7 @@ Resources:
                 type: aws_proxy
                 httpMethod: POST
                 uri:
-                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
             put:
               tags:
                 - AlertDefinitions
@@ -234,7 +263,7 @@ Resources:
                 type: aws_proxy
                 httpMethod: POST
                 uri:
-                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
             post:
               tags:
                 - AlertDefinitions
@@ -258,7 +287,7 @@ Resources:
                 type: aws_proxy
                 httpMethod: POST
                 uri:
-                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
           '/api/alertdefinitions/{id}':
             get:
               tags:
@@ -279,7 +308,7 @@ Resources:
                 type: aws_proxy
                 httpMethod: POST
                 uri:
-                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
             delete:
               tags:
                 - AlertDefinitions
@@ -299,7 +328,7 @@ Resources:
                 type: aws_proxy
                 httpMethod: POST
                 uri:
-                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
           /api/alerts:
             get:
               tags:
@@ -328,7 +357,7 @@ Resources:
                 type: aws_proxy
                 httpMethod: POST
                 uri:
-                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
           '/api/alerts/miner/{minerid}':
             get:
               tags:
@@ -362,7 +391,7 @@ Resources:
                 type: aws_proxy
                 httpMethod: POST
                 uri:
-                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
           '/api/alerts/{id}':
             get:
               tags:
@@ -383,7 +412,7 @@ Resources:
                 type: aws_proxy
                 httpMethod: POST
                 uri:
-                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
           '/api/alerts/{id}/acknowledge':
             post:
               tags:
@@ -404,7 +433,7 @@ Resources:
                 type: aws_proxy
                 httpMethod: POST
                 uri:
-                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
           /api/collector:
             get:
               tags:
@@ -428,7 +457,7 @@ Resources:
                 type: aws_proxy
                 httpMethod: POST
                 uri:
-                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
             put:
               tags:
                 - Collector
@@ -452,7 +481,7 @@ Resources:
                 type: aws_proxy
                 httpMethod: POST
                 uri:
-                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
             post:
               tags:
                 - Collector
@@ -476,7 +505,7 @@ Resources:
                 type: aws_proxy
                 httpMethod: POST
                 uri:
-                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
           '/api/collector/{collector}':
             get:
               tags:
@@ -496,7 +525,7 @@ Resources:
                 type: aws_proxy
                 httpMethod: POST
                 uri:
-                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
             delete:
               tags:
                 - Collector
@@ -515,7 +544,7 @@ Resources:
                 type: aws_proxy
                 httpMethod: POST
                 uri:
-                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
           /api/login/required:
             get:
               tags:
@@ -536,7 +565,7 @@ Resources:
                 type: aws_proxy
                 httpMethod: POST
                 uri:
-                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
           /api/login:
             post:
               tags:
@@ -561,7 +590,7 @@ Resources:
                 type: aws_proxy
                 httpMethod: POST
                 uri:
-                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
           /api/miners:
             get:
               tags:
@@ -585,7 +614,7 @@ Resources:
                 type: aws_proxy
                 httpMethod: POST
                 uri:
-                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
             put:
               tags:
                 - Miners
@@ -609,7 +638,7 @@ Resources:
                 type: aws_proxy
                 httpMethod: POST
                 uri:
-                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
             post:
               tags:
                 - Miners
@@ -633,7 +662,7 @@ Resources:
                 type: aws_proxy
                 httpMethod: POST
                 uri:
-                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
           '/api/miners/{id}':
             get:
               tags:
@@ -654,7 +683,7 @@ Resources:
                 type: aws_proxy
                 httpMethod: POST
                 uri:
-                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
             delete:
               tags:
                 - Miners
@@ -674,7 +703,7 @@ Resources:
                 type: aws_proxy
                 httpMethod: POST
                 uri:
-                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
           '/api/miners/collector/{collector}':
             post:
               tags:
@@ -703,7 +732,7 @@ Resources:
                 type: aws_proxy
                 httpMethod: POST
                 uri:
-                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
           /api/serversettings:
             get:
               tags:
@@ -726,7 +755,7 @@ Resources:
                 type: aws_proxy
                 httpMethod: POST
                 uri:
-                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
             put:
               tags:
                 - ServerSettings
@@ -752,7 +781,7 @@ Resources:
                 type: aws_proxy
                 httpMethod: POST
                 uri:
-                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
           '/api/serversettings/{setting}':
             get:
               tags:
@@ -772,7 +801,7 @@ Resources:
                 type: aws_proxy
                 httpMethod: POST
                 uri:
-                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
           '/api/snapshots/{minerid}':
             get:
               tags:
@@ -811,7 +840,7 @@ Resources:
                 type: aws_proxy
                 httpMethod: POST
                 uri:
-                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
           '/api/snapshots/collector/{collector}/{minerid}':
             post:
               tags:
@@ -845,7 +874,7 @@ Resources:
                 type: aws_proxy
                 httpMethod: POST
                 uri:
-                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
           /api/users:
             get:
               tags:
@@ -869,7 +898,7 @@ Resources:
                 type: aws_proxy
                 httpMethod: POST
                 uri:
-                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
             post:
               tags:
                 - Users
@@ -893,7 +922,7 @@ Resources:
                 type: aws_proxy
                 httpMethod: POST
                 uri:
-                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
           '/api/users/{username}':
             delete:
               tags:
@@ -913,7 +942,7 @@ Resources:
                 type: aws_proxy
                 httpMethod: POST
                 uri:
-                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
           /api/version:
             get:
               tags:
@@ -934,7 +963,7 @@ Resources:
                 type: aws_proxy
                 httpMethod: POST
                 uri:
-                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
         definitions:
           AlertDefinition:
             required:

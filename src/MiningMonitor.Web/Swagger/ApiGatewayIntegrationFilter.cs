@@ -14,7 +14,7 @@ namespace MiningMonitor.Web.Swagger
                 httpMethod = "POST",
                 uri = new Dictionary<string, string>
                 {
-                    ["Fn::Sub"] = $"arn:aws:apigateway:${{AWS::Region}}:lambda:path/2015-03-31/functions/${{MiningMonitor.Arn}}/invocations"
+                    ["Fn::Sub"] = "arn:aws:apigateway:${{AWS::Region}}:lambda:path/2015-03-31/functions/${{MiningMonitorLambda.Arn}}/invocations"
                 }
             });
         }

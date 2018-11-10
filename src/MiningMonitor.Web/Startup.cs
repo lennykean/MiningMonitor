@@ -94,6 +94,7 @@ namespace MiningMonitor.Web
             // MVC
             services
                 .AddResponseCompression()
+                .AddCors()
                 .AddMvc(options => options.AddClaimsValueProvider())
                 .AddJsonOptions(options =>
                 {
@@ -121,6 +122,10 @@ namespace MiningMonitor.Web
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider service)
         {
             app.UseResponseCompression()
+                .UseCors(policy => policy
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowAnyOrigin())
                 .UseStaticFiles()
                 .UseAuthentication()
                 .UseMvc(routes =>
