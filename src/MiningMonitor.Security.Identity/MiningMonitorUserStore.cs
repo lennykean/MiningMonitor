@@ -5,14 +5,13 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
-using AspNetCore.Identity.LiteDB;
-
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 
 using MiningMonitor.Data;
-using MiningMonitor.Security.Identity;
+using MiningMonitor.Model.Identity;
 
-namespace Microsoft.AspNetCore.Identity.MongoDB
+namespace MiningMonitor.Security.Identity
 {
     public class MiningMonitorUserStore :
         IUserPasswordStore<MiningMonitorUser>,

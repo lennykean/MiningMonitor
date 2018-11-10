@@ -2,16 +2,18 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
+import { BasePathService } from '../base-path.service';
 import { Miner } from '../models/Miner';
 
 @Injectable({ providedIn: 'root' })
 export class MinerService {
-    private static readonly baseUrl = '/api/miners';
+    private static readonly baseUrl = 'miners';
 
     private _miners: BehaviorSubject<Miner[]>;
 
     constructor(
-        private http: HttpClient) {
+        private http: HttpClient,
+        private basePathService: BasePathService, ) {
     }
 
     public get miners(): Observable<Miner[]> {
@@ -23,29 +25,39 @@ export class MinerService {
     }
 
     public async Get(id: string) {
-        return await this.http.get<Miner>(`${MinerService.baseUrl}/${id}`).toPromise();
+        const url = `${this.basePathService.apiBasePath}${MinerService.baseUrl}/${id}`;
+
+        return await this.http.get<Miner>(url).toPromise();
     }
 
     public async Create(miner: Miner) {
-        miner = await this.http.post<Miner>(MinerService.baseUrl, miner).toPromise();
+        const url = `${this.basePathService.apiBasePath}${MinerService.baseUrl}`;
+
+        miner = await this.http.post<Miner>(url, miner).toPromise();
         this.RefreshMiners();
 
         return miner;
     }
 
     public async Update(miner: Miner) {
-        miner = await this.http.put<Miner>(MinerService.baseUrl, miner).toPromise();
+        const url = `${this.basePathService.apiBasePath}${MinerService.baseUrl}`;
+
+        miner = await this.http.put<Miner>(url, miner).toPromise();
         this.RefreshMiners();
 
         return miner;
     }
 
     public async Delete(id: string) {
-        await this.http.delete(`${MinerService.baseUrl}/${id}`).toPromise();
+        const url = `${this.basePathService.apiBasePath}${MinerService.baseUrl}/${id}`;
+
+        await this.http.delete(url).toPromise();
         this.RefreshMiners();
     }
 
     private RefreshMiners() {
-        this.http.get<Miner[]>(MinerService.baseUrl).subscribe(miners => this._miners.next(miners));
+        const url = `${this.basePathService.apiBasePath}${MinerService.baseUrl}`;
+
+        this.http.get<Miner[]>(url).subscribe(miners => this._miners.next(miners));
     }
 }

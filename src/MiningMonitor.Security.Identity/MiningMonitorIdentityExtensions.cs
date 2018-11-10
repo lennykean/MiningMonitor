@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.MongoDB;
+using Microsoft.Extensions.DependencyInjection;
 
-using MiningMonitor.Security.Identity;
+using MiningMonitor.Model.Identity;
 
-namespace Microsoft.Extensions.DependencyInjection
+namespace MiningMonitor.Security.Identity
 {
     public static class MongoIdentityBuilderExtensions
     {

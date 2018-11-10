@@ -4,7 +4,8 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Identity;
-
+using MiningMonitor.Model;
+using MiningMonitor.Model.Identity;
 using MiningMonitor.Security.Identity;
 
 namespace MiningMonitor.Service

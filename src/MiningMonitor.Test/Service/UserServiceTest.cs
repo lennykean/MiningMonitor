@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 
 using MiningMonitor.Model;
+using MiningMonitor.Model.Identity;
 using MiningMonitor.Security.Identity;
 using MiningMonitor.Service;
 using MiningMonitor.Service.Mapper;

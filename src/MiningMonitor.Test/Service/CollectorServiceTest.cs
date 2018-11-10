@@ -11,7 +11,6 @@ using LiteDB;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.MongoDB;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -19,6 +18,7 @@ using MiningMonitor.Common;
 using MiningMonitor.Common.Mapper;
 using MiningMonitor.Data.LiteDb;
 using MiningMonitor.Model;
+using MiningMonitor.Model.Identity;
 using MiningMonitor.Security.Identity;
 using MiningMonitor.Service;
 using MiningMonitor.Service.Mapper;

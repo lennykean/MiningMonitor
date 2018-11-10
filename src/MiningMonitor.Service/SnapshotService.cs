@@ -12,21 +12,21 @@ namespace MiningMonitor.Service
 {
     public class SnapshotService : ISnapshotService
     {
-        private readonly IRepository<Snapshot, Guid> _collection;
+        private readonly IRepository<Snapshot, Guid> _snapshotRepository;
 
-        public SnapshotService(IRepository<Snapshot, Guid> collection)
+        public SnapshotService(IRepository<Snapshot, Guid> snapshotRepository)
         {
-            _collection = collection;
+            _snapshotRepository = snapshotRepository;
         }
 
         public async Task<IEnumerable<Snapshot>> GetAllAsync(CancellationToken token = default)
         {
-            return await _collection.FindAllAsync(token);
+            return await _snapshotRepository.FindAllAsync(token);
         }
 
         public async Task<IEnumerable<Snapshot>> GetByMinerAsync(Guid minerId, Period period, CancellationToken token = default)
         {
-            return await _collection.FindAsync(snapshot => snapshot.MinerId == minerId && snapshot.SnapshotTime >= period.Start && snapshot.SnapshotTime <= period.End, token);
+            return await _snapshotRepository.FindAsync(snapshot => snapshot.MinerId == minerId && snapshot.SnapshotTime >= period.Start && snapshot.SnapshotTime <= period.End, token);
         }
 
         public async Task<IEnumerable<Snapshot>> GetByMinerFillGapsAsync(Guid minerId, ConcretePeriod period, TimeSpan interval, CancellationToken token = default)
@@ -39,36 +39,36 @@ namespace MiningMonitor.Service
             snapshot.Id = Guid.NewGuid();
             snapshot.IsSynced = false;
 
-            await _collection.InsertAsync(snapshot, token);
+            await _snapshotRepository.InsertAsync(snapshot, token);
         }
 
         public async Task UpsertAsync(Snapshot snapshot, CancellationToken token = default)
         {
             snapshot.IsSynced = false;
 
-            await _collection.UpsertAsync(snapshot, token);
+            await _snapshotRepository.UpsertAsync(snapshot, token);
         }
 
         public async Task<bool> SetSyncedAsync(Snapshot snapshot, CancellationToken token = default)
         {
             snapshot.IsSynced = true;
 
-            return await _collection.UpdateAsync(snapshot, token);
+            return await _snapshotRepository.UpdateAsync(snapshot, token);
         }
 
         public async Task DeleteAsync(Guid snapshotId, CancellationToken token = default)
         {
-            await _collection.DeleteAsync(snapshotId, token);
+            await _snapshotRepository.DeleteAsync(snapshotId, token);
         }
 
         public async Task DeleteByMinerAsync(Guid minerId, CancellationToken token = default)
         {
-            await _collection.DeleteAsync(s => s.MinerId == minerId, token);
+            await _snapshotRepository.DeleteAsync(s => s.MinerId == minerId, token);
         }
 
         public async Task<int> DeleteOldAsync(DateTime cutoff, CancellationToken token = default)
         {
-            return await _collection.DeleteAsync(s => s.SnapshotTime < cutoff, token);
+            return await _snapshotRepository.DeleteAsync(s => s.SnapshotTime < cutoff, token);
         }
     }
 }

@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using MiningMonitor.Common.Mapper;
 using MiningMonitor.Model;
+using MiningMonitor.Model.Identity;
 using MiningMonitor.Security.Identity;
 using MiningMonitor.Service.Mapper;
 

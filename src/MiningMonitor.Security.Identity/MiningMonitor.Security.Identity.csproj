@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MiningMonitor.Data\MiningMonitor.Data.csproj" />
+    <ProjectReference Include="..\MiningMonitor.Model\MiningMonitor.Model.csproj" />
   </ItemGroup>
 
 </Project>

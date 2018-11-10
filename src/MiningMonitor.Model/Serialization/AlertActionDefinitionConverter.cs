@@ -1,10 +1,9 @@
-﻿using System;
-
-using MiningMonitor.Model.Alerts;
-using MiningMonitor.Model.Alerts.Actions;
+﻿using MiningMonitor.Model.Alerts.Actions;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+
+using System;
 
 namespace MiningMonitor.Model.Serialization
 {

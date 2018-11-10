@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 using MiningMonitor.Data;
 using MiningMonitor.Model;
-using MiningMonitor.Security.Identity;
+using MiningMonitor.Model.Identity;
 
 namespace MiningMonitor.Service
 {

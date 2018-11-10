@@ -13,9 +13,12 @@ using Microsoft.Extensions.Hosting;
 
 using MiningMonitor.BackgroundScheduler;
 using MiningMonitor.Data.MongoDb;
+using MiningMonitor.Model;
+using MiningMonitor.Model.Identity;
 using MiningMonitor.Security.Authorization;
 using MiningMonitor.Security.Identity;
 using MiningMonitor.Service;
+using MiningMonitor.Web.Swagger;
 using MiningMonitor.Workers.AlertScan;
 using MiningMonitor.Workers.DataCollector;
 using MiningMonitor.Workers.DataSynchronizer;
@@ -91,6 +94,7 @@ namespace MiningMonitor.Web
             // MVC
             services
                 .AddResponseCompression()
+                .AddCors()
                 .AddMvc(options => options.AddClaimsValueProvider())
                 .AddJsonOptions(options =>
                 {
@@ -105,12 +109,23 @@ namespace MiningMonitor.Web
                 else 
                     configuration.RootPath = "ClientApp/dist";
             });
-            services.AddSwaggerGen(options => options.SwaggerDoc("v1", new Info { Title = "Mining Monitor API - V1", Version = "v1" }));
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new Info {Title = "Mining Monitor API - V1", Version = "v1"});
+                options.OperationFilter<ApiGatewayIntegrationFilter>();
+                options.OperationFilter<FromClaimParameterFilter>();
+                options.DocumentFilter<LowercaseDocumentFilter>();
+                options.SchemaFilter<ReadonlyFilter>();
+            });
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider service)
         {
             app.UseResponseCompression()
+                .UseCors(policy => policy
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowAnyOrigin())
                 .UseStaticFiles()
                 .UseAuthentication()
                 .UseMvc(routes =>

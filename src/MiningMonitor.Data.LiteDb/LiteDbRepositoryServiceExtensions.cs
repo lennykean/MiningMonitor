@@ -8,6 +8,7 @@ using MiningMonitor.Data.LiteDb;
 using MiningMonitor.Data.LiteDb.Serialization;
 using MiningMonitor.Model;
 using MiningMonitor.Model.Alerts;
+using MiningMonitor.Model.Identity;
 using MiningMonitor.Security.Identity;
 
 namespace MiningMonitor.Data.MongoDb

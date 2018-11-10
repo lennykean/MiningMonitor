@@ -40,10 +40,12 @@ namespace MiningMonitor.Web.Controllers
         [HttpPut, Authorize(Policy = "Basic")]
         public async Task<IActionResult> PutAsync([FromBody]Collector collector, CancellationToken token = default)
         {
-            var success = await _collectorService.UpdateAsync(collector, token);
+            var (result, found) = await _collectorService.UpdateAsync(collector, token);
 
-            if (!success)
+            if (!found)
                 return NotFound();
+            if (!result.IsValid)
+                return BadRequest(result);
 
             return Ok(collector);
         }
@@ -59,10 +61,10 @@ namespace MiningMonitor.Web.Controllers
             return Ok(response);
         }
 
-        [HttpDelete("{collectorId}"), Authorize(Policy = "Basic")]
-        public async Task<StatusCodeResult> DeleteAsync(string collectorId, CancellationToken token = default)
+        [HttpDelete("{collector}"), Authorize(Policy = "Basic")]
+        public async Task<StatusCodeResult> DeleteAsync(string collector, CancellationToken token = default)
         {
-            if (!await _collectorService.DeleteAsync(collectorId, token))
+            if (!await _collectorService.DeleteAsync(collector, token))
                 return NotFound();
 
             return NoContent();

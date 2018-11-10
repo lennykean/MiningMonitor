@@ -1,38 +1,46 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
+import { BasePathService } from '../base-path.service';
 import { AlertDefinition } from '../models/AlertDefinition';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AlertDefinitionsService {
-    private static readonly baseUrl = '/api/alertdefinitions';
+    private static readonly baseUrl = 'alertdefinitions';
 
     constructor(
-        private http: HttpClient) {
+        private http: HttpClient,
+        private basePathService: BasePathService) {
     }
 
     public async GetAll(minerId?: string) {
+        let url = `${this.basePathService.apiBasePath}${AlertDefinitionsService.baseUrl}`;
+
         if (minerId) {
-            return await this.http.get<AlertDefinition[]>(`${AlertDefinitionsService.baseUrl}?minerId=${minerId}`).toPromise();
+            url = `${url}?minerId=${minerId}`;
         }
-        return await this.http.get<AlertDefinition[]>(AlertDefinitionsService.baseUrl).toPromise();
+        return await this.http.get<AlertDefinition[]>(url).toPromise();
     }
 
     public async Get(id: string) {
-        return await this.http.get<AlertDefinition>(`${AlertDefinitionsService.baseUrl}/${id}`).toPromise();
+        const url = `${this.basePathService.apiBasePath}${AlertDefinitionsService.baseUrl}/${id}`;
+        return await this.http.get<AlertDefinition>(url).toPromise();
     }
 
     public async Create(alertdefinition: AlertDefinition) {
-        return await this.http.post<AlertDefinition>(AlertDefinitionsService.baseUrl, alertdefinition).toPromise();
+        const url = `${this.basePathService.apiBasePath}${AlertDefinitionsService.baseUrl}`;
+        return await this.http.post<AlertDefinition>(url, alertdefinition).toPromise();
     }
 
     public async Update(alertdefinition: AlertDefinition) {
-        return await this.http.put<AlertDefinition>(AlertDefinitionsService.baseUrl, alertdefinition).toPromise();
+        const url = `${this.basePathService.apiBasePath}${AlertDefinitionsService.baseUrl}`;
+        return await this.http.put<AlertDefinition>(url, alertdefinition).toPromise();
     }
 
     public async Delete(id: string) {
-        await this.http.delete(`${AlertDefinitionsService.baseUrl}/${id}`).toPromise();
+        const url = `${this.basePathService.apiBasePath}${AlertDefinitionsService.baseUrl}/${id}`;
+        await this.http.delete(url).toPromise();
     }
 }

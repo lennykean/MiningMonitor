@@ -1,0 +1,1262 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  MongoConnectionString:
+    Type: String
+  LambdaS3Bucket:
+    Type: String
+  AppCertificateArn:
+    Type: String
+  ApiCertificateArn:
+    Type: String
+  AppBucketName:
+    Type: String
+  HostedZoneId:
+    Type: String
+  AppDomainName:
+    Type: String
+  ApiDomainName:
+    Type: String  
+
+Globals:
+  Function:
+    Runtime: dotnetcore2.1
+    Timeout: 60
+    Environment:
+      Variables:
+        ConnectionStrings__miningmonitor: !Ref MongoConnectionString
+  Api:
+    Cors:
+      AllowMethods: "'*'"
+      AllowHeaders: "'*'"
+      AllowOrigin: "'*'"
+
+Resources:
+  AppBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: PublicRead
+      BucketName: !Ref AppBucketName
+
+  AppCdn:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Aliases:
+        - !Ref AppDomainName
+        DefaultRootObject: index.html
+        CustomErrorResponses:
+        - ErrorCode: 404
+          ResponseCode: 200
+          ResponsePagePath: /index.html
+        DefaultCacheBehavior:
+          ForwardedValues:
+            QueryString: false
+          TargetOriginId: !Ref AppBucket
+          ViewerProtocolPolicy: redirect-to-https
+        Enabled: true
+        Origins:
+        - DomainName: !GetAtt AppBucket.DomainName
+          Id: !Ref AppBucket
+          S3OriginConfig: 
+            OriginAccessIdentity: !Ref AWS::NoValue
+        PriceClass: PriceClass_100
+        ViewerCertificate:
+          AcmCertificateArn: !Ref AppCertificateArn
+          MinimumProtocolVersion: TLSv1.1_2016
+          SslSupportMethod: sni-only
+
+  AppDnsRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      AliasTarget: 
+        DNSName: !GetAtt AppCdn.DomainName
+        HostedZoneId: Z2FDTNDATAQYW2
+      HostedZoneId: !Ref HostedZoneId
+      Name: !Ref AppDomainName
+      Type: A
+
+  LambdaWorkerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: 
+            - lambda.amazonaws.com
+          Action: 
+          - sts:AssumeRole
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      RoleName: MiningMonitorWorkerRole
+
+  AlertScanLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: MiningMonitor.Workers.AlertScan::MiningMonitor.Workers.AlertScan.Program::Main
+      CodeUri: 
+        Bucket: !Ref LambdaS3Bucket
+        Key: alertscan.zip
+      FunctionName: MiningMonitorAlertScan
+      Role: !GetAtt LambdaWorkerRole.Arn
+      Events:
+        Schedule:
+          Type: Schedule
+          Properties:
+            Schedule: rate(1 minute)
+            Input: "null"
+
+  DataCollectorLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: MiningMonitor.Workers.DataCollector::MiningMonitor.Workers.DataCollector.Program::Main
+      CodeUri: 
+        Bucket: !Ref LambdaS3Bucket
+        Key: datacollector.zip
+      FunctionName: MiningMonitorDataCollector
+      Role: !GetAtt LambdaWorkerRole.Arn
+      Events:
+        Schedule:
+          Type: Schedule
+          Properties:
+            Schedule: rate(1 minute)
+            Input: "null"
+
+  DataSynchronizerLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: MiningMonitor.Workers.DataSynchronizer::MiningMonitor.Workers.DataSynchronizer.Program::Main
+      CodeUri: 
+        Bucket: !Ref LambdaS3Bucket
+        Key: datasynchronizer.zip
+      FunctionName: MiningMonitorDataSynchronizer
+      Role: !GetAtt LambdaWorkerRole.Arn
+      Events:
+        Schedule:
+          Type: Schedule
+          Properties:
+            Schedule: rate(1 minute)
+            Input: "null"
+
+  MaintenanceLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: MiningMonitor.Workers.Maintenance::MiningMonitor.Workers.Maintenance.Program::Main
+      CodeUri:
+        Bucket: !Ref LambdaS3Bucket
+        Key: maintenance.zip
+      FunctionName: MiningMonitorMaintenance
+      Role: !GetAtt LambdaWorkerRole.Arn
+      Events:
+        Schedule:
+          Type: Schedule
+          Properties:
+            Schedule: rate(1 hour)
+            Input: "null"
+
+  MiningMonitorLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: MiningMonitor.Web::MiningMonitor.Web.LambdaEntryPoint::FunctionHandlerAsync
+      CodeUri:
+        Bucket: !Ref LambdaS3Bucket
+        Key: miningmonitor.zip
+      Environment:
+        Variables:
+          use_mongo: "true"
+          disable_background_workers: "true"
+      FunctionName: MiningMonitorApi
+      Role: !GetAtt LambdaWorkerRole.Arn
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /api/{proxy+}
+            Method: any
+            RestApiId: !Ref Api
+
+  ApiGatewayDomainName:
+    Type: AWS::ApiGateway::DomainName
+    Properties:
+      CertificateArn: !Ref ApiCertificateArn
+      DomainName: !Ref ApiDomainName
+
+  ApiBasePathMapping:
+    Type: AWS::ApiGateway::BasePathMapping
+    Properties:
+      DomainName: !Ref ApiGatewayDomainName
+      RestApiId: !Ref Api
+      Stage: prod
+
+  ApiDnsRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      AliasTarget: 
+        DNSName: !GetAtt ApiGatewayDomainName.DistributionDomainName
+        HostedZoneId: !GetAtt ApiGatewayDomainName.DistributionHostedZoneId
+      HostedZoneId: !Ref HostedZoneId
+      Name: !Ref ApiDomainName
+      Type: A
+
+  Api:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: prod
+      DefinitionBody:
+        swagger: '2.0'
+        info:
+          version: v1
+          title: Mining Monitor API - V1
+        paths:
+          /api/alertdefinitions:
+            get:
+              tags:
+                - AlertDefinitions
+              operationId: ApiAlertDefinitionsGet
+              consumes: []
+              produces:
+                - text/plain
+                - application/json
+                - text/json
+              parameters:
+                - name: minerId
+                  in: query
+                  required: false
+                  type: string
+                  format: uuid
+              responses:
+                '200':
+                  description: Success
+                  schema:
+                    uniqueItems: false
+                    type: array
+                    items:
+                      $ref: '#/definitions/AlertDefinition'
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri:
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
+            put:
+              tags:
+                - AlertDefinitions
+              operationId: ApiAlertDefinitionsPut
+              consumes:
+                - application/json-patch+json
+                - application/json
+                - text/json
+                - application/*+json
+              produces: []
+              parameters:
+                - name: alertDefinition
+                  in: body
+                  required: false
+                  schema:
+                    $ref: '#/definitions/AlertDefinition'
+              responses:
+                '200':
+                  description: Success
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri:
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
+            post:
+              tags:
+                - AlertDefinitions
+              operationId: ApiAlertDefinitionsPost
+              consumes:
+                - application/json-patch+json
+                - application/json
+                - text/json
+                - application/*+json
+              produces: []
+              parameters:
+                - name: alertDefinition
+                  in: body
+                  required: false
+                  schema:
+                    $ref: '#/definitions/AlertDefinition'
+              responses:
+                '200':
+                  description: Success
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri:
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
+          '/api/alertdefinitions/{id}':
+            get:
+              tags:
+                - AlertDefinitions
+              operationId: ApiAlertDefinitionsByIdGet
+              consumes: []
+              produces: []
+              parameters:
+                - name: id
+                  in: path
+                  required: true
+                  type: string
+                  format: uuid
+              responses:
+                '200':
+                  description: Success
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri:
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
+            delete:
+              tags:
+                - AlertDefinitions
+              operationId: ApiAlertDefinitionsByIdDelete
+              consumes: []
+              produces: []
+              parameters:
+                - name: id
+                  in: path
+                  required: true
+                  type: string
+                  format: uuid
+              responses:
+                '200':
+                  description: Success
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri:
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
+          /api/alerts:
+            get:
+              tags:
+                - Alerts
+              operationId: ApiAlertsGet
+              consumes: []
+              produces:
+                - text/plain
+                - application/json
+                - text/json
+              parameters:
+                - name: includeAcknowledged
+                  in: query
+                  required: false
+                  type: boolean
+                  default: false
+              responses:
+                '200':
+                  description: Success
+                  schema:
+                    uniqueItems: false
+                    type: array
+                    items:
+                      $ref: '#/definitions/Alert'
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri:
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
+          '/api/alerts/miner/{minerid}':
+            get:
+              tags:
+                - Alerts
+              operationId: ApiAlertsMinerByMinerIdGet
+              consumes: []
+              produces:
+                - text/plain
+                - application/json
+                - text/json
+              parameters:
+                - name: minerId
+                  in: path
+                  required: true
+                  type: string
+                  format: uuid
+                - name: includeAcknowledged
+                  in: query
+                  required: false
+                  type: boolean
+                  default: false
+              responses:
+                '200':
+                  description: Success
+                  schema:
+                    uniqueItems: false
+                    type: array
+                    items:
+                      $ref: '#/definitions/Alert'
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri:
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
+          '/api/alerts/{id}':
+            get:
+              tags:
+                - Alerts
+              operationId: ApiAlertsByIdGet
+              consumes: []
+              produces: []
+              parameters:
+                - name: id
+                  in: path
+                  required: true
+                  type: string
+                  format: uuid
+              responses:
+                '200':
+                  description: Success
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri:
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
+          '/api/alerts/{id}/acknowledge':
+            post:
+              tags:
+                - Alerts
+              operationId: ApiAlertsByIdAcknowledgePost
+              consumes: []
+              produces: []
+              parameters:
+                - name: id
+                  in: path
+                  required: true
+                  type: string
+                  format: uuid
+              responses:
+                '200':
+                  description: Success
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri:
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
+          /api/collector:
+            get:
+              tags:
+                - Collector
+              operationId: ApiCollectorGet
+              consumes: []
+              produces:
+                - text/plain
+                - application/json
+                - text/json
+              parameters: []
+              responses:
+                '200':
+                  description: Success
+                  schema:
+                    uniqueItems: false
+                    type: array
+                    items:
+                      $ref: '#/definitions/Collector'
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri:
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
+            put:
+              tags:
+                - Collector
+              operationId: ApiCollectorPut
+              consumes:
+                - application/json-patch+json
+                - application/json
+                - text/json
+                - application/*+json
+              produces: []
+              parameters:
+                - name: collector
+                  in: body
+                  required: false
+                  schema:
+                    $ref: '#/definitions/Collector'
+              responses:
+                '200':
+                  description: Success
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri:
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
+            post:
+              tags:
+                - Collector
+              operationId: ApiCollectorPost
+              consumes:
+                - application/json-patch+json
+                - application/json
+                - text/json
+                - application/*+json
+              produces: []
+              parameters:
+                - name: collector
+                  in: body
+                  required: false
+                  schema:
+                    $ref: '#/definitions/Collector'
+              responses:
+                '200':
+                  description: Success
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri:
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
+          '/api/collector/{collector}':
+            get:
+              tags:
+                - Collector
+              operationId: ApiCollectorByCollectorGet
+              consumes: []
+              produces: []
+              parameters:
+                - name: collector
+                  in: path
+                  required: true
+                  type: string
+              responses:
+                '200':
+                  description: Success
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri:
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
+            delete:
+              tags:
+                - Collector
+              operationId: ApiCollectorByCollectorDelete
+              consumes: []
+              produces: []
+              parameters:
+                - name: collector
+                  in: path
+                  required: true
+                  type: string
+              responses:
+                '200':
+                  description: Success
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri:
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
+          /api/login/required:
+            get:
+              tags:
+                - Login
+              operationId: ApiLoginRequiredGet
+              consumes: []
+              produces:
+                - text/plain
+                - application/json
+                - text/json
+              parameters: []
+              responses:
+                '200':
+                  description: Success
+                  schema:
+                    type: boolean
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri:
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
+          /api/login:
+            post:
+              tags:
+                - Login
+              operationId: ApiLoginPost
+              consumes:
+                - application/json-patch+json
+                - application/json
+                - text/json
+                - application/*+json
+              produces: []
+              parameters:
+                - name: credentials
+                  in: body
+                  required: false
+                  schema:
+                    $ref: '#/definitions/LoginCredentials'
+              responses:
+                '200':
+                  description: Success
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri:
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
+          /api/miners:
+            get:
+              tags:
+                - Miners
+              operationId: ApiMinersGet
+              consumes: []
+              produces:
+                - text/plain
+                - application/json
+                - text/json
+              parameters: []
+              responses:
+                '200':
+                  description: Success
+                  schema:
+                    uniqueItems: false
+                    type: array
+                    items:
+                      $ref: '#/definitions/Miner'
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri:
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
+            put:
+              tags:
+                - Miners
+              operationId: ApiMinersPut
+              consumes:
+                - application/json-patch+json
+                - application/json
+                - text/json
+                - application/*+json
+              produces: []
+              parameters:
+                - name: miner
+                  in: body
+                  required: false
+                  schema:
+                    $ref: '#/definitions/Miner'
+              responses:
+                '200':
+                  description: Success
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri:
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
+            post:
+              tags:
+                - Miners
+              operationId: ApiMinersPost
+              consumes:
+                - application/json-patch+json
+                - application/json
+                - text/json
+                - application/*+json
+              produces: []
+              parameters:
+                - name: miner
+                  in: body
+                  required: false
+                  schema:
+                    $ref: '#/definitions/Miner'
+              responses:
+                '200':
+                  description: Success
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri:
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
+          '/api/miners/{id}':
+            get:
+              tags:
+                - Miners
+              operationId: ApiMinersByIdGet
+              consumes: []
+              produces: []
+              parameters:
+                - name: id
+                  in: path
+                  required: true
+                  type: string
+                  format: uuid
+              responses:
+                '200':
+                  description: Success
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri:
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
+            delete:
+              tags:
+                - Miners
+              operationId: ApiMinersByIdDelete
+              consumes: []
+              produces: []
+              parameters:
+                - name: id
+                  in: path
+                  required: true
+                  type: string
+                  format: uuid
+              responses:
+                '200':
+                  description: Success
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri:
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
+          '/api/miners/collector/{collector}':
+            post:
+              tags:
+                - Miners
+              operationId: ApiMinersCollectorByCollectorPost
+              consumes:
+                - application/json-patch+json
+                - application/json
+                - text/json
+                - application/*+json
+              produces: []
+              parameters:
+                - name: collector
+                  in: path
+                  required: true
+                  type: string
+                - name: miner
+                  in: body
+                  required: false
+                  schema:
+                    $ref: '#/definitions/Miner'
+              responses:
+                '200':
+                  description: Success
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri:
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
+          /api/serversettings:
+            get:
+              tags:
+                - ServerSettings
+              operationId: ApiServerSettingsGet
+              consumes: []
+              produces:
+                - text/plain
+                - application/json
+                - text/json
+              parameters: []
+              responses:
+                '200':
+                  description: Success
+                  schema:
+                    type: object
+                    additionalProperties:
+                      type: string
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri:
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
+            put:
+              tags:
+                - ServerSettings
+              operationId: ApiServerSettingsPut
+              consumes:
+                - application/json-patch+json
+                - application/json
+                - text/json
+                - application/*+json
+              produces: []
+              parameters:
+                - name: settings
+                  in: body
+                  required: false
+                  schema:
+                    type: object
+                    additionalProperties:
+                      type: string
+              responses:
+                '200':
+                  description: Success
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri:
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
+          '/api/serversettings/{setting}':
+            get:
+              tags:
+                - ServerSettings
+              operationId: ApiServerSettingsBySettingGet
+              consumes: []
+              produces: []
+              parameters:
+                - name: setting
+                  in: path
+                  required: true
+                  type: string
+              responses:
+                '200':
+                  description: Success
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri:
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
+          '/api/snapshots/{minerid}':
+            get:
+              tags:
+                - Snapshots
+              operationId: ApiSnapshotsByMinerIdGet
+              consumes: []
+              produces:
+                - text/plain
+                - application/json
+                - text/json
+              parameters:
+                - name: minerId
+                  in: path
+                  required: true
+                  type: string
+                  format: uuid
+                - name: from
+                  in: query
+                  required: false
+                  type: string
+                  format: date-time
+                - name: to
+                  in: query
+                  required: false
+                  type: string
+                  format: date-time
+              responses:
+                '200':
+                  description: Success
+                  schema:
+                    uniqueItems: false
+                    type: array
+                    items:
+                      $ref: '#/definitions/Snapshot'
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri:
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
+          '/api/snapshots/collector/{collector}/{minerid}':
+            post:
+              tags:
+                - Snapshots
+              operationId: ApiSnapshotsCollectorByCollectorByMinerIdPost
+              consumes:
+                - application/json-patch+json
+                - application/json
+                - text/json
+                - application/*+json
+              produces: []
+              parameters:
+                - name: collector
+                  in: path
+                  required: true
+                  type: string
+                - name: minerId
+                  in: path
+                  required: true
+                  type: string
+                  format: uuid
+                - name: snapshot
+                  in: body
+                  required: false
+                  schema:
+                    $ref: '#/definitions/Snapshot'
+              responses:
+                '200':
+                  description: Success
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri:
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
+          /api/users:
+            get:
+              tags:
+                - Users
+              operationId: ApiUsersGet
+              consumes: []
+              produces:
+                - text/plain
+                - application/json
+                - text/json
+              parameters: []
+              responses:
+                '200':
+                  description: Success
+                  schema:
+                    uniqueItems: false
+                    type: array
+                    items:
+                      $ref: '#/definitions/UserListItem'
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri:
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
+            post:
+              tags:
+                - Users
+              operationId: ApiUsersPost
+              consumes:
+                - application/json-patch+json
+                - application/json
+                - text/json
+                - application/*+json
+              produces: []
+              parameters:
+                - name: user
+                  in: body
+                  required: false
+                  schema:
+                    $ref: '#/definitions/User'
+              responses:
+                '200':
+                  description: Success
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri:
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
+          '/api/users/{username}':
+            delete:
+              tags:
+                - Users
+              operationId: ApiUsersByUsernameDelete
+              consumes: []
+              produces: []
+              parameters:
+                - name: username
+                  in: path
+                  required: true
+                  type: string
+              responses:
+                '200':
+                  description: Success
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri:
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
+          /api/version:
+            get:
+              tags:
+                - Version
+              operationId: ApiVersionGet
+              consumes: []
+              produces:
+                - text/plain
+                - application/json
+                - text/json
+              parameters: []
+              responses:
+                '200':
+                  description: Success
+                  schema:
+                    $ref: '#/definitions/Version'
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri:
+                  'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitorLambda.Arn}/invocations'
+        definitions:
+          AlertDefinition:
+            required:
+              - minerId
+              - severity
+              - parameters
+            type: object
+            properties:
+              id:
+                format: uuid
+                type: string
+              minerId:
+                format: uuid
+                type: string
+              severity:
+                format: int32
+                enum:
+                  - 0
+                  - 1
+                  - 2
+                  - 3
+                type: integer
+              displayName:
+                type: string
+              enabled:
+                type: boolean
+              parameters:
+                $ref: '#/definitions/AlertParameters'
+              actions:
+                uniqueItems: false
+                type: array
+                items:
+                  $ref: '#/definitions/AlertActionDefinition'
+              created:
+                format: date-time
+                type: string
+              updated:
+                format: date-time
+                type: string
+              lastEnabled:
+                format: date-time
+                type: string
+              lastScan:
+                format: date-time
+                type: string
+              name:
+                type: string
+          AlertParameters:
+            type: object
+            properties:
+              alertType:
+                format: int32
+                enum:
+                  - 0
+                  - 1
+                  - 2
+                type: integer
+              alertMessage:
+                type: string
+              durationMinutes:
+                format: int32
+                type: integer
+          AlertActionDefinition:
+            type: object
+            properties:
+              displayName:
+                type: string
+              type:
+                format: int32
+                enum:
+                  - 0
+                  - 1
+                  - 2
+                type: integer
+              allowRemote:
+                type: boolean
+              name:
+                type: string
+          Alert:
+            type: object
+            properties:
+              id:
+                format: uuid
+                type: string
+              minerId:
+                format: uuid
+                type: string
+              alertDefinitionId:
+                format: uuid
+                type: string
+              severity:
+                format: int32
+                enum:
+                  - 0
+                  - 1
+                  - 2
+                  - 3
+                type: integer
+              message:
+                type: string
+              detailMessages:
+                uniqueItems: false
+                type: array
+                items:
+                  type: string
+              actionResults:
+                uniqueItems: false
+                type: array
+                items:
+                  $ref: '#/definitions/AlertActionResult'
+              start:
+                format: date-time
+                type: string
+              lastActive:
+                format: date-time
+                type: string
+              end:
+                format: date-time
+                type: string
+              acknowledgedAt:
+                format: date-time
+                type: string
+              acknowledged:
+                type: boolean
+              active:
+                type: boolean
+          AlertActionResult:
+            type: object
+            properties:
+              state:
+                format: int32
+                enum:
+                  - 0
+                  - 1
+                  - 2
+                type: integer
+              actionName:
+                type: string
+              message:
+                type: string
+          Collector:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              approved:
+                type: boolean
+          LoginCredentials:
+            type: object
+            properties:
+              username:
+                type: string
+              password:
+                type: string
+          Miner:
+            required:
+              - address
+            type: object
+            properties:
+              id:
+                format: uuid
+                type: string
+              displayName:
+                type: string
+              address:
+                type: string
+              port:
+                format: int32
+                maximum: 65535
+                minimum: 1
+                type: integer
+              password:
+                type: string
+              collectData:
+                type: boolean
+              collectorId:
+                type: string
+              name:
+                type: string
+          Snapshot:
+            type: object
+            properties:
+              id:
+                format: uuid
+                type: string
+              minerId:
+                format: uuid
+                type: string
+              snapshotTime:
+                format: date-time
+                type: string
+              retrievalElapsedTime:
+                type: string
+              minerStatistics:
+                $ref: '#/definitions/MinerStatistics'
+          MinerStatistics:
+            type: object
+            properties:
+              minerVersion:
+                type: string
+              uptime:
+                type: string
+              ethereum:
+                $ref: '#/definitions/PoolStats'
+              decred:
+                $ref: '#/definitions/PoolStats'
+              gpus:
+                uniqueItems: false
+                type: array
+                items:
+                  $ref: '#/definitions/GpuStats'
+          PoolStats:
+            type: object
+            properties:
+              pool:
+                type: string
+              hashrate:
+                format: int32
+                type: integer
+              shares:
+                format: int32
+                type: integer
+              rejectedShares:
+                format: int32
+                type: integer
+              invalidShares:
+                format: int32
+                type: integer
+              poolSwitches:
+                format: int32
+                type: integer
+          GpuStats:
+            type: object
+            properties:
+              mode:
+                format: int32
+                enum:
+                  - 0
+                  - 1
+                  - 2
+                type: integer
+              ethereumHashrate:
+                format: int32
+                type: integer
+              decredHashrate:
+                format: int32
+                type: integer
+              temperature:
+                format: int32
+                type: integer
+              fanSpeed:
+                format: int32
+                type: integer
+          UserListItem:
+            type: object
+            properties:
+              isCurrentUser:
+                type: boolean
+              username:
+                type: string
+              email:
+                type: string
+              password:
+                type: string
+          User:
+            type: object
+            properties:
+              username:
+                type: string
+              email:
+                type: string
+              password:
+                type: string
+          Version:
+            type: object
+            properties:
+              major:
+                format: int32
+                type: integer
+              minor:
+                format: int32
+                type: integer
+              build:
+                format: int32
+                type: integer
+              revision:
+                format: int32
+                type: integer
+              majorRevision:
+                format: int32
+                type: integer
+              minorRevision:
+                format: int32
+                type: integer
