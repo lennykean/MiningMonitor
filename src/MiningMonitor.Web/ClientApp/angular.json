@@ -26,7 +26,7 @@
                             "./node_modules/bootstrap/dist/js/bootstrap.js"
                         ],
                         "assets": [
-                            "src/assets"
+                            "src/settings.js"
                         ]
                     },
                     "configurations": {
