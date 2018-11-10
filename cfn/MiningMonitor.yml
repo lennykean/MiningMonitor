@@ -8,10 +8,12 @@ Parameters:
     Type: String
   ApiCertificateArn:
     Type: String
+  AppBucketName:
+    Type: String
   HostedZoneId:
     Type: String
   ApiDomainName:
-    Type: String
+    Type: String  
 
 Globals:
   Function:
@@ -121,32 +123,56 @@ Resources:
           Properties:
             Path: /api/{proxy+}
             Method: any
-            RestApiId: !Ref MiningMonitorApi
+            RestApiId: !Ref Api
 
-  MiningMonitorApiDomainName:
+  AppBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: PublicRead
+      BucketName: !Ref AppBucketName
+
+  AppCdn:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        DefaultRootObject: index.html
+        DefaultCacheBehavior:
+          ForwardedValues:
+            QueryString: false
+          TargetOriginId: !Ref AppBucket
+          ViewerProtocolPolicy: redirect-to-https
+        Enabled: true
+        Origins:
+        - DomainName: !GetAtt AppBucket.DomainName
+          Id: !Ref AppBucket
+          S3OriginConfig: 
+            OriginAccessIdentity: !Ref AWS::NoValue
+        PriceClass: PriceClass_100
+
+  ApiGatewayDomainName:
     Type: AWS::ApiGateway::DomainName
     Properties:
       CertificateArn: !Ref ApiCertificateArn
       DomainName: !Ref ApiDomainName
 
-  MiningMonitorBasePath:
+  ApiBasePath:
     Type: AWS::ApiGateway::BasePathMapping
     Properties:
-      DomainName: !Ref MiningMonitorApiDomainName
-      RestApiId: !Ref MiningMonitorApi
+      DomainName: !Ref ApiGatewayDomainName
+      RestApiId: !Ref Api
       Stage: prod
 
-  MiningMonitorApiDNSRecord:
+  ApiDNSRecord:
     Type: AWS::Route53::RecordSet
     Properties:
       AliasTarget: 
-        DNSName: !GetAtt MiningMonitorApiDomainName.DistributionDomainName
-        HostedZoneId: !GetAtt MiningMonitorApiDomainName.DistributionHostedZoneId
+        DNSName: !GetAtt ApiGatewayDomainName.DistributionDomainName
+        HostedZoneId: !GetAtt ApiGatewayDomainName.DistributionHostedZoneId
       HostedZoneId: !Ref HostedZoneId
       Name: !Ref ApiDomainName
       Type: A
 
-  MiningMonitorApi:
+  Api:
     Type: AWS::Serverless::Api
     Properties:
       StageName: prod
