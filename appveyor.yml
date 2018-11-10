@@ -50,19 +50,25 @@ for:
       msbuild src\MiningMonitor.sln /p:Configuration=WindowsService /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
       
       dotnet publish -c Release src\MiningMonitor.Web
+
       Compress-Archive -Path src\MiningMonitor.Web\bin\Release\netcoreapp2.1\publish\* miningmonitor.zip
+      
       Compress-Archive -Path src\MiningMonitor.Web\bin\Release\netcoreapp2.1\publish\ClientApp\* clientapp.zip
       
       dotnet publish -c Release src\MiningMonitor.Workers.AlertScan
+      
       Compress-Archive -Path src\MiningMonitor.Workers.AlertScan\bin\Release\netcoreapp2.1\publish\*" alertscan.zip
       
       dotnet publish -c Release src\MiningMonitor.Workers.DataCollector
+      
       Compress-Archive -Path src\MiningMonitor.Workers.DataCollector\bin\Release\netcoreapp2.1\publish\* datacollector.zip
       
       dotnet publish -c Release src\MiningMonitor.Workers.DataSynchronizer
+      
       Compress-Archive -Path src\MiningMonitor.Workers.DataSynchronizer\bin\Release\netcoreapp2.1\publish\* datasynchronizer.zip
       
       dotnet publish -c Release src\MiningMonitor.Workers.Maintenance"
+      
       Compress-Archive -Path src\MiningMonitor.Workers.Maintenance\bin\Release\netcoreapp2.1\publish\* maintenance.zip
       
   artifacts:
