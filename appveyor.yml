@@ -51,7 +51,7 @@ for:
       
       dotnet publish -c Release src\MiningMonitor.Web
 
-      Compress-Archive -Path src\MiningMonitor.Web\bin\Release\netcoreapp2.1\publish\* -DestinationPath miningmonitor.zip
+      Compress-Archive -Path src\MiningMonitor.Web\bin\Release\netcoreapp2.1\publish\* -DestinationPath .\miningmonitor.zip
       
       Compress-Archive -Path src\MiningMonitor.Web\bin\Release\netcoreapp2.1\publish\ClientApp\* -DestinationPath .\clientapp.zip
       
@@ -69,7 +69,7 @@ for:
       
       dotnet publish -c Release src\MiningMonitor.Workers.Maintenance"
       
-      Compress-Archive -Path src\MiningMonitor.Workers.Maintenance\bin\Release\netcoreapp2.1\publish\* -DestinationPath .\\maintenance.zip
+      Compress-Archive -Path src\MiningMonitor.Workers.Maintenance\bin\Release\netcoreapp2.1\publish\* -DestinationPath .\maintenance.zip
       
   artifacts:
   - path: '**\*.msi'
