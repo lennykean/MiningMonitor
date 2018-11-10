@@ -2,7 +2,7 @@
 
 using MiningMonitor.Common.Mapper;
 using MiningMonitor.Model;
-using MiningMonitor.Security.Identity;
+using MiningMonitor.Model.Identity;
 
 namespace MiningMonitor.Service.Mapper
 {
@@ -35,7 +35,8 @@ namespace MiningMonitor.Service.Mapper
         {
             return new MiningMonitorUser
             {
-                UserName = collector.Id,
+                Id = collector.Id,
+                UserName = collector.Id.ToString(),
                 CollectorName = collector.Name,
                 IsApproved = collector.Approved
             };
@@ -43,7 +44,7 @@ namespace MiningMonitor.Service.Mapper
 
         public void Update(Collector collector, MiningMonitorUser user)
         {
-            user.UserName = collector.Id;
+            user.UserName = collector.Id.ToString();
             user.CollectorName = user.CollectorName;
             user.IsApproved = collector.Approved;
         }
@@ -52,7 +53,7 @@ namespace MiningMonitor.Service.Mapper
         {
             return new Collector
             {
-                Id = user.UserName,
+                Id = user.Id,
                 Name = user.CollectorName,
                 Approved = user.IsApproved
             };

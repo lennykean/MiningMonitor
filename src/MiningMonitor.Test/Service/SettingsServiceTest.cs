@@ -10,6 +10,7 @@ using LiteDB;
 using MiningMonitor.Data;
 using MiningMonitor.Data.LiteDb;
 using MiningMonitor.Model;
+using MiningMonitor.Model.Identity;
 using MiningMonitor.Security.Identity;
 using MiningMonitor.Service;
 

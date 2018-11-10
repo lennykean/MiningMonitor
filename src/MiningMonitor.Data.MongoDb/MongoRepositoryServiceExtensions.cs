@@ -1,12 +1,13 @@
 ﻿using System;
-
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
 using MiningMonitor.Data.LiteDb;
 using MiningMonitor.Model;
 using MiningMonitor.Model.Alerts;
+using MiningMonitor.Model.Identity;
 using MiningMonitor.Security.Identity;
-
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 
 namespace MiningMonitor.Data.MongoDb

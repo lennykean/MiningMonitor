@@ -6,6 +6,12 @@ Parameters:
     Type: String
   CodeS3Bucket: 
     Type: String
+  ApiCertificateArn:
+    Type: String
+  HostedZoneId:
+    Type: String
+  ApiDomainName:
+    Type: String
 
 Globals:
   Function:
@@ -110,126 +116,35 @@ Resources:
       FunctionName: MiningMonitorApi
       Role: !GetAtt WorkerRole.Arn
       Events:
-        ApiAlertDefinitions:
+        Api:
           Type: Api
           Properties:
-            Path: /api/AlertDefinitions
+            Path: /api/{proxy+}
             Method: any
             RestApiId: !Ref MiningMonitorApi
-        ApiAlertDefinitionsById:
-          Type: Api
-          Properties:
-            Path: /api/AlertDefinitions/{id}
-            Method: any
-            RestApiId: !Ref MiningMonitorApi
-        ApiAlerts:
-          Type: Api
-          Properties:
-            Path: /api/Alerts
-            Method: GET
-            RestApiId: !Ref MiningMonitorApi
-        ApiAlertsMinerByMinerId:
-          Type: Api
-          Properties:
-            Path: /api/Alerts/miner/{minerId}
-            Method: GET
-            RestApiId: !Ref MiningMonitorApi
-        ApiAlertsById:
-          Type: Api
-          Properties:
-            Path: /api/Alerts/{id}
-            Method: GET
-            RestApiId: !Ref MiningMonitorApi
-        ApiAlertsByIdAcknowledge:
-          Type: Api
-          Properties:
-            Path: /api/Alerts/{id}/acknowledge
-            Method: POST
-            RestApiId: !Ref MiningMonitorApi
-        ApiCollector:
-          Type: Api
-          Properties:
-            Path: /api/Collector
-            Method: any
-            RestApiId: !Ref MiningMonitorApi
-        ApiCollectorByCollector:
-          Type: Api
-          Properties:
-            Path: /api/Collector/{collector}
-            Method: any
-            RestApiId: !Ref MiningMonitorApi
-        ApiLoginRequired:
-          Type: Api
-          Properties:
-            Path: /api/Login/required
-            Method: GET
-            RestApiId: !Ref MiningMonitorApi
-        ApiLoginPost:
-          Type: Api
-          Properties:
-            Path: /api/Login
-            Method: POST
-            RestApiId: !Ref MiningMonitorApi
-        ApiMiners:
-          Type: Api
-          Properties:
-            Path: /api/Miners
-            Method: any
-            RestApiId: !Ref MiningMonitorApi
-        ApiMinersById:
-          Type: Api
-          Properties:
-            Path: /api/Miners/{id}
-            Method: any
-            RestApiId: !Ref MiningMonitorApi
-        ApiMinersCollectorByCollector:
-          Type: Api
-          Properties:
-            Path: /api/Miners/collector/{collector}
-            Method: POST
-            RestApiId: !Ref MiningMonitorApi
-        ApiServerSettings:
-          Type: Api
-          Properties:
-            Path: /api/ServerSettings
-            Method: any
-            RestApiId: !Ref MiningMonitorApi
-        ApiServerSettingsBySettingGet:
-          Type: Api
-          Properties:
-            Path: /api/ServerSettings/{setting}
-            Method: GET
-            RestApiId: !Ref MiningMonitorApi
-        ApiSnapshotsByMinerId:
-          Type: Api
-          Properties:
-            Path: /api/Snapshots/{minerId}
-            Method: GET
-            RestApiId: !Ref MiningMonitorApi
-        ApiSnapshotsCollectorByCollectorByMinerId:
-          Type: Api
-          Properties:
-            Path: /api/Snapshots/collector/{collector}/{minerId}
-            Method: POST
-            RestApiId: !Ref MiningMonitorApi
-        ApiUsers:
-          Type: Api
-          Properties:
-            Path: /api/Users
-            Method: any
-            RestApiId: !Ref MiningMonitorApi
-        ApiUsersByUsername:
-          Type: Api
-          Properties:
-            Path: /api/Users/{username}
-            Method: DELETE
-            RestApiId: !Ref MiningMonitorApi
-        ApiVersion:
-          Type: Api
-          Properties:
-            Path: /api/Version
-            Method: GET
-            RestApiId: !Ref MiningMonitorApi
+
+  MiningMonitorApiDomainName:
+    Type: AWS::ApiGateway::DomainName
+    Properties:
+      CertificateArn: !Ref ApiCertificateArn
+      DomainName: !Ref ApiDomainName
+
+  MiningMonitorBasePath:
+    Type: AWS::ApiGateway::BasePathMapping
+    Properties:
+      DomainName: !Ref MiningMonitorApiDomainName
+      RestApiId: !Ref MiningMonitorApi
+      Stage: prod
+
+  MiningMonitorApiDNSRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      AliasTarget: 
+        DNSName: !GetAtt MiningMonitorApiDomainName.DistributionDomainName
+        HostedZoneId: !GetAtt MiningMonitorApiDomainName.DistributionHostedZoneId
+      HostedZoneId: !Ref HostedZoneId
+      Name: !Ref ApiDomainName
+      Type: A
 
   MiningMonitorApi:
     Type: AWS::Serverless::Api
@@ -241,7 +156,7 @@ Resources:
           version: v1
           title: Mining Monitor API - V1
         paths:
-          /api/AlertDefinitions:
+          /api/alertdefinitions:
             get:
               tags:
                 - AlertDefinitions
@@ -318,7 +233,7 @@ Resources:
                 httpMethod: POST
                 uri:
                   'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
-          '/api/AlertDefinitions/{id}':
+          '/api/alertdefinitions/{id}':
             get:
               tags:
                 - AlertDefinitions
@@ -359,7 +274,7 @@ Resources:
                 httpMethod: POST
                 uri:
                   'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
-          /api/Alerts:
+          /api/alerts:
             get:
               tags:
                 - Alerts
@@ -388,7 +303,7 @@ Resources:
                 httpMethod: POST
                 uri:
                   'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
-          '/api/Alerts/miner/{minerId}':
+          '/api/alerts/miner/{minerid}':
             get:
               tags:
                 - Alerts
@@ -422,7 +337,7 @@ Resources:
                 httpMethod: POST
                 uri:
                   'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
-          '/api/Alerts/{id}':
+          '/api/alerts/{id}':
             get:
               tags:
                 - Alerts
@@ -443,7 +358,7 @@ Resources:
                 httpMethod: POST
                 uri:
                   'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
-          '/api/Alerts/{id}/acknowledge':
+          '/api/alerts/{id}/acknowledge':
             post:
               tags:
                 - Alerts
@@ -464,7 +379,7 @@ Resources:
                 httpMethod: POST
                 uri:
                   'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
-          /api/Collector:
+          /api/collector:
             get:
               tags:
                 - Collector
@@ -536,7 +451,7 @@ Resources:
                 httpMethod: POST
                 uri:
                   'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
-          '/api/Collector/{collector}':
+          '/api/collector/{collector}':
             get:
               tags:
                 - Collector
@@ -575,7 +490,7 @@ Resources:
                 httpMethod: POST
                 uri:
                   'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
-          /api/Login/required:
+          /api/login/required:
             get:
               tags:
                 - Login
@@ -596,7 +511,7 @@ Resources:
                 httpMethod: POST
                 uri:
                   'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
-          /api/Login:
+          /api/login:
             post:
               tags:
                 - Login
@@ -621,7 +536,7 @@ Resources:
                 httpMethod: POST
                 uri:
                   'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
-          /api/Miners:
+          /api/miners:
             get:
               tags:
                 - Miners
@@ -693,7 +608,7 @@ Resources:
                 httpMethod: POST
                 uri:
                   'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
-          '/api/Miners/{id}':
+          '/api/miners/{id}':
             get:
               tags:
                 - Miners
@@ -734,7 +649,7 @@ Resources:
                 httpMethod: POST
                 uri:
                   'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
-          '/api/Miners/collector/{collector}':
+          '/api/miners/collector/{collector}':
             post:
               tags:
                 - Miners
@@ -763,7 +678,7 @@ Resources:
                 httpMethod: POST
                 uri:
                   'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
-          /api/ServerSettings:
+          /api/serversettings:
             get:
               tags:
                 - ServerSettings
@@ -812,7 +727,7 @@ Resources:
                 httpMethod: POST
                 uri:
                   'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
-          '/api/ServerSettings/{setting}':
+          '/api/serversettings/{setting}':
             get:
               tags:
                 - ServerSettings
@@ -832,7 +747,7 @@ Resources:
                 httpMethod: POST
                 uri:
                   'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
-          '/api/Snapshots/{minerId}':
+          '/api/snapshots/{minerid}':
             get:
               tags:
                 - Snapshots
@@ -871,7 +786,7 @@ Resources:
                 httpMethod: POST
                 uri:
                   'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
-          '/api/Snapshots/collector/{collector}/{minerId}':
+          '/api/snapshots/collector/{collector}/{minerid}':
             post:
               tags:
                 - Snapshots
@@ -905,7 +820,7 @@ Resources:
                 httpMethod: POST
                 uri:
                   'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
-          /api/Users:
+          /api/users:
             get:
               tags:
                 - Users
@@ -953,7 +868,7 @@ Resources:
                 httpMethod: POST
                 uri:
                   'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
-          '/api/Users/{username}':
+          '/api/users/{username}':
             delete:
               tags:
                 - Users
@@ -973,7 +888,7 @@ Resources:
                 httpMethod: POST
                 uri:
                   'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MiningMonitor.Arn}/invocations'
-          /api/Version:
+          /api/version:
             get:
               tags:
                 - Version

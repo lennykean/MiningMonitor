@@ -1,4 +1,4 @@
-﻿namespace AspNetCore.Identity.LiteDB
+﻿namespace MiningMonitor.Model.Identity
 {
     public class MiningMonitorClaim
     {

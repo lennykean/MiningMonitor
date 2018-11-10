@@ -2,12 +2,13 @@
 using System.Threading;
 using System.Threading.Tasks;
 
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 
 using MiningMonitor.Data;
-using MiningMonitor.Security.Identity;
+using MiningMonitor.Model.Identity;
 
-namespace Microsoft.AspNetCore.Identity.MongoDB
+namespace MiningMonitor.Security.Identity
 {
     public class MiningMonitorRoleStore : IRoleStore<MiningMonitorRole>
     {

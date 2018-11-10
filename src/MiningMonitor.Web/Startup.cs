@@ -13,6 +13,8 @@ using Microsoft.Extensions.Hosting;
 
 using MiningMonitor.BackgroundScheduler;
 using MiningMonitor.Data.MongoDb;
+using MiningMonitor.Model;
+using MiningMonitor.Model.Identity;
 using MiningMonitor.Security.Authorization;
 using MiningMonitor.Security.Identity;
 using MiningMonitor.Service;
@@ -111,6 +113,7 @@ namespace MiningMonitor.Web
                 options.SwaggerDoc("v1", new Info {Title = "Mining Monitor API - V1", Version = "v1"});
                 options.OperationFilter<ApiGatewayIntegrationFilter>();
                 options.OperationFilter<FromClaimParameterFilter>();
+                options.DocumentFilter<LowercaseDocumentFilter>();
                 options.SchemaFilter<ReadonlyFilter>();
             });
         }

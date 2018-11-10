@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 using MiningMonitor.Common.Mapper;
 using MiningMonitor.Model;
-using MiningMonitor.Security.Identity;
+using MiningMonitor.Model.Identity;
 
 namespace MiningMonitor.Service
 {
@@ -58,7 +58,7 @@ namespace MiningMonitor.Service
 
         public async Task<(ModelStateDictionary modelState, RegistrationResponse registration)> CreateCollectorAsync(Collector collector, CancellationToken token = default)
         {
-            collector.Id = Guid.NewGuid().ToString();
+            collector.Id = Guid.NewGuid();
             collector.Approved = null;
             
             var identityUser = _userMapper.Map(collector);
@@ -73,14 +73,17 @@ namespace MiningMonitor.Service
             } : null);
         }
 
-        public async Task<bool> UpdateAsync(Collector collector, CancellationToken token = default)
+        public async Task<(ModelStateDictionary modelState, bool found)> UpdateAsync(Collector collector, CancellationToken token = default)
         {
-            var user = await _userManager.FindByNameAsync(collector.Id);
+            var user = await _userManager.FindByIdAsync(collector.Id.ToString());
+            if (user == null)
+                return (null, false);
+
             _userMapper.Update(collector, user);
 
             var result = await _userManager.UpdateAsync(user);
 
-            return result.Succeeded;
+            return (_resultMapper.Map(result), true);
         }
 
         public async Task<bool> DeleteAsync(string collectorId, CancellationToken token = default)
