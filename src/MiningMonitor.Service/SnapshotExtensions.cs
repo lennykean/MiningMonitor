@@ -31,7 +31,11 @@ namespace MiningMonitor.Service
 
                 previous = snapshot;
             }
-
+            var doubleBufferTime = bufferTime + bufferTime;
+            if (previous.SnapshotTime >= expectedPeriod.End - doubleBufferTime) 
+            {
+                yield break;
+            }
             while (expectedInterval > TimeSpan.Zero && previous.SnapshotTime <= expectedPeriod.End - bufferTime)
             {
                 previous = new Snapshot

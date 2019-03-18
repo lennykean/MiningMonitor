@@ -37,7 +37,7 @@ namespace MiningMonitor.Web.Controllers
             var start = from?.ToUniversalTime() ?? end.AddHours(-1);
             var period = new ConcretePeriod(start, end);
 
-            return _snapshotService.GetByMinerFillGapsAsync(minerId, period, TimeSpan.FromSeconds(30), token);
+            return _snapshotService.GetByMinerFillGapsAsync(minerId, period, TimeSpan.FromMinutes(1), token);
         }
 
         [HttpPost("collector/{collector}/{minerId}"), Authorize(Policy = "Collector")]
