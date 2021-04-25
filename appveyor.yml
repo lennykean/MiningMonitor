@@ -81,7 +81,7 @@ for:
     release: MiningMonitor-v$(appveyor_build_version)
     provider: GitHub
     auth_token:
-      secure: k/etfEesYPpZOMWmeHY+ZOdMzN45G9VS5dMvkxlzfvUBD1j+HrsJ/WeWAw9PoyBB
+      secure: POkCcSMbhpf3E+QVyiFvic5k2wfqITtPJgiQ4ZlOWd0aWtBqNbufAEWwHQkaleiD
     artifact: WindowsInstaller, ServerlessAssets
     draft: false
     prerelease: false
