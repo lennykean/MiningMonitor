@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { faCheck, faTimes } from "@fortawesome/free-solid-svg-icons"
 
 import { Collector } from '../../models/Collector';
 import { CollectorService } from '../collector.service';
@@ -8,6 +9,9 @@ import { CollectorService } from '../collector.service';
     styleUrls: ['./collectors.component.scss']
 })
 export class CollectorsComponent implements OnInit {
+    public readonly faCheck = faCheck;
+    public readonly faTimes = faTimes;
+
     public collectors: Collector[];
 
     constructor(

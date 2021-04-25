@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { faCog, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 
 import { LoginService } from '../login.service';
 
@@ -8,6 +9,9 @@ import { LoginService } from '../login.service';
     styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent {
+    public readonly faCog = faCog;
+    public readonly faSignOutAlt = faSignOutAlt;
+
     constructor(
         private loginService: LoginService) {
     }

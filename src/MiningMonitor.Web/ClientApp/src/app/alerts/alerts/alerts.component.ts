@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import { Observable } from 'rxjs';
 
 import { Alert } from '../../models/Alert';
@@ -10,6 +11,8 @@ import { AlertService } from '../alert.service';
     styleUrls: ['./alerts.component.scss']
 })
 export class AlertsComponent implements OnInit {
+    public readonly faExclamationTriangle = faExclamationTriangle;
+    
     public alerts: Observable<Alert[]>;
 
     public alertSeverity = AlertSeverity;

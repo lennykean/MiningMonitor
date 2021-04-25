@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { faSignInAlt } from "@fortawesome/free-solid-svg-icons";
 
 import { LoginService } from '../login.service';
 
@@ -8,6 +9,8 @@ import { LoginService } from '../login.service';
     styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
+    public readonly faSignInAlt = faSignInAlt;
+
     public busy = false;
     public message: string;
 

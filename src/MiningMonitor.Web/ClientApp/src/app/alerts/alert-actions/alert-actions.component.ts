@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { faEdit, faTimes } from "@fortawesome/free-solid-svg-icons";
 
 import { AlertActionDefinition } from '../../models/AlertActionDefinition';
 import { AlertActionType } from '../../models/AlertActionType';
@@ -8,6 +9,9 @@ import { AlertActionType } from '../../models/AlertActionType';
     templateUrl: './alert-actions.component.html'
 })
 export class AlertActionsComponent {
+    public readonly faEdit = faEdit;
+    public readonly faTimes = faTimes;
+
     @Input()
     public actions: AlertActionDefinition[] = [];
     public actionTypes = AlertActionType;

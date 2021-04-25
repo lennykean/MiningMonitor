@@ -12,7 +12,7 @@
         <tr *ngFor="let miner of miners | async">
             <td title="Monitor {{ miner.name}}">
                 <a routerLink="/monitor/{{ miner.id }}">
-                    <fa-icon icon="heartbeat"></fa-icon>
+                    <fa-icon [icon]="faHeartbeat"></fa-icon>
                 </a>
             </td>
             <td title="Edit {{ miner.name }}">

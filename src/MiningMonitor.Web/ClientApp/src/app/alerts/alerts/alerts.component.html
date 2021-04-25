@@ -14,7 +14,7 @@
         <tr *ngFor="let alert of alerts | async" [ngClass]="{'table-danger': alert.active && alert.severity === alertSeverity.High, 'table-warning': alert.active && alert.severity === alertSeverity.Medium, 'table-info': alert.active && alert.severity === alertSeverity.Low}">
             <td class="icon" title="View Alert Details">
                 <a routerLink="/alert/{{ alert.id }}">
-                    <fa-icon icon="exclamation-triangle"></fa-icon>
+                    <fa-icon [icon]="faExclamationTriangle"></fa-icon>
                 </a>
             </td>
             <td class="message" [title]="alert.message">{{ alert.message }}</td>

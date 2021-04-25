@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { faHeartbeat } from "@fortawesome/free-solid-svg-icons";
 
 import { Miner } from '../../models/Miner';
 import { MinerService } from '../miner.service';
@@ -9,6 +10,8 @@ import { MinerService } from '../miner.service';
     templateUrl: './miner-edit.component.html'
 })
 export class MinerEditComponent implements OnInit {
+    public readonly faHeartbeat = faHeartbeat;
+
     public miner: Miner;
     public validationErrors: { [key: string]: string[] } = {};
 
