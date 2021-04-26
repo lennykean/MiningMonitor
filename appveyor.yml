@@ -6,7 +6,7 @@ branches:
 skip_tags: true
 
 image: 
-- Visual Studio -
+- Visual Studio 2017
 - Ubuntu
 
 dotnet_csproj:
