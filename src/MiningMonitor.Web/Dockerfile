@@ -8,7 +8,7 @@ FROM microsoft/dotnet:2.1-sdk AS build
 WORKDIR /src
 
 # Install Node.js in build container
-ENV NODE_VERSION 8.11.2
+ENV NODE_VERSION 12.13.0
 RUN curl -SL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.gz" --output nodejs.tar.gz \
     && tar -xzf "nodejs.tar.gz" -C /usr/local --strip-components=1 \
     && rm nodejs.tar.gz \
