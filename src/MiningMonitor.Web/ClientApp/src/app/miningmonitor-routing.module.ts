@@ -43,6 +43,7 @@ import { MonitorComponent } from './miner/monitor/monitor.component';
                     { path: 'miner/new', component: MinerCreateComponent },
                     { path: 'miner/:id', component: MinerEditComponent },
                     { path: 'miners', component: MinersComponent },
+                    { path: 'monitor', component: MonitorComponent },
                     { path: 'monitor/:id', component: MonitorComponent },
                 ]
             },

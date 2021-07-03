@@ -33,6 +33,7 @@ import { LogoutComponent } from './logout/logout.component';
 import { MainComponent } from './main/main.component';
 import { MinerNamePipe } from './miner-name.pipe';
 import { GpuChartComponent } from './miner/gpu-chart/gpu-chart.component';
+import { MinerChartComponent } from './miner/miner-chart/miner-chart.component';
 import { MinerCreateComponent } from './miner/miner-create/miner-create.component';
 import { MinerEditComponent } from './miner/miner-edit/miner-edit.component';
 import { MinerFormComponent } from './miner/miner-form/miner-form.component';
@@ -58,6 +59,7 @@ import { SidebarComponent } from './sidebar/sidebar.component';
         ConnectivityParametersComponent,
         EnumPipe,
         GpuChartComponent,
+        MinerChartComponent,
         GpuThresholdParametersComponent,
         HashrateParametersComponent,
         HeaderComponent,
