@@ -10,6 +10,7 @@
     <PackageVersion></PackageVersion>
     <AssemblyVersion></AssemblyVersion>
     <FileVersion></FileVersion>
+    <ValidateExecutableReferencesMatchSelfContained>false</ValidateExecutableReferencesMatchSelfContained>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='WindowsService|AnyCPU'">

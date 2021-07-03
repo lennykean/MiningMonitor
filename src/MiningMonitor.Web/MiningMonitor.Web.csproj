@@ -16,6 +16,7 @@
     <PackageVersion></PackageVersion>
     <AssemblyVersion></AssemblyVersion>
     <FileVersion></FileVersion>
+    <ValidateExecutableReferencesMatchSelfContained>false</ValidateExecutableReferencesMatchSelfContained>
   </PropertyGroup>
 
   <ItemGroup>
