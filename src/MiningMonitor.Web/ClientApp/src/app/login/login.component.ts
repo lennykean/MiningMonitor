@@ -1,35 +1,31 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { faSignInAlt } from "@fortawesome/free-solid-svg-icons";
+import { faSignInAlt } from '@fortawesome/free-solid-svg-icons';
 
 import { LoginService } from '../login.service';
 
 @Component({
-    templateUrl: './login.component.html',
-    styleUrls: ['./login.component.scss']
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent {
-    public readonly faSignInAlt = faSignInAlt;
+  public readonly faSignInAlt = faSignInAlt;
 
-    public busy = false;
-    public message: string;
+  public busy = false;
+  public message: string;
 
-    constructor(
-        private loginService: LoginService,
-        private router: Router) {
+  constructor(private loginService: LoginService, private router: Router) {}
+
+  async Login(username: string, password: string) {
+    try {
+      this.busy = true;
+      if (await this.loginService.Login(username, password)) {
+        this.router.navigateByUrl('/');
+      } else {
+        this.message = 'Invalid username or password';
+      }
+    } finally {
+      this.busy = false;
     }
-
-    async Login(username: string, password: string) {
-        try {
-            this.busy = true;
-            if (await this.loginService.Login(username, password)) {
-                this.router.navigateByUrl('/');
-            } else {
-                this.message = 'Invalid username or password';
-            }
-        }
-        finally {
-            this.busy = false;
-        }
-    }
+  }
 }

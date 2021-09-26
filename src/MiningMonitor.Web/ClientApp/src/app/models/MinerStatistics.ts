@@ -2,9 +2,9 @@ import { GpuStats } from './GpuStats';
 import { PoolStats } from './PoolStats';
 
 export interface MinerStatistics {
-    minerVersion: string;
-    uptime: string;
-    ethereum: PoolStats;
-    decred: PoolStats;
-    gpus: GpuStats[];
+  minerVersion: string;
+  uptime: string;
+  ethereum: PoolStats;
+  decred: PoolStats;
+  gpus: GpuStats[];
 }

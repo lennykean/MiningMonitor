@@ -1,36 +1,42 @@
 <div *ngIf="collectors; else loading">
-    <h3>Data Collectors</h3>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Status</th>
-                <th></th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let collector of collectors">
-                <td>{{ collector.name }}</td>
-                <td>{{ Status(collector) }}</td>
-                <td>
-                    <button class="btn-sm btn-outline-success" *ngIf="collector.approved !== true" (click)="Approve(collector)">
-                        <fa-icon [icon]="faCheck"></fa-icon> Approve
-                    </button>
-                    &nbsp;
-                    <button class="btn-sm btn-outline-danger" *ngIf="collector.approved !== false" (click)="Reject(collector)">
-                        <fa-icon [icon]="faTimes"></fa-icon> Reject
-                    </button>
-                </td>
-                <td>
-                    <button class="btn-sm btn-danger" (click)="Delete(collector)">
-                        Delete
-                    </button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+  <h3>Data Collectors</h3>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Status</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let collector of collectors">
+        <td>{{ collector.name }}</td>
+        <td>{{ Status(collector) }}</td>
+        <td>
+          <button
+            class="btn-sm btn-outline-success"
+            *ngIf="collector.approved !== true"
+            (click)="Approve(collector)"
+          >
+            <fa-icon [icon]="faCheck"></fa-icon> Approve
+          </button>
+          &nbsp;
+          <button
+            class="btn-sm btn-outline-danger"
+            *ngIf="collector.approved !== false"
+            (click)="Reject(collector)"
+          >
+            <fa-icon [icon]="faTimes"></fa-icon> Reject
+          </button>
+        </td>
+        <td>
+          <button class="btn-sm btn-danger" (click)="Delete(collector)">
+            Delete
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div>
-<ng-template #loading>
-    Loading Collectors...
-</ng-template>
+<ng-template #loading> Loading Collectors... </ng-template>

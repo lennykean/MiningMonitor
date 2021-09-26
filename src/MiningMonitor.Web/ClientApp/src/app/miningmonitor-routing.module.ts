@@ -22,37 +22,47 @@ import { MinersComponent } from './miner/miners/miners.component';
 import { MonitorComponent } from './miner/monitor/monitor.component';
 
 @NgModule({
-    imports: [
-        RouterModule.forRoot([
-            {
-                path: '', component: MainComponent, canActivate: [AuthGuard], runGuardsAndResolvers: 'always', children: [
-                    { path: '', component: HomeComponent },
-                    {
-                        path: 'admin', component: AdminComponent, children: [
-                            { path: 'collectors', component: CollectorsComponent },
-                            { path: 'settings', component: SettingsComponent },
-                            { path: 'users', component: UsersComponent },
-                            { path: 'users/new', component: UserCreateComponent }
-                        ]
-                    },
-                    { path: 'alert/:id', component: AlertDetailComponent },
-                    { path: 'alertdefinition/new', component: AlertDefinitionCreateComponent },
-                    { path: 'alertdefinition/:id', component: AlertDefinitionEditComponent },
-                    { path: 'alertdefinitions', component: AlertDefinitionsComponent },
-                    { path: 'alerts', component: AlertsComponent },
-                    { path: 'miner/new', component: MinerCreateComponent },
-                    { path: 'miner/:id', component: MinerEditComponent },
-                    { path: 'miners', component: MinersComponent },
-                    { path: 'monitor', component: MonitorComponent },
-                    { path: 'monitor/:id', component: MonitorComponent },
-                ]
-            },
-            { path: 'login', component: LoginComponent },
-            { path: 'logout', component: LogoutComponent }
-        ])
-    ],
-    exports: [
-        RouterModule
-    ],
+  imports: [
+    RouterModule.forRoot([
+      {
+        path: '',
+        component: MainComponent,
+        canActivate: [AuthGuard],
+        runGuardsAndResolvers: 'always',
+        children: [
+          { path: '', component: HomeComponent },
+          {
+            path: 'admin',
+            component: AdminComponent,
+            children: [
+              { path: 'collectors', component: CollectorsComponent },
+              { path: 'settings', component: SettingsComponent },
+              { path: 'users', component: UsersComponent },
+              { path: 'users/new', component: UserCreateComponent },
+            ],
+          },
+          { path: 'alert/:id', component: AlertDetailComponent },
+          {
+            path: 'alertdefinition/new',
+            component: AlertDefinitionCreateComponent,
+          },
+          {
+            path: 'alertdefinition/:id',
+            component: AlertDefinitionEditComponent,
+          },
+          { path: 'alertdefinitions', component: AlertDefinitionsComponent },
+          { path: 'alerts', component: AlertsComponent },
+          { path: 'miner/new', component: MinerCreateComponent },
+          { path: 'miner/:id', component: MinerEditComponent },
+          { path: 'miners', component: MinersComponent },
+          { path: 'monitor', component: MonitorComponent },
+          { path: 'monitor/:id', component: MonitorComponent },
+        ],
+      },
+      { path: 'login', component: LoginComponent },
+      { path: 'logout', component: LogoutComponent },
+    ]),
+  ],
+  exports: [RouterModule],
 })
-export class MiningMonitorRoutingModule { }
+export class MiningMonitorRoutingModule {}

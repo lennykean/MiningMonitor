@@ -4,17 +4,17 @@ import { AlertActionDefinition } from '../../models/AlertActionDefinition';
 import { AlertActionType } from '../../models/AlertActionType';
 
 @Component({
-    selector: 'mm-alert-action-detail',
-    templateUrl: './alert-action-detail.component.html'
+  selector: 'mm-alert-action-detail',
+  templateUrl: './alert-action-detail.component.html',
 })
 export class AlertActionDetailComponent {
-    @Input()
-    public action: AlertActionDefinition;
-    public actionTypes = AlertActionType;
-    @Output()
-    public done = new EventEmitter();
+  @Input()
+  public action: AlertActionDefinition;
+  public actionTypes = AlertActionType;
+  @Output()
+  public done = new EventEmitter();
 
-    public close() {
-        this.done.emit();
-    }
+  public close() {
+    this.done.emit();
+  }
 }

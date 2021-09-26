@@ -1,29 +1,45 @@
-<a class="btn btn-outline-info float-right" routerLink="/alertdefinitions">Alert Definitions</a>
+<a class="btn btn-outline-info float-right" routerLink="/alertdefinitions"
+  >Alert Definitions</a
+>
 
 <h3>Alerts</h3>
 
 <table class="table table-hover">
-    <thead>
-        <th class="message" colspan="2">Alert</th>
-        <th class="status">Status</th>
-        <th class="start">Started</th>
-        <th class="end">Ended</th>
-        <th class="acknowledge"></th>
-    </thead>
-    <tbody>
-        <tr *ngFor="let alert of alerts | async" [ngClass]="{'table-danger': alert.active && alert.severity === alertSeverity.High, 'table-warning': alert.active && alert.severity === alertSeverity.Medium, 'table-info': alert.active && alert.severity === alertSeverity.Low}">
-            <td class="icon" title="View Alert Details">
-                <a routerLink="/alert/{{ alert.id }}">
-                    <fa-icon [icon]="faExclamationTriangle"></fa-icon>
-                </a>
-            </td>
-            <td class="message" [title]="alert.message">{{ alert.message }}</td>
-            <td class="status">{{ alert.active ? 'Active' : 'Inactive' }}</td>
-            <td class="start">{{ alert.start | date:'short' }}</td>
-            <td class="end">{{ alert.end | date:'short' }}</td>
-            <td class="acknowledge">
-                <button class="btn btn-secondary btn-sm" *ngIf="!alert.acknowledged" (click)="Acknowledge(alert.id)">Acknowledge</button>
-            </td>
-        </tr>
-    </tbody>
+  <thead>
+    <th class="message" colspan="2">Alert</th>
+    <th class="status">Status</th>
+    <th class="start">Started</th>
+    <th class="end">Ended</th>
+    <th class="acknowledge"></th>
+  </thead>
+  <tbody>
+    <tr
+      *ngFor="let alert of alerts | async"
+      [ngClass]="{
+        'table-danger': alert.active && alert.severity === alertSeverity.High,
+        'table-warning':
+          alert.active && alert.severity === alertSeverity.Medium,
+        'table-info': alert.active && alert.severity === alertSeverity.Low
+      }"
+    >
+      <td class="icon" title="View Alert Details">
+        <a routerLink="/alert/{{ alert.id }}">
+          <fa-icon [icon]="faExclamationTriangle"></fa-icon>
+        </a>
+      </td>
+      <td class="message" [title]="alert.message">{{ alert.message }}</td>
+      <td class="status">{{ alert.active ? "Active" : "Inactive" }}</td>
+      <td class="start">{{ alert.start | date: "short" }}</td>
+      <td class="end">{{ alert.end | date: "short" }}</td>
+      <td class="acknowledge">
+        <button
+          class="btn btn-secondary btn-sm"
+          *ngIf="!alert.acknowledged"
+          (click)="Acknowledge(alert.id)"
+        >
+          Acknowledge
+        </button>
+      </td>
+    </tr>
+  </tbody>
 </table>

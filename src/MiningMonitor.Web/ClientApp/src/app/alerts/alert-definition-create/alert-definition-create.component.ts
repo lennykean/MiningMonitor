@@ -6,24 +6,26 @@ import { AlertDefinition } from '../../models/AlertDefinition';
 import { AlertDefinitionsService } from '../alert-definitions.service';
 
 @Component({
-    templateUrl: './alert-definition-create.component.html'
+  templateUrl: './alert-definition-create.component.html',
 })
 export class AlertDefinitionCreateComponent {
-    public validationErrors: { [key: string]: string[] } = {};
+  public validationErrors: { [key: string]: string[] } = {};
 
-    constructor(
-        private alertDefinitionService: AlertDefinitionsService,
-        private router: Router) {
-    }
+  constructor(
+    private alertDefinitionService: AlertDefinitionsService,
+    private router: Router
+  ) {}
 
-    public async Save(alertDefinition: AlertDefinition) {
-        try {
-            alertDefinition = await this.alertDefinitionService.Create(alertDefinition);
-            this.router.navigateByUrl(`/alertdefinition/${alertDefinition.id}`);
-        } catch (error) {
-            if (error instanceof HttpErrorResponse && error.status === 400) {
-                this.validationErrors = error.error;
-            }
-        }
+  public async Save(alertDefinition: AlertDefinition) {
+    try {
+      alertDefinition = await this.alertDefinitionService.Create(
+        alertDefinition
+      );
+      this.router.navigateByUrl(`/alertdefinition/${alertDefinition.id}`);
+    } catch (error) {
+      if (error instanceof HttpErrorResponse && error.status === 400) {
+        this.validationErrors = error.error;
+      }
     }
+  }
 }

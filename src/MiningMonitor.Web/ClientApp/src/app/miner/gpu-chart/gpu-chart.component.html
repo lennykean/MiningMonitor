@@ -1,10 +1,21 @@
 <div class="gpu">
-    <h4>{{ name }}</h4>
-    <span class="text-muted">
-        {{ mode === gpuMode.Disabled ? "(Disabled)" : null }}
-    </span>
-    <h6 class="hashrate">{{hashrate}} MH/s</h6>•<h6 class="temp">{{temp}}°</h6>•<h6 class="fanSpeed">{{fanSpeed}}%</h6>
-    <div class="chart">
-        <canvas baseChart chartType="line" height="200" [options]="options" [colors]="colors" [datasets]="data"></canvas>
-    </div>
+  <h4>{{ name }}</h4>
+  <span class="text-muted">
+    {{ mode === gpuMode.Disabled ? "(Disabled)" : null }}
+  </span>
+  <h6 class="hashrate">{{ hashrate }} MH/s</h6>
+  •
+  <h6 class="temp">{{ temp }}°</h6>
+  •
+  <h6 class="fanSpeed">{{ fanSpeed }}%</h6>
+  <div class="chart">
+    <canvas
+      baseChart
+      chartType="line"
+      height="200"
+      [options]="options"
+      [colors]="colors"
+      [datasets]="data"
+    ></canvas>
+  </div>
 </div>

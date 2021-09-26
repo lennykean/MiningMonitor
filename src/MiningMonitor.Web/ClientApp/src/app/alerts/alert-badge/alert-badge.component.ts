@@ -5,17 +5,15 @@ import { Alert } from '../../models/Alert';
 import { AlertService } from '../alert.service';
 
 @Component({
-    selector: 'mm-alert-badge',
-    templateUrl: './alert-badge.component.html'
+  selector: 'mm-alert-badge',
+  templateUrl: './alert-badge.component.html',
 })
 export class AlertBadgeComponent implements OnInit {
-    public alerts: Observable<Alert[]>;
+  public alerts: Observable<Alert[]>;
 
-    constructor(
-        private alertService: AlertService) {
-    }
+  constructor(private alertService: AlertService) {}
 
-    ngOnInit() {
-        this.alerts = this.alertService.alerts;
-    }
+  ngOnInit() {
+    this.alerts = this.alertService.alerts;
+  }
 }

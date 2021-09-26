@@ -3,12 +3,12 @@ import { Component, Input } from '@angular/core';
 import { HashrateAlertParameters } from '../../models/HashrateAlertParameters';
 
 @Component({
-    selector: 'mm-hashrate-parameters',
-    templateUrl: './hashrate-parameters.component.html'
+  selector: 'mm-hashrate-parameters',
+  templateUrl: './hashrate-parameters.component.html',
 })
 export class HashrateParametersComponent {
-    @Input()
-    public alertParameters: HashrateAlertParameters = {
-        alertType: null
-    };
+  @Input()
+  public alertParameters: HashrateAlertParameters = {
+    alertType: null,
+  };
 }

@@ -5,9 +5,9 @@ import { MiningMonitorModule } from './app/miningmonitor.module';
 import { environment } from './environments/environment';
 
 if (environment.production) {
-    enableProdMode();
+  enableProdMode();
 }
 
-platformBrowserDynamic().bootstrapModule(MiningMonitorModule)
-    .catch(err => console.log(err));
-
+platformBrowserDynamic()
+  .bootstrapModule(MiningMonitorModule)
+  .catch((err) => console.log(err));

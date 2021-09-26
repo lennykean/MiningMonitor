@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
+import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { Observable } from 'rxjs';
 
 import { Alert } from '../../models/Alert';
@@ -7,25 +7,23 @@ import { AlertSeverity } from '../../models/AlertSeverity';
 import { AlertService } from '../alert.service';
 
 @Component({
-    templateUrl: './alerts.component.html',
-    styleUrls: ['./alerts.component.scss']
+  templateUrl: './alerts.component.html',
+  styleUrls: ['./alerts.component.scss'],
 })
 export class AlertsComponent implements OnInit {
-    public readonly faExclamationTriangle = faExclamationTriangle;
-    
-    public alerts: Observable<Alert[]>;
+  public readonly faExclamationTriangle = faExclamationTriangle;
 
-    public alertSeverity = AlertSeverity;
+  public alerts: Observable<Alert[]>;
 
-    constructor(
-        private alertService: AlertService) {
-    }
+  public alertSeverity = AlertSeverity;
 
-    public ngOnInit() {
-        this.alerts = this.alertService.alerts;
-    }
+  constructor(private alertService: AlertService) {}
 
-    public async Acknowledge(id: string) {
-        await this.alertService.Acknowledge(id);
-    }
+  public ngOnInit() {
+    this.alerts = this.alertService.alerts;
+  }
+
+  public async Acknowledge(id: string) {
+    await this.alertService.Acknowledge(id);
+  }
 }

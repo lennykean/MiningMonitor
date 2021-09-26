@@ -1,56 +1,86 @@
-<form (submit)="Submit(); $event.preventDefault();">
-    <div class="form-group row">
-        <label for="displayName" class="col-sm-2">
-            Name
-            <small class="form-text text-muted">Optional</small>
-        </label>
-        <div class="col col-sm-10">
-            <input name="displayName" class="form-control" [(ngModel)]="alertDefinition.displayName" [ngClass]="{'is-invalid': validationErrors.displayName}">
-            <small class="invalid-feedback" *ngFor="let message of validationErrors.displayName">
-                {{ message }}
-            </small>
-        </div>
+<form (submit)="Submit(); $event.preventDefault()">
+  <div class="form-group row">
+    <label for="displayName" class="col-sm-2">
+      Name
+      <small class="form-text text-muted">Optional</small>
+    </label>
+    <div class="col col-sm-10">
+      <input
+        name="displayName"
+        class="form-control"
+        [(ngModel)]="alertDefinition.displayName"
+        [ngClass]="{ 'is-invalid': validationErrors.displayName }"
+      />
+      <small
+        class="invalid-feedback"
+        *ngFor="let message of validationErrors.displayName"
+      >
+        {{ message }}
+      </small>
     </div>
-    <div class="form-group row">
-        <label for="minerId" class="col-sm-2">
-            Miner
-        </label>
-        <div class="col col-sm-10">
-            <select name="minerId" class="form-control" [(ngModel)]="alertDefinition.minerId" [ngClass]="{'is-invalid': validationErrors.minerId}"
-                [disabled]="alertDefinition.id">
-                <option *ngFor="let miner of miners | async" [ngValue]="miner.id">{{ miner.name }}</option>
-            </select>
-            <small class="invalid-feedback" *ngFor="let message of validationErrors.minerId">
-                {{ message }}
-            </small>
-        </div>
+  </div>
+  <div class="form-group row">
+    <label for="minerId" class="col-sm-2"> Miner </label>
+    <div class="col col-sm-10">
+      <select
+        name="minerId"
+        class="form-control"
+        [(ngModel)]="alertDefinition.minerId"
+        [ngClass]="{ 'is-invalid': validationErrors.minerId }"
+        [disabled]="alertDefinition.id"
+      >
+        <option *ngFor="let miner of miners | async" [ngValue]="miner.id">
+          {{ miner.name }}
+        </option>
+      </select>
+      <small
+        class="invalid-feedback"
+        *ngFor="let message of validationErrors.minerId"
+      >
+        {{ message }}
+      </small>
     </div>
-    <div class="form-group row">
-        <label for="severity" class="col-sm-2">
-            Severity
-        </label>
-        <div class="col col-sm-10">
-            <select name="severity" class="form-control" [(ngModel)]="alertDefinition.severity" [ngClass]="{'is-invalid': validationErrors.severity}">
-                <option *ngFor="let alertSeverity of alertSeverity | enum" [ngValue]="alertSeverity.value">
-                    {{ alertSeverity.key | humanize }}
-                </option>
-            </select>
-            <small class="invalid-feedback" *ngFor="let message of validationErrors.severity">
-                {{ message }}
-            </small>
-        </div>
+  </div>
+  <div class="form-group row">
+    <label for="severity" class="col-sm-2"> Severity </label>
+    <div class="col col-sm-10">
+      <select
+        name="severity"
+        class="form-control"
+        [(ngModel)]="alertDefinition.severity"
+        [ngClass]="{ 'is-invalid': validationErrors.severity }"
+      >
+        <option
+          *ngFor="let alertSeverity of alertSeverity | enum"
+          [ngValue]="alertSeverity.value"
+        >
+          {{ alertSeverity.key | humanize }}
+        </option>
+      </select>
+      <small
+        class="invalid-feedback"
+        *ngFor="let message of validationErrors.severity"
+      >
+        {{ message }}
+      </small>
     </div>
-    <div class="form-group row">
-        <label for="enabled" class="col-sm-2">
-            Enabled
-        </label>
-        <div class="col col-sm-10">
-            <input type="checkbox" name="enabled" [(ngModel)]="alertDefinition.enabled">
-        </div>
+  </div>
+  <div class="form-group row">
+    <label for="enabled" class="col-sm-2"> Enabled </label>
+    <div class="col col-sm-10">
+      <input
+        type="checkbox"
+        name="enabled"
+        [(ngModel)]="alertDefinition.enabled"
+      />
     </div>
-    <mm-alert-definition-parameters [alertParameters]="alertDefinition.parameters" [validationErrors]="validationErrors"
-        [isNew]="!alertDefinition.id">
-    </mm-alert-definition-parameters>
-    <mm-alert-actions [actions]="alertDefinition.actions"></mm-alert-actions>
-    <button type="submit" class="btn btn-outline-info">Save Changes</button>
+  </div>
+  <mm-alert-definition-parameters
+    [alertParameters]="alertDefinition.parameters"
+    [validationErrors]="validationErrors"
+    [isNew]="!alertDefinition.id"
+  >
+  </mm-alert-definition-parameters>
+  <mm-alert-actions [actions]="alertDefinition.actions"></mm-alert-actions>
+  <button type="submit" class="btn btn-outline-info">Save Changes</button>
 </form>

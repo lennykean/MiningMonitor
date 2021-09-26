@@ -4,14 +4,14 @@ import { GpuThresholdAlertParameters } from '../../models/GpuThresholdAlertParam
 import { Metric } from '../../models/Metric';
 
 @Component({
-    selector: 'mm-gpu-threshold-parameters',
-    templateUrl: './gpu-threshold-parameters.component.html'
+  selector: 'mm-gpu-threshold-parameters',
+  templateUrl: './gpu-threshold-parameters.component.html',
 })
 export class GpuThresholdParametersComponent {
-    @Input()
-    public alertParameters: GpuThresholdAlertParameters = {
-        alertType: null,
-        metric: null
-    };
-    public metric = Metric;
+  @Input()
+  public alertParameters: GpuThresholdAlertParameters = {
+    alertType: null,
+    metric: null,
+  };
+  public metric = Metric;
 }

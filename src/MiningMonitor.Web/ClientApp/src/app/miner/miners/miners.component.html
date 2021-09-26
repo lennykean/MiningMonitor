@@ -1,28 +1,30 @@
-<a class="btn btn-outline-info float-right" routerLink="/miner/new">Add Miner</a>
+<a class="btn btn-outline-info float-right" routerLink="/miner/new"
+  >Add Miner</a
+>
 <h3>Miners</h3>
 <a class="btn btn-outline-success mb-2" routerLink="/monitor">
-    <fa-icon [icon]="faHeartbeat"></fa-icon>
-    Monitor All
+  <fa-icon [icon]="faHeartbeat"></fa-icon>
+  Monitor All
 </a>
 <table class="table table-striped">
-    <thead>
-        <tr>
-            <th></th>
-            <th>Name</th>
-            <th>Data Collection</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let miner of miners | async">
-            <td title="Monitor {{ miner.name}}">
-                <a routerLink="/monitor/{{ miner.id }}">
-                    <fa-icon [icon]="faHeartbeat"></fa-icon>
-                </a>
-            </td>
-            <td title="Edit {{ miner.name }}">
-                <a routerLink="/miner/{{ miner.id }}">{{ miner.name }}</a>
-            </td>
-            <td>{{ miner.collectData ? 'Enabled' : 'Disabled' }}</td>
-        </tr>
-    </tbody>
+  <thead>
+    <tr>
+      <th></th>
+      <th>Name</th>
+      <th>Data Collection</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let miner of miners | async">
+      <td title="Monitor {{ miner.name }}">
+        <a routerLink="/monitor/{{ miner.id }}">
+          <fa-icon [icon]="faHeartbeat"></fa-icon>
+        </a>
+      </td>
+      <td title="Edit {{ miner.name }}">
+        <a routerLink="/miner/{{ miner.id }}">{{ miner.name }}</a>
+      </td>
+      <td>{{ miner.collectData ? "Enabled" : "Disabled" }}</td>
+    </tr>
+  </tbody>
 </table>

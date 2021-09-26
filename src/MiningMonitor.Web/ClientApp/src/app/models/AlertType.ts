@@ -1,5 +1,5 @@
 export enum AlertType {
-    Hashrate = 0,
-    GpuThreshold = 1,
-    Connectivity = 2
+  Hashrate = 0,
+  GpuThreshold = 1,
+  Connectivity = 2,
 }

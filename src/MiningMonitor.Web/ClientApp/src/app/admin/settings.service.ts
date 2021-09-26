@@ -5,20 +5,22 @@ import { BasePathService } from '../base-path.service';
 
 @Injectable({ providedIn: 'root' })
 export class SettingsService {
-    private static readonly baseUrl = 'serversettings';
+  private static readonly baseUrl = 'serversettings';
 
-    constructor(
-        private http: HttpClient,
-        private basePathService: BasePathService) {
-    }
+  constructor(
+    private http: HttpClient,
+    private basePathService: BasePathService
+  ) {}
 
-    public async GetAll() {
-        const url = `${this.basePathService.apiBasePath}${SettingsService.baseUrl}`;
-        return await this.http.get<{ [key: string]: string }>(url).toPromise();
-    }
+  public async GetAll() {
+    const url = `${this.basePathService.apiBasePath}${SettingsService.baseUrl}`;
+    return await this.http.get<{ [key: string]: string }>(url).toPromise();
+  }
 
-    public async Update(settings: { [key: string]: string }) {
-        const url = `${this.basePathService.apiBasePath}${SettingsService.baseUrl}`;
-        return await this.http.put<{ [key: string]: string }>(url, settings).toPromise();
-    }
+  public async Update(settings: { [key: string]: string }) {
+    const url = `${this.basePathService.apiBasePath}${SettingsService.baseUrl}`;
+    return await this.http
+      .put<{ [key: string]: string }>(url, settings)
+      .toPromise();
+  }
 }

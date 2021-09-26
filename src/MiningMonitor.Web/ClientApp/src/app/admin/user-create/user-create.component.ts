@@ -6,30 +6,27 @@ import { User } from '../../models/User';
 import { UserService } from '../user.service';
 
 @Component({
-    templateUrl: './user-create.component.html',
-    styleUrls: ['./user-create.component.scss']
+  templateUrl: './user-create.component.html',
+  styleUrls: ['./user-create.component.scss'],
 })
 export class UserCreateComponent {
-    public user: User = {
-        username: null,
-        password: null,
-        email: null
-    };
-    public validationErrors: { [key: string]: string[] } = {};
+  public user: User = {
+    username: null,
+    password: null,
+    email: null,
+  };
+  public validationErrors: { [key: string]: string[] } = {};
 
-    constructor(
-        private userService: UserService,
-        private router: Router) {
-    }
+  constructor(private userService: UserService, private router: Router) {}
 
-    public async Save() {
-        try {
-            await this.userService.Create(this.user);
-            this.router.navigateByUrl('admin/users');
-        } catch (error) {
-            if (error instanceof HttpErrorResponse && error.status === 400) {
-                this.validationErrors = error.error;
-            }
-        }
+  public async Save() {
+    try {
+      await this.userService.Create(this.user);
+      this.router.navigateByUrl('admin/users');
+    } catch (error) {
+      if (error instanceof HttpErrorResponse && error.status === 400) {
+        this.validationErrors = error.error;
+      }
     }
+  }
 }

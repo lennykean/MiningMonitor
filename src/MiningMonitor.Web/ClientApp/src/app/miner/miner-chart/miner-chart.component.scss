@@ -1,18 +1,18 @@
 @import "../../variables.scss";
 
 .row {
-    margin-top: 15px;
+  margin-top: 15px;
 }
 
 .stats {
-    margin: 15px;
+  margin: 15px;
 
-    .row {
-        background: $list-group-bg;
-        margin-top: 0;
+  .row {
+    background: $list-group-bg;
+    margin-top: 0;
 
-        .col-lg {
-            border: 1px solid $list-group-border-color;
-        }
+    .col-lg {
+      border: 1px solid $list-group-border-color;
     }
+  }
 }

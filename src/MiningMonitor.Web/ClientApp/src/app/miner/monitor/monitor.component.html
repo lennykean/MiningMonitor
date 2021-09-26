@@ -1,30 +1,59 @@
 <div *ngIf="miners; else loading">
-    <nav class="navbar navbar-dark bg-dark mb-2">
-        <div class="form-inline mr-auto">
-            <div class="form-group">
-                <div class="custom-control custom-radio mr-5">
-                    <input type="radio" id="live" name="customRadio" class="custom-control-input" [value]="true"
-                        [(ngModel)]="live" (change)="live ? GoLive(): null">
-                    <label class="custom-control-label" for="live">Live</label>
-                </div>
-                <div class="custom-control custom-radio mr-3">
-                    <input type="radio" id="timetravel" name="customRadio" class="custom-control-input" [value]="false"
-                        [(ngModel)]="live">
-                    <label class="custom-control-label" for="timetravel">Time Travel</label>
-                </div>
-            </div>
-            <div class="form-group">
-                <input #to type="datetime-local" class="form-control form-control-sm mr-3" [disabled]="live"
-                    [value]="timeTravelTo | date:'yyyy-MM-ddTHH:mm'">
-                <button type="button" class="btn btn-sm btn-primary" [disabled]="live"
-                    (click)="TimeTravel(to.value)">Go</button>
-            </div>
+  <nav class="navbar navbar-dark bg-dark mb-2">
+    <div class="form-inline mr-auto">
+      <div class="form-group">
+        <div class="custom-control custom-radio mr-5">
+          <input
+            type="radio"
+            id="live"
+            name="customRadio"
+            class="custom-control-input"
+            [value]="true"
+            [(ngModel)]="live"
+            (change)="live ? GoLive() : null"
+          />
+          <label class="custom-control-label" for="live">Live</label>
         </div>
-    </nav>
+        <div class="custom-control custom-radio mr-3">
+          <input
+            type="radio"
+            id="timetravel"
+            name="customRadio"
+            class="custom-control-input"
+            [value]="false"
+            [(ngModel)]="live"
+          />
+          <label class="custom-control-label" for="timetravel"
+            >Time Travel</label
+          >
+        </div>
+      </div>
+      <div class="form-group">
+        <input
+          #to
+          type="datetime-local"
+          class="form-control form-control-sm mr-3"
+          [disabled]="live"
+          [value]="timeTravelTo | date: 'yyyy-MM-ddTHH:mm'"
+        />
+        <button
+          type="button"
+          class="btn btn-sm btn-primary"
+          [disabled]="live"
+          (click)="TimeTravel(to.value)"
+        >
+          Go
+        </button>
+      </div>
+    </div>
+  </nav>
 
-    <mm-miner-chart *ngFor="let miner of miners" [miner]="miner" [live]="live" [timeTravelTo]="timeTravelTo">
-    </mm-miner-chart>
+  <mm-miner-chart
+    *ngFor="let miner of miners"
+    [miner]="miner"
+    [live]="live"
+    [timeTravelTo]="timeTravelTo"
+  >
+  </mm-miner-chart>
 </div>
-<ng-template #loading>
-    Loading...
-</ng-template>
+<ng-template #loading> Loading... </ng-template>

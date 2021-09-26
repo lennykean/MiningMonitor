@@ -1,28 +1,32 @@
 <div *ngIf="users; else loading">
-    <a class="btn btn-outline-info float-right" routerLink="/admin/users/new">Add User</a>
-    <h3>Users</h3>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Username</th>
-                <th>E-Mail</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let user of users">
-                <td>{{ user.username }}</td>
-                <td>{{ user.email }}</td>
-                <td>
-                    <button type="button" class="btn btn-sm btn-danger pt-0 pb-0 float-right" *ngIf="!user.isCurrentUser"
-                        (click)="Delete(user)">
-                        Delete
-                    </button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+  <a class="btn btn-outline-info float-right" routerLink="/admin/users/new"
+    >Add User</a
+  >
+  <h3>Users</h3>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>E-Mail</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <td>{{ user.username }}</td>
+        <td>{{ user.email }}</td>
+        <td>
+          <button
+            type="button"
+            class="btn btn-sm btn-danger pt-0 pb-0 float-right"
+            *ngIf="!user.isCurrentUser"
+            (click)="Delete(user)"
+          >
+            Delete
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div>
-<ng-template #loading>
-    Loading Users...
-</ng-template>
+<ng-template #loading> Loading Users... </ng-template>

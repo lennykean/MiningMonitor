@@ -5,15 +5,12 @@ import { LoginService } from './login.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthGuard implements CanActivate {
-    constructor(
-        private loginService: LoginService,
-        private router: Router) {
+  constructor(private loginService: LoginService, private router: Router) {}
+  async canActivate() {
+    if (await this.loginService.LoginRequired()) {
+      this.router.navigateByUrl('/login');
+      return false;
     }
-    async canActivate() {
-        if (await this.loginService.LoginRequired()) {
-            this.router.navigateByUrl('/login');
-            return false;
-        }
-        return true;
-    }
+    return true;
+  }
 }

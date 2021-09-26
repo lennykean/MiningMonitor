@@ -1,74 +1,63 @@
 <div *ngIf="settings; else loading">
-    <h3>Server Settings</h3>
-    <form (submit)="SaveSettings(); $event.preventDefault();">
-        <div class="form-group row">
-            <label for="enableSecurity" class="col-sm-2">
-                Authentication
-            </label>
-            <div class="col col-sm-10">
-                <label>
-                    <input type="checkbox" name="enableSecurity" [checked]="settings.enableSecurity === 'true'"
-                        (change)="settings.enableSecurity = $event.target.checked.toString()">
-                    Enabled
-                </label>
-                <small class="text-danger" *ngFor="let message of validationErrors.enableSecurity">
-                    {{ message }}
-                </small>
-            </div>
+  <h3>Server Settings</h3>
+  <form (submit)="SaveSettings(); $event.preventDefault()">
+    <div class="form-group row">
+      <label for="enableSecurity" class="col-sm-2"> Authentication </label>
+      <div class="col col-sm-10">
+        <label>
+          <input type="checkbox" name="enableSecurity" [checked]="settings.enableSecurity==='true'"
+            (change)="enableSecurityCheckChanged($event)" />
+          Enabled
+        </label>
+        <small class="text-danger" *ngFor="let message of validationErrors.enableSecurity">
+          {{ message }}
+        </small>
+      </div>
+    </div>
+    <div class="form-group row" title="Automatically purge old monitoring data">
+      <label for="enablePurge" class="col-sm-2"> Automatic Data Purge </label>
+      <div class="col col-sm-10">
+        <label>
+          <input type="checkbox" name="enablePurge" [checked]="settings.enablePurge === 'true'"
+            (change)="enablePurgeCheckChanged($event)" />
+          Enabled
+        </label>
+      </div>
+    </div>
+    <div class="form-group row" [hidden]="settings.enablePurge !== 'true'">
+      <label for="purgeAgeMinutes" class="col-sm-2">
+        Purge Data Older Than
+        <small class="form-text text-muted">Minutes</small>
+      </label>
+      <div class="col col-sm-10">
+        <input type="number" name="purgeAgeMinutes" class="form-control" [(ngModel)]="settings.purgeAgeMinutes" />
+      </div>
+    </div>
+    <div class="form-group row" title="Run server in data collector mode">
+      <label for="isDataCollector" class="col-sm-2"> Data Collector </label>
+      <div class="col col-sm-10">
+        <label>
+          <input type="checkbox" name="isDataCollector" [checked]="settings.isDataCollector === 'true'"
+            (change)="isDataCollectorCheckChanged($event)" />
+          Enabled
+        </label>
+      </div>
+    </div>
+    <fieldset [hidden]="settings.isDataCollector !== 'true'">
+      <div class="form-group row">
+        <label for="serverUrl" class="col-sm-2"> Remote Server URL </label>
+        <div class="col col-sm-10">
+          <input type="text" name="serverUrl" class="form-control" [(ngModel)]="settings.serverUrl" />
         </div>
-        <div class="form-group row" title="Automatically purge old monitoring data">
-            <label for="enablePurge" class="col-sm-2">
-                Automatic Data Purge
-            </label>
-            <div class="col col-sm-10">
-                <label>
-                    <input type="checkbox" name="enablePurge" [checked]="settings.enablePurge === 'true'" (change)="settings.enablePurge = $event.target.checked.toString()">
-                    Enabled
-                </label>
-            </div>
+      </div>
+      <div class="form-group row">
+        <label for="name" class="col-sm-2"> Collector Name </label>
+        <div class="col col-sm-10">
+          <input type="text" name="name" class="form-control" [(ngModel)]="settings.name" />
         </div>
-        <div class="form-group row" [hidden]="settings.enablePurge !== 'true'">
-            <label for="purgeAgeMinutes" class="col-sm-2">
-                Purge Data Older Than
-                <small class="form-text text-muted">Minutes</small>
-            </label>
-            <div class="col col-sm-10">
-                <input type="number" name="purgeAgeMinutes" class="form-control" [(ngModel)]="settings.purgeAgeMinutes">
-            </div>
-        </div>
-        <div class="form-group row" title="Run server in data collector mode">
-            <label for="isDataCollector" class="col-sm-2">
-                Data Collector
-            </label>
-            <div class="col col-sm-10">
-                <label>
-                    <input type="checkbox" name="isDataCollector" [checked]="settings.isDataCollector === 'true'"
-                        (change)="settings.isDataCollector = $event.target.checked.toString()">
-                    Enabled
-                </label>
-            </div>
-        </div>
-        <fieldset [hidden]="settings.isDataCollector !== 'true'">
-            <div class="form-group row">
-                <label for="serverUrl" class="col-sm-2">
-                    Remote Server URL
-                </label>
-                <div class="col col-sm-10">
-                    <input type="text" name="serverUrl" class="form-control" [(ngModel)]="settings.serverUrl">
-                </div>
-            </div>
-            <div class="form-group row">
-                <label for="name" class="col-sm-2">
-                    Collector Name
-                </label>
-                <div class="col col-sm-10">
-                    <input type="text" name="name" class="form-control" [(ngModel)]="settings.name">
-                </div>
-            </div>
-        </fieldset>
-        <button type="submit" class="btn btn-outline-info">Save Changes</button>
-    </form>
+      </div>
+    </fieldset>
+    <button type="submit" class="btn btn-outline-info">Save Changes</button>
+  </form>
 </div>
-<ng-template #loading>
-    Loading Settings...
-</ng-template>
+<ng-template #loading> Loading Settings... </ng-template>

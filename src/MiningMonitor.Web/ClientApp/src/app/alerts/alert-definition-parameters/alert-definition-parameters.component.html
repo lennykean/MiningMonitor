@@ -1,36 +1,34 @@
 <fieldset>
-    <legend>Alert Parameters</legend>
-    <div class="form-group row">
-        <label for="alertMessage" class="col-sm-2">
-            Alert Message
-            <small class="form-text text-muted">Optional</small>
-        </label>
-        <div class="col col-sm-10">
-            <input name="alertMessage" class="form-control" [(ngModel)]="alertParameters.alertMessage">
-        </div>
+  <legend>Alert Parameters</legend>
+  <div class="form-group row">
+    <label for="alertMessage" class="col-sm-2">
+      Alert Message
+      <small class="form-text text-muted">Optional</small>
+    </label>
+    <div class="col col-sm-10">
+      <input name="alertMessage" class="form-control" [(ngModel)]="alertParameters.alertMessage" />
     </div>
-    <div class="form-group row">
-        <label for="alertType" class="col-sm-2">
-            Alert Type
-        </label>
-        <div class="col col-sm-10">
-            <select name="alertType" class="form-control" [disabled]="!isNew" [(ngModel)]="alertParameters.alertType"
-                [ngClass]="{'is-invalid': validationErrors.parameters}">
-                <option *ngFor="let alertType of alertType | enum" [ngValue]="alertType.value">
-                    {{ alertType.key | humanize }}
-                </option>
-            </select>
-            <small class="invalid-feedback" *ngFor="let message of validationErrors.parameters">
-                {{ message }}
-            </small>
-        </div>
+  </div>
+  <div class="form-group row">
+    <label for="alertType" class="col-sm-2"> Alert Type </label>
+    <div class="col col-sm-10">
+      <select name="alertType" class="form-control" [disabled]="!isNew" [(ngModel)]="alertParameters.alertType"
+        [ngClass]="{ 'is-invalid': validationErrors.parameters }">
+        <option *ngFor="let alertType of alertType | enum" [ngValue]="alertType.value">
+          {{ alertType.key | humanize }}
+        </option>
+      </select>
+      <small class="invalid-feedback" *ngFor="let message of validationErrors.parameters">
+        {{ message }}
+      </small>
     </div>
-    <div [ngSwitch]="alertParameters.alertType">
-        <mm-hashrate-parameters *ngSwitchCase="alertType.Hashrate" [alertParameters]="alertParameters">
-        </mm-hashrate-parameters>
-        <mm-gpu-threshold-parameters *ngSwitchCase="alertType.GpuThreshold" [alertParameters]="alertParameters">
-        </mm-gpu-threshold-parameters>
-        <mm-connectivity-parameters *ngSwitchCase="alertType.Connectivity" [alertParameters]="alertParameters">
-        </mm-connectivity-parameters>
-    </div>
+  </div>
+  <div [ngSwitch]="alertParameters.alertType">
+    <mm-hashrate-parameters *ngSwitchCase="alertType.Hashrate" [alertParameters]="alertParameters">
+    </mm-hashrate-parameters>
+    <mm-gpu-threshold-parameters *ngSwitchCase="alertType.GpuThreshold" [alertParameters]="alertParameters">
+    </mm-gpu-threshold-parameters>
+    <mm-connectivity-parameters *ngSwitchCase="alertType.Connectivity" [alertParameters]="alertParameters">
+    </mm-connectivity-parameters>
+  </div>
 </fieldset>

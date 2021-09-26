@@ -4,16 +4,14 @@ import { AlertDefinition } from '../../models/AlertDefinition';
 import { AlertDefinitionsService } from '../alert-definitions.service';
 
 @Component({
-    templateUrl: './alert-definitions.component.html'
+  templateUrl: './alert-definitions.component.html',
 })
 export class AlertDefinitionsComponent implements OnInit {
-    public alertDefinitions: AlertDefinition[];
+  public alertDefinitions: AlertDefinition[];
 
-    constructor(
-        private alertDefinitionService: AlertDefinitionsService) {
-    }
+  constructor(private alertDefinitionService: AlertDefinitionsService) {}
 
-    async ngOnInit() {
-        this.alertDefinitions = await this.alertDefinitionService.GetAll();
-    }
+  async ngOnInit() {
+    this.alertDefinitions = await this.alertDefinitionService.GetAll();
+  }
 }

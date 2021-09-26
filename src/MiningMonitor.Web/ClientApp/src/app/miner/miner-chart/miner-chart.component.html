@@ -1,62 +1,89 @@
 <h3>{{ miner.name }}</h3>
 <div *ngIf="snapshot && dataSet; else loading">
-    <div class="stats">
-        <div class="row">
-            <div class="col-lg">
-                <div class="d-flex justify-content-between align-items-center">
-                    <strong>Hashrate</strong>
-                    {{ snapshot.minerStatistics && snapshot.minerStatistics.ethereum.hashrate / 1000 || '--' }} MH/s
-                </div>
-            </div>
-            <div class="col-lg">
-                <div class="d-flex justify-content-between align-items-center">
-                    <strong>Shares</strong>
-                    <span *ngIf="snapshot.minerStatistics && snapshot.minerStatistics.ethereum">
-                        <span title="Valid Shares">{{ snapshot.minerStatistics.ethereum.shares }}</span> /
-                        <span title="Stale Shares">{{ snapshot.minerStatistics.ethereum.rejectedShares }}</span> /
-                        <span title="Invalid Shares">{{ snapshot.minerStatistics.ethereum.invalidShares }}</span>
-                    </span>
-                </div>
-            </div>
-            <div class="col-lg">
-                <div class="d-flex justify-content-between align-items-center">
-                    <strong>Miner Version</strong>
-                    {{ snapshot.minerStatistics && snapshot.minerStatistics.minerVersion }}
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg">
-                <div class="d-flex justify-content-between align-items-center">
-                    <strong>Time</strong>
-                    {{ snapshot.snapshotTime | date:'M/d/yy, h:mm:ss a' }}
-                </div>
-            </div>
-            <div class="col-lg">
-                <div class="d-flex justify-content-between align-items-center">
-                    <strong>Uptime</strong>
-                    {{ snapshot.minerStatistics && snapshot.minerStatistics.uptime }}
-                </div>
-            </div>
-            <div class="col-lg">
-                <div class="d-flex justify-content-between align-items-center">
-                    <strong>Pool</strong>
-                    {{snapshot.minerStatistics
-                    && snapshot.minerStatistics.ethereum
-                    && snapshot.minerStatistics.ethereum.pool}}
-                </div>
-            </div>
-        </div>
-    </div>
-
+  <div class="stats">
     <div class="row">
-        <div class="col-md-6" *ngFor="let data of dataSet; index as i">
-            <mm-gpu-chart name="GPU {{ i + 1 }}" [data]="data"
-                [mode]="snapshot.minerStatistics && snapshot.minerStatistics.gpus && snapshot.minerStatistics.gpus && snapshot.minerStatistics.gpus[i].mode">
-            </mm-gpu-chart>
+      <div class="col-lg">
+        <div class="d-flex justify-content-between align-items-center">
+          <strong>Hashrate</strong>
+          {{
+            (snapshot.minerStatistics &&
+              snapshot.minerStatistics.ethereum.hashrate / 1000) ||
+              "--"
+          }}
+          MH/s
         </div>
+      </div>
+      <div class="col-lg">
+        <div class="d-flex justify-content-between align-items-center">
+          <strong>Shares</strong>
+          <span
+            *ngIf="
+              snapshot.minerStatistics && snapshot.minerStatistics.ethereum
+            "
+          >
+            <span title="Valid Shares">{{
+              snapshot.minerStatistics.ethereum.shares
+            }}</span>
+            /
+            <span title="Stale Shares">{{
+              snapshot.minerStatistics.ethereum.rejectedShares
+            }}</span>
+            /
+            <span title="Invalid Shares">{{
+              snapshot.minerStatistics.ethereum.invalidShares
+            }}</span>
+          </span>
+        </div>
+      </div>
+      <div class="col-lg">
+        <div class="d-flex justify-content-between align-items-center">
+          <strong>Miner Version</strong>
+          {{
+            snapshot.minerStatistics && snapshot.minerStatistics.minerVersion
+          }}
+        </div>
+      </div>
     </div>
+    <div class="row">
+      <div class="col-lg">
+        <div class="d-flex justify-content-between align-items-center">
+          <strong>Time</strong>
+          {{ snapshot.snapshotTime | date: "M/d/yy, h:mm:ss a" }}
+        </div>
+      </div>
+      <div class="col-lg">
+        <div class="d-flex justify-content-between align-items-center">
+          <strong>Uptime</strong>
+          {{ snapshot.minerStatistics && snapshot.minerStatistics.uptime }}
+        </div>
+      </div>
+      <div class="col-lg">
+        <div class="d-flex justify-content-between align-items-center">
+          <strong>Pool</strong>
+          {{
+            snapshot.minerStatistics &&
+              snapshot.minerStatistics.ethereum &&
+              snapshot.minerStatistics.ethereum.pool
+          }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6" *ngFor="let data of dataSet; index as i">
+      <mm-gpu-chart
+        name="GPU {{ i + 1 }}"
+        [data]="data"
+        [mode]="
+          snapshot.minerStatistics &&
+          snapshot.minerStatistics.gpus &&
+          snapshot.minerStatistics.gpus &&
+          snapshot.minerStatistics.gpus[i].mode
+        "
+      >
+      </mm-gpu-chart>
+    </div>
+  </div>
 </div>
-<ng-template #loading>
-    Loading...
-</ng-template>
+<ng-template #loading> Loading... </ng-template>

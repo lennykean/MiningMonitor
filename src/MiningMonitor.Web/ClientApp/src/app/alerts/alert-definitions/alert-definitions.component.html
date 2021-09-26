@@ -1,27 +1,29 @@
-<a class="btn btn-outline-info float-right" routerLink="/alertdefinition/new">Create Definition</a>
-<div *ngIf="alertDefinitions; else loading;">
-    <h3>Alert Definitions</h3>
-    <table class="table table-striped">
-        <thead>
-            <th>Definition</th>
-            <th>Miner</th>
-            <th>Status</th>
-        </thead>
-        <tbody>
-            <tr *ngFor="let alertDefinition of alertDefinitions">
-                <td>
-                    <a routerLink="/alertdefinition/{{ alertDefinition.id }}">{{ alertDefinition.name }}</a>
-                </td>
-                <td>
-                    <a routerLink="/miner/{{ alertDefinition.minerId }}">
-                        {{ alertDefinition.minerId | minerName | async }}
-                    </a>
-                </td>
-                <td>{{ alertDefinition.enabled ? 'enabled' : 'disabled' }}</td>
-            </tr>
-        </tbody>
-    </table>
+<a class="btn btn-outline-info float-right" routerLink="/alertdefinition/new"
+  >Create Definition</a
+>
+<div *ngIf="alertDefinitions; else loading">
+  <h3>Alert Definitions</h3>
+  <table class="table table-striped">
+    <thead>
+      <th>Definition</th>
+      <th>Miner</th>
+      <th>Status</th>
+    </thead>
+    <tbody>
+      <tr *ngFor="let alertDefinition of alertDefinitions">
+        <td>
+          <a routerLink="/alertdefinition/{{ alertDefinition.id }}">{{
+            alertDefinition.name
+          }}</a>
+        </td>
+        <td>
+          <a routerLink="/miner/{{ alertDefinition.minerId }}">
+            {{ alertDefinition.minerId | minerName | async }}
+          </a>
+        </td>
+        <td>{{ alertDefinition.enabled ? "enabled" : "disabled" }}</td>
+      </tr>
+    </tbody>
+  </table>
 </div>
-<ng-template #loading>
-    Loading alert definitions...
-</ng-template>
+<ng-template #loading> Loading alert definitions... </ng-template>

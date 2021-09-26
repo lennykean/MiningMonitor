@@ -1,40 +1,58 @@
 <h3>Add User</h3>
-<form (submit)="Save(); $event.preventDefault();">
-    <div class="form-group row">
-        <label for="username" class="col-sm-2">
-            Username
-        </label>
-        <div class="col col-sm-10">
-            <input type="text" name="username" class="form-control" [ngClass]="{'is-invalid': validationErrors.username}"
-                [(ngModel)]="user.username">
-            <small class="invalid-feedback" *ngFor="let message of validationErrors.username">
-                {{ message }}
-            </small>
-        </div>
+<form (submit)="Save(); $event.preventDefault()">
+  <div class="form-group row">
+    <label for="username" class="col-sm-2"> Username </label>
+    <div class="col col-sm-10">
+      <input
+        type="text"
+        name="username"
+        class="form-control"
+        [ngClass]="{ 'is-invalid': validationErrors.username }"
+        [(ngModel)]="user.username"
+      />
+      <small
+        class="invalid-feedback"
+        *ngFor="let message of validationErrors.username"
+      >
+        {{ message }}
+      </small>
     </div>
-    <div class="form-group row">
-        <label for="email" class="col-sm-2">
-            Mail
-        </label>
-        <div class="col col-sm-10">
-            <input type="text" name="email" class="form-control" [ngClass]="{'is-invalid': validationErrors.email}"
-                [(ngModel)]="user.email">
-            <small class="invalid-feedback" *ngFor="let message of validationErrors.email">
-                {{ message }}
-            </small>
-        </div>
+  </div>
+  <div class="form-group row">
+    <label for="email" class="col-sm-2"> Mail </label>
+    <div class="col col-sm-10">
+      <input
+        type="text"
+        name="email"
+        class="form-control"
+        [ngClass]="{ 'is-invalid': validationErrors.email }"
+        [(ngModel)]="user.email"
+      />
+      <small
+        class="invalid-feedback"
+        *ngFor="let message of validationErrors.email"
+      >
+        {{ message }}
+      </small>
     </div>
-    <div class="form-group row">
-        <label for="password" class="col-sm-2">
-            Password
-        </label>
-        <div class="col col-sm-10">
-            <input type="password" name="password" class="form-control" [ngClass]="{'is-invalid': validationErrors.password}"
-                [(ngModel)]="user.password">
-            <small class="invalid-feedback" *ngFor="let message of validationErrors.password">
-                {{ message }}
-            </small>
-        </div>
+  </div>
+  <div class="form-group row">
+    <label for="password" class="col-sm-2"> Password </label>
+    <div class="col col-sm-10">
+      <input
+        type="password"
+        name="password"
+        class="form-control"
+        [ngClass]="{ 'is-invalid': validationErrors.password }"
+        [(ngModel)]="user.password"
+      />
+      <small
+        class="invalid-feedback"
+        *ngFor="let message of validationErrors.password"
+      >
+        {{ message }}
+      </small>
     </div>
-    <button type="submit" class="btn btn-outline-info">Save Changes</button>
+  </div>
+  <button type="submit" class="btn btn-outline-info">Save Changes</button>
 </form>
