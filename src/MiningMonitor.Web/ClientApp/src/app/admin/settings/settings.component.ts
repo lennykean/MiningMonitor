@@ -15,9 +15,9 @@ export class SettingsComponent implements OnInit {
   settingsForm: FormGroup;
 
   constructor(
-    private formBuilder: FormBuilder,
     private settingsService: SettingsService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private formBuilder: FormBuilder
   ) {}
 
   async ngOnInit() {
@@ -62,18 +62,11 @@ export class SettingsComponent implements OnInit {
       }
     }
   }
-  private initializeValidators() {
-    const purgeAgeMinutes = this.settingsForm.get('purgeAgeMinutes');
-    purgeAgeMinutes.valueChanges.subscribe(() => {
-      if (purgeAgeMinutes.errors?.required) {
-        this.validationErrors.purgeAgeMinutes = [
-          'Purge Data Older Than is required',
-        ];
-      }
-    });
 
+  private initializeValidators() {
     const enablePurge = this.settingsForm.get('enablePurge');
     enablePurge.valueChanges.subscribe((value) => {
+      const purgeAgeMinutes = this.settingsForm.get('purgeAgeMinutes');
       if (value) {
         purgeAgeMinutes.addValidators(Validators.required);
       } else {
@@ -82,22 +75,10 @@ export class SettingsComponent implements OnInit {
       purgeAgeMinutes.updateValueAndValidity();
     });
 
-    const serverUrl = this.settingsForm.get('serverUrl');
-    serverUrl.valueChanges.subscribe(() => {
-      if (serverUrl.errors?.required) {
-        this.validationErrors.serverUrl = ['Remote Server URL is required'];
-      }
-    });
-
-    const name = this.settingsForm.get('name');
-    name.valueChanges.subscribe(() => {
-      if (name.errors?.required) {
-        this.validationErrors.name = ['Collector Name is required'];
-      }
-    });
-
     const isDataCollector = this.settingsForm.get('isDataCollector');
     isDataCollector.valueChanges.subscribe((value) => {
+      const serverUrl = this.settingsForm.get('serverUrl');
+      const name = this.settingsForm.get('name');
       if (value) {
         serverUrl.addValidators(Validators.required);
         name.addValidators(Validators.required);

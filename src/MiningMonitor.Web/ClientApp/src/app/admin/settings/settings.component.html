@@ -33,6 +33,9 @@
         <small class="invalid-feedback" *ngFor="let message of validationErrors.purgeAgeMinutes">
           {{ message }}
         </small>
+        <small class="invalid-feedback" *ngIf="settingsForm.get('purgeAgeMinutes').errors?.required">
+          Purge Data Older Than is required
+        </small>
       </div>
     </div>
     <div class="form-group row" title="Run server in data collector mode">
@@ -53,6 +56,9 @@
           <small class="invalid-feedback" *ngFor="let message of validationErrors.serverUrl">
             {{ message }}
           </small>
+          <small class="invalid-feedback" *ngIf="settingsForm.get('serverUrl').errors?.required">
+            Remote Server URL is required
+          </small>
         </div>
       </div>
       <div class="form-group row">
@@ -62,6 +68,9 @@
             [ngClass]="{'is-invalid': isInvalid('name')}" />
           <small class="invalid-feedback" *ngFor="let message of validationErrors.name">
             {{ message }}
+          </small>
+          <small class="invalid-feedback" *ngIf="settingsForm.get('name').errors?.required">
+            Collector Name is required
           </small>
         </div>
       </div>
