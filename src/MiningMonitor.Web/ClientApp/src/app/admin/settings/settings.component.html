@@ -1,12 +1,11 @@
 <div *ngIf="settings; else loading">
   <h3>Server Settings</h3>
-  <form (submit)="SaveSettings(); $event.preventDefault()">
+  <form (ngSubmit)="saveSettings()" [formGroup]="settingsForm">
     <div class="form-group row">
       <label for="enableSecurity" class="col-sm-2"> Authentication </label>
       <div class="col col-sm-10">
         <label>
-          <input type="checkbox" name="enableSecurity" [checked]="settings.enableSecurity==='true'"
-            (change)="enableSecurityCheckChanged($event)" />
+          <input type="checkbox" id="enableSecurity" formControlName="enableSecurity" />
           Enabled
         </label>
         <small class="text-danger" *ngFor="let message of validationErrors.enableSecurity">
@@ -18,46 +17,56 @@
       <label for="enablePurge" class="col-sm-2"> Automatic Data Purge </label>
       <div class="col col-sm-10">
         <label>
-          <input type="checkbox" name="enablePurge" [checked]="settings.enablePurge === 'true'"
-            (change)="enablePurgeCheckChanged($event)" />
+          <input type="checkbox" id="enablePurge" formControlName="enablePurge" />
           Enabled
         </label>
       </div>
     </div>
-    <div class="form-group row" [hidden]="settings.enablePurge !== 'true'">
+    <div class="form-group row" *ngIf="settingsForm.get('enablePurge').value">
       <label for="purgeAgeMinutes" class="col-sm-2">
         Purge Data Older Than
         <small class="form-text text-muted">Minutes</small>
       </label>
       <div class="col col-sm-10">
-        <input type="number" name="purgeAgeMinutes" class="form-control" [(ngModel)]="settings.purgeAgeMinutes" />
+        <input type="number" id="purgeAgeMinutes" class="form-control" formControlName="purgeAgeMinutes"
+          [ngClass]="{'is-invalid': isInvalid('purgeAgeMinutes')}" />
+        <small class="invalid-feedback" *ngFor="let message of validationErrors.purgeAgeMinutes">
+          {{ message }}
+        </small>
       </div>
     </div>
     <div class="form-group row" title="Run server in data collector mode">
       <label for="isDataCollector" class="col-sm-2"> Data Collector </label>
       <div class="col col-sm-10">
         <label>
-          <input type="checkbox" name="isDataCollector" [checked]="settings.isDataCollector === 'true'"
-            (change)="isDataCollectorCheckChanged($event)" />
+          <input type="checkbox" id="isDataCollector" formControlName="isDataCollector" />
           Enabled
         </label>
       </div>
     </div>
-    <fieldset [hidden]="settings.isDataCollector !== 'true'">
+    <fieldset *ngIf="settingsForm.get('isDataCollector').value">
       <div class="form-group row">
         <label for="serverUrl" class="col-sm-2"> Remote Server URL </label>
         <div class="col col-sm-10">
-          <input type="text" name="serverUrl" class="form-control" [(ngModel)]="settings.serverUrl" />
+          <input type="text" id="serverUrl" class="form-control" formControlName="serverUrl"
+            [ngClass]="{'is-invalid': isInvalid('serverUrl')}" />
+          <small class="invalid-feedback" *ngFor="let message of validationErrors.serverUrl">
+            {{ message }}
+          </small>
         </div>
       </div>
       <div class="form-group row">
         <label for="name" class="col-sm-2"> Collector Name </label>
         <div class="col col-sm-10">
-          <input type="text" name="name" class="form-control" [(ngModel)]="settings.name" />
+          <input type="text" id="name" class="form-control" formControlName="name"
+            [ngClass]="{'is-invalid': isInvalid('name')}" />
+          <small class="invalid-feedback" *ngFor="let message of validationErrors.name">
+            {{ message }}
+          </small>
         </div>
       </div>
     </fieldset>
-    <button type="submit" class="btn btn-outline-info">Save Changes</button>
+    <button type="submit" class="btn btn-outline-info" [disabled]="!settingsForm.valid">Save Changes</button>
   </form>
 </div>
 <ng-template #loading> Loading Settings... </ng-template>
