@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { ConnectivityAlertParameters } from '../../models/ConnectivityAlertParameters';
 
 @Component({
@@ -7,7 +8,7 @@ import { ConnectivityAlertParameters } from '../../models/ConnectivityAlertParam
 })
 export class ConnectivityParametersComponent {
   @Input()
-  public alertParameters: ConnectivityAlertParameters = {
-    alertType: null,
-  };
+  alertParameters?: ConnectivityAlertParameters;
+  @Input()
+  alertDefinitionFormGroup: FormGroup;
 }

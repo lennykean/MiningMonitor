@@ -1,34 +1,42 @@
-<fieldset>
-  <legend>Alert Parameters</legend>
-  <div class="form-group row">
-    <label for="alertMessage" class="col-sm-2">
-      Alert Message
-      <small class="form-text text-muted">Optional</small>
-    </label>
-    <div class="col col-sm-10">
-      <input name="alertMessage" class="form-control" [(ngModel)]="alertParameters.alertMessage" />
+<ng-container [formGroup]="alertDefinitionFormGroup">
+  <fieldset formGroupName="parameters">
+    <legend>Alert Parameters</legend>
+    <div class="form-group row">
+      <label for="alertMessage" class="col-sm-2">
+        Alert Message
+        <small class="form-text text-muted">Optional</small>
+      </label>
+      <div class="col col-sm-10">
+        <input id="alertMessage" class="form-control" formControlName="alertMessage" />
+      </div>
     </div>
-  </div>
-  <div class="form-group row">
-    <label for="alertType" class="col-sm-2"> Alert Type </label>
-    <div class="col col-sm-10">
-      <select name="alertType" class="form-control" [disabled]="!isNew" [(ngModel)]="alertParameters.alertType"
-        [ngClass]="{ 'is-invalid': validationErrors.parameters }">
-        <option *ngFor="let alertType of alertType | enum" [ngValue]="alertType.value">
-          {{ alertType.key | humanize }}
-        </option>
-      </select>
-      <small class="invalid-feedback" *ngFor="let message of validationErrors.parameters">
-        {{ message }}
-      </small>
+    <div class="form-group row">
+      <label for="alertType" class="col-sm-2"> Alert Type </label>
+      <div class="col col-sm-10">
+        <select name="id" class="form-control" formControlName="alertType"
+          [ngClass]="{'is-invalid':isInvalid('parameters.alertType')}">
+          <option *ngFor="let alertType of alertType | enum" [ngValue]="alertType.value">
+            {{ alertType.key | humanize }}
+          </option>
+        </select>
+        <small class="invalid-feedback" *ngFor="let message of validationErrors.parameters">
+          {{ message }}
+        </small>
+        <small class="invalid-feedback" *ngIf="alertDefinitionFormGroup.get('parameters.alertType').errors?.required">
+          Alert Type is required
+        </small>
+      </div>
     </div>
-  </div>
-  <div [ngSwitch]="alertParameters.alertType">
-    <mm-hashrate-parameters *ngSwitchCase="alertType.Hashrate" [alertParameters]="alertParameters">
-    </mm-hashrate-parameters>
-    <mm-gpu-threshold-parameters *ngSwitchCase="alertType.GpuThreshold" [alertParameters]="alertParameters">
-    </mm-gpu-threshold-parameters>
-    <mm-connectivity-parameters *ngSwitchCase="alertType.Connectivity" [alertParameters]="alertParameters">
-    </mm-connectivity-parameters>
-  </div>
-</fieldset>
+    <div [ngSwitch]="alertDefinitionFormGroup.get('parameters.alertType').value">
+      <mm-hashrate-parameters *ngSwitchCase="alertType.Hashrate" [alertParameters]="alertParameters"
+        [alertDefinitionFormGroup]="alertDefinitionFormGroup">
+      </mm-hashrate-parameters>
+      <mm-gpu-threshold-parameters *ngSwitchCase="alertType.GpuThreshold" [alertParameters]="alertParameters"
+        [alertDefinitionFormGroup]="alertDefinitionFormGroup">
+      </mm-gpu-threshold-parameters>
+      <mm-connectivity-parameters *ngSwitchCase="alertType.Connectivity" [alertParameters]="alertParameters"
+        [alertDefinitionFormGroup]="alertDefinitionFormGroup">
+      </mm-connectivity-parameters>
+    </div>
+  </fieldset>
+</ng-container>

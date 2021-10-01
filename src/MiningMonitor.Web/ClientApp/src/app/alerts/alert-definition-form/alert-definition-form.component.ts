@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 
 import { MinerService } from '../../miner/miner.service';
@@ -13,30 +14,44 @@ import { Miner } from '../../models/Miner';
 })
 export class AlertDefinitionFormComponent implements OnInit {
   @Input()
-  public alertDefinition: AlertDefinition = {
-    displayName: null,
-    minerId: null,
-    enabled: true,
-    parameters: {
-      alertType: null,
-    },
-    actions: [],
-  };
+  alertDefinition?: AlertDefinition;
   @Input()
-  public validationErrors: { [key: string]: string[] } = {};
+  validationErrors: { [key: string]: string[] } = {};
   @Output()
-  public save = new EventEmitter<AlertDefinition>();
+  save = new EventEmitter<AlertDefinition>();
 
-  public miners: Observable<Miner[]>;
-  public alertSeverity = AlertSeverity;
+  miners: Observable<Miner[]>;
+  alertSeverity = AlertSeverity;
+  alertDefinitionFormGroup: FormGroup;
 
-  constructor(private minerService: MinerService) {}
+  constructor(
+    private formBuilder: FormBuilder,
+    private minerService: MinerService
+  ) {}
 
-  public ngOnInit() {
+  ngOnInit() {
     this.miners = this.minerService.miners;
+
+    this.alertDefinitionFormGroup = this.formBuilder.group({
+      displayName: this.alertDefinition?.displayName,
+      minerId: [this.alertDefinition?.minerId, Validators.required],
+      severity: [this.alertDefinition?.severity, Validators.required],
+      enabled: this.alertDefinition?.enabled ?? true,
+    });
   }
 
-  public Submit() {
-    this.save.emit(this.alertDefinition);
+  isInvalid(fieldName: string) {
+    const field = this.alertDefinitionFormGroup.get(fieldName);
+    return (
+      (field.touched || field.dirty) &&
+      (!field.valid || this.validationErrors[fieldName]?.length)
+    );
+  }
+
+  submit() {
+    this.save.emit({
+      ...this.alertDefinition,
+      ...this.alertDefinitionFormGroup.getRawValue(),
+    });
   }
 }

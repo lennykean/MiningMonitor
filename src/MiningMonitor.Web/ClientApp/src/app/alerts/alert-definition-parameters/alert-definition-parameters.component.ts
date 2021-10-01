@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { AlertParameters } from '../../models/AlertParameters';
 import { AlertType } from '../../models/AlertType';
@@ -7,15 +8,41 @@ import { AlertType } from '../../models/AlertType';
   selector: 'mm-alert-definition-parameters',
   templateUrl: './alert-definition-parameters.component.html',
 })
-export class AlertDefinitionParametersComponent {
+export class AlertDefinitionParametersComponent implements OnInit {
   @Input()
-  public isNew: boolean;
-  @Input()
-  public alertParameters: AlertParameters = {
-    alertType: null,
-  };
+  public alertParameters?: AlertParameters;
   @Input()
   public validationErrors: { [key: string]: string[] } = {};
+  @Input()
+  public alertDefinitionFormGroup: FormGroup;
 
   public alertType = AlertType;
+
+  constructor(private formBuilder: FormBuilder) {}
+
+  ngOnInit() {
+    this.alertDefinitionFormGroup.addControl(
+      'parameters',
+      this.formBuilder.group({
+        alertType: [
+          {
+            value: this.alertParameters?.alertType,
+            disabled: !!this.alertParameters,
+          },
+          Validators.required,
+        ],
+        alertMessage: this.alertParameters?.alertMessage,
+        durationMinutes: this.alertParameters?.durationMinutes,
+      })
+    );
+    this.alertDefinitionFormGroup.updateValueAndValidity();
+  }
+
+  isInvalid(fieldName: string) {
+    const field = this.alertDefinitionFormGroup.get(fieldName);
+    return (
+      (field.touched || field.dirty) &&
+      (!field.valid || this.validationErrors[fieldName]?.length)
+    );
+  }
 }

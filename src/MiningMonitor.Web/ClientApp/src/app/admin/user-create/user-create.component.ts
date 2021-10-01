@@ -10,15 +10,6 @@ import { Router } from '@angular/router';
 
 import { UserService } from '../user.service';
 
-function passwordMatch(control: AbstractControl) {
-  const password = control.get('password');
-  const confirmPassword = control.get('confirmPassword');
-
-  if (password?.value !== confirmPassword?.value) {
-    return { passwordMatch: true };
-  }
-}
-
 @Component({
   templateUrl: './user-create.component.html',
   styleUrls: ['./user-create.component.scss'],
@@ -42,7 +33,7 @@ export class UserCreateComponent implements OnInit {
         email: '',
       },
       {
-        validators: passwordMatch,
+        validators: this.passwordMatch,
       }
     );
   }
@@ -64,6 +55,15 @@ export class UserCreateComponent implements OnInit {
       if (error instanceof HttpErrorResponse && error.status === 400) {
         this.validationErrors = error.error;
       }
+    }
+  }
+
+  private passwordMatch(control: AbstractControl) {
+    const password = control.get('password');
+    const confirmPassword = control.get('confirmPassword');
+
+    if (password?.value !== confirmPassword?.value) {
+      return { passwordMatch: true };
     }
   }
 }
