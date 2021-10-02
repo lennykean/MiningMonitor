@@ -1,5 +1,5 @@
-<div *ngIf="action">
-  <button type="button" class="btn btn-sm btn-outline-info mb-2" (click)="close()">
+<div *ngIf="action" [formGroup]="actionFormGroup">
+  <button type="button" class="btn btn-sm btn-outline-info mb-2" (click)="close()" [disabled]="!actionFormGroup.valid">
     Done
   </button>
   <div class="form-group row">
@@ -7,11 +7,15 @@
       <small>Type</small>
     </label>
     <div class="col col-sm-10">
-      <select name="type" class="form-control form-control-sm" [(ngModel)]="action.type">
+      <select id="type" class="form-control form-control-sm" formControlName="type"
+        (ngModelChange)="changeForm(actionFormGroup.get('type').value)" [ngClass]="{ 'is-invalid': isInvalid('type') }">
         <option *ngFor="let type of actionTypes | enum" [ngValue]="type.value">
           {{ type.key | humanize }}
         </option>
       </select>
+      <small class="invalid-feedback" *ngIf="!actionFormGroup.get('type').errors?.required">
+        Type is required
+      </small>
     </div>
   </div>
   <div class="form-group row">
@@ -19,17 +23,17 @@
       <small>Name <span class="text-muted">(optional)</span></small>
     </label>
     <div class="col col-sm-10">
-      <input name="displayName" class="form-control form-control-sm" [(ngModel)]="action.displayName" />
+      <input id="displayName" class="form-control form-control-sm" formControlName="displayName" />
     </div>
   </div>
-  <div [ngSwitch]="action.type">
+  <div [ngSwitch]="actionFormGroup.get('type').value">
     <div *ngSwitchCase="actionTypes.DisableGpu">
       <div class="form-group row" title="Disable GPU(s) affecting the alert">
         <label for="disableAffected" class="col-sm-2">
           <small>Disable Affected</small>
         </label>
         <div class="col col-sm-10">
-          <!-- <input type="checkbox" name="disableAffected" [(ngModel)]="action4.disableAffected" /> -->
+          <input type="checkbox" id="disableAffected" formControlName="disableAffected" />
         </div>
       </div>
       <div class="form-group row" title="Disable all GPUs">
@@ -37,7 +41,7 @@
           <small>Disable All</small>
         </label>
         <div class="col col-sm-10">
-          <!-- <input type="checkbox" name="disableAll" [(ngModel)]="action.disableAll" /> -->
+          <input type="checkbox" id="disableAll" formControlName="disableAll" />
         </div>
       </div>
     </div>
@@ -47,7 +51,11 @@
           <small>URL</small>
         </label>
         <div class="col col-sm-10">
-          <!-- <input name="url" class="form-control form-control-sm" [(ngModel)]="action.url" /> -->
+          <input id="url" class="form-control form-control-sm" formControlName="url"
+            [ngClass]="{ 'is-invalid': isInvalid('url') }" />
+          <small class="invalid-feedback" *ngIf="!actionFormGroup.get('url').errors?.validUrl">
+            A valid URL is required
+          </small>
         </div>
       </div>
       <div class="form-group row">
@@ -55,7 +63,7 @@
           <small>Body</small>
         </label>
         <div class="col col-sm-10">
-          <!-- <textarea name="body" class="form-control form-control-sm" [(ngModel)]="action.body"></textarea> -->
+          <textarea id="body" class="form-control form-control-sm" formControlName="body"></textarea>
         </div>
       </div>
     </div>

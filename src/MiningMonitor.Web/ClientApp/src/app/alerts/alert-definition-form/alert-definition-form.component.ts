@@ -14,7 +14,7 @@ import { Miner } from '../../models/Miner';
 })
 export class AlertDefinitionFormComponent implements OnInit {
   @Input()
-  alertDefinition?: AlertDefinition;
+  alertDefinition: AlertDefinition;
   @Input()
   validationErrors: { [key: string]: string[] } = {};
   @Output()
@@ -30,6 +30,10 @@ export class AlertDefinitionFormComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    if (!this.alertDefinition?.actions) {
+      this.alertDefinition = { ...this.alertDefinition, ...{ actions: [] } };
+    }
+
     this.miners = this.minerService.miners;
 
     this.alertDefinitionFormGroup = this.formBuilder.group({

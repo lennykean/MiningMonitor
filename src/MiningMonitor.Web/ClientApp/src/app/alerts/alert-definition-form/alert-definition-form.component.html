@@ -52,9 +52,9 @@
       <input type="checkbox" id="enabled" formControlName="enabled" />
     </div>
   </div>
-  <mm-alert-definition-parameters [alertParameters]="alertDefinition?.parameters"
+  <mm-alert-definition-parameters [alertParameters]="alertDefinition.parameters"
     [alertDefinitionFormGroup]="alertDefinitionFormGroup" [validationErrors]=" validationErrors">
   </mm-alert-definition-parameters>
-  <!-- <mm-alert-actions [actions]="alertDefinition?.actions"></mm-alert-actions> -->
+  <mm-alert-actions [actions]="alertDefinition.actions"></mm-alert-actions>
   <button type="submit" class="btn btn-outline-info" [disabled]="!alertDefinitionFormGroup.valid">Save Changes</button>
 </form>

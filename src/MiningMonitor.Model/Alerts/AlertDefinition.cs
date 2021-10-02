@@ -37,10 +37,10 @@ namespace MiningMonitor.Model.Alerts
         [LiteDB.BsonIgnore, Mongo.BsonIgnore]
         public string Name
         {
-            get 
+            get
             {
                 if (DisplayName != null)
-                    return DisplayName; 
+                    return DisplayName;
                 if (Parameters == null)
                     return null;
 

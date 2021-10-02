@@ -9,29 +9,34 @@ import { AlertActionType } from '../../models/AlertActionType';
   templateUrl: './alert-actions.component.html',
 })
 export class AlertActionsComponent {
-  public readonly faEdit = faEdit;
-  public readonly faTimes = faTimes;
+  readonly faEdit = faEdit;
+  readonly faTimes = faTimes;
 
   @Input()
-  public actions: AlertActionDefinition[] = [];
-  public actionTypes = AlertActionType;
-  public editIndex: number;
+  actions: AlertActionDefinition[] = [];
+  actionTypes = AlertActionType;
+  editIndex: number;
+  editAction: Partial<AlertActionDefinition>;
 
-  public add() {
-    this.editIndex = this.actions.push({ type: null, name: null }) - 1;
+  add() {
+    this.editIndex = this.actions?.length ?? 0;
+    this.editAction = {};
   }
 
-  public edit(index: number) {
+  edit(index: number) {
     this.editIndex = index;
+    this.editAction = this.actions[index];
   }
 
-  public remove(index: number) {
+  remove(index: number) {
     const editing = this.actions[this.editIndex];
     this.actions.splice(index, 1);
     this.editIndex = this.actions.findIndex((a) => a === editing);
   }
 
-  public done() {
+  done(action: AlertActionDefinition) {
+    this.actions[this.editIndex] = action;
     this.editIndex = null;
+    this.editAction = null;
   }
 }
