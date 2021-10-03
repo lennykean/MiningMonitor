@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { Miner } from '../../models/Miner';
 
@@ -7,21 +8,40 @@ import { Miner } from '../../models/Miner';
   templateUrl: './miner-form.component.html',
   styleUrls: ['./miner-form.component.scss'],
 })
-export class MinerFormComponent {
+export class MinerFormComponent implements OnInit {
   @Input()
-  public miner: Miner = {
-    displayName: null,
-    address: null,
-    port: null,
-    collectData: null,
-  };
+  miner?: Miner;
   @Input()
-  public validationErrors: { [key: string]: string[] } = {};
+  validationErrors: { [key: string]: string[] } = {};
 
   @Output()
-  public save = new EventEmitter<Miner>();
+  save = new EventEmitter<Miner>();
 
-  public Submit() {
-    this.save.emit(this.miner);
+  minerFormGroup: FormGroup;
+
+  constructor(private formBuilder: FormBuilder) {}
+
+  ngOnInit() {
+    this.minerFormGroup = this.formBuilder.group({
+      displayName: this.miner?.displayName,
+      address: [this.miner?.address, Validators.required],
+      port: this.miner?.port,
+      collectData: this.miner?.collectData,
+    });
+    if (this.miner?.collectorId) {
+      this.minerFormGroup.disable();
+    }
+  }
+
+  isInvalid(fieldName: string) {
+    const field = this.minerFormGroup.get(fieldName);
+    return (
+      (field.touched || field.dirty) &&
+      (!field.valid || this.validationErrors[fieldName]?.length)
+    );
+  }
+
+  submit() {
+    this.save.emit({ ...this.miner, ...this.minerFormGroup.value });
   }
 }

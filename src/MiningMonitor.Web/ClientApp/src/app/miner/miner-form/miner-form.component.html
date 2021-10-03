@@ -1,22 +1,14 @@
-<form (submit)="Submit(); $event.preventDefault()">
-  <fieldset [disabled]="miner.collectorId">
+<form (ngSubmit)="submit()" [formGroup]="minerFormGroup">
+  <fieldset>
     <div class="form-group row">
       <label for="displayName" class="col-sm-2">
         Name
         <small class="form-text text-muted">Optional</small>
       </label>
       <div class="col col-sm-10">
-        <input
-          name="displayName"
-          class="form-control"
-          [placeholder]="miner.name ? miner.name : '127.0.0.1:3333'"
-          [ngClass]="{ 'is-invalid': validationErrors.displayName }"
-          [(ngModel)]="miner.displayName"
-        />
-        <small
-          class="invalid-feedback"
-          *ngFor="let message of validationErrors.displayName"
-        >
+        <input id="displayName" class="form-control" [placeholder]="miner?.name ?? '127.0.0.1:3333'"
+          [ngClass]="{ 'is-invalid': isInvalid('displayName') }" formControlName="displayName" />
+        <small class="invalid-feedback" *ngFor="let message of validationErrors.displayName">
           {{ message }}
         </small>
       </div>
@@ -24,38 +16,22 @@
     <div class="form-group row">
       <label for="address" class="col-sm-2"> Address </label>
       <div class="col col-sm-10">
-        <input
-          type="text"
-          name="address"
-          class="form-control"
-          placeholder="127.0.0.1"
-          [ngClass]="{ 'is-invalid': validationErrors.address }"
-          [(ngModel)]="miner.address"
-          valid="false"
-        />
-        <small
-          class="invalid-feedback"
-          *ngFor="let message of validationErrors.address"
-        >
+        <input type="text" id="address" class="form-control" placeholder="127.0.0.1"
+          [ngClass]="{ 'is-invalid': isInvalid('address') }" formControlName="address" />
+        <small class="invalid-feedback" *ngFor="let message of validationErrors.address">
           {{ message }}
+        </small>
+        <small class="invalid-feedback" *ngIf="minerFormGroup.get('address').errors?.required">
+          Address is required
         </small>
       </div>
     </div>
     <div class="form-group row">
       <label for="port" class="col-sm-2"> Port </label>
       <div class="col col-sm-10">
-        <input
-          type="number"
-          name="port"
-          class="form-control"
-          placeholder="3333"
-          [ngClass]="{ 'is-invalid': validationErrors.port }"
-          [(ngModel)]="miner.port"
-        />
-        <small
-          class="invalid-feedback"
-          *ngFor="let message of validationErrors.port"
-        >
+        <input type="number" id="port" class="form-control" placeholder="3333"
+          [ngClass]="{ 'is-invalid': isInvalid('port') }" formControlName="port" />
+        <small class="invalid-feedback" *ngFor="let message of validationErrors.port">
           {{ message }}
         </small>
       </div>
@@ -64,20 +40,12 @@
       <label for="collectData" class="col-sm-2"> Data Collection </label>
       <div class="col col-sm-10">
         <label>
-          <input
-            type="checkbox"
-            name="collectData"
-            [(ngModel)]="miner.collectData"
-          />
+          <input type="checkbox" id="collectData" formControlName="collectData" />
           Enabled
         </label>
       </div>
     </div>
-    <button
-      type="submit"
-      class="btn btn-outline-info"
-      *ngIf="!miner.collectorId"
-    >
+    <button type="submit" class="btn btn-outline-info" *ngIf="!miner?.collectorId" [disabled]="!minerFormGroup.valid">
       Save Changes
     </button>
   </fieldset>
